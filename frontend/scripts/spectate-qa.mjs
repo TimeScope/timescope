@@ -27,7 +27,8 @@ await withLocalApp("spectate", async ({ page, api, out, pass }) => {
   const compass = page.locator(".navigation-compass");
   const compassStyle = () => compass.evaluate((element) => {
     const style = getComputedStyle(element);
-    return [style.backgroundColor, style.opacity, style.backdropFilter];
+    const face = element.querySelector(".compass-face");
+    return [getComputedStyle(face).fill, style.opacity, style.backdropFilter];
   });
   const idleCompass = await compassStyle();
   const attached = await navigate({ action: "spectate", entity: "Survey" });

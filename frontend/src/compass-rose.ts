@@ -1,5 +1,6 @@
 /** Flat SVG compass; one camera supplies orientation in every view. */
 export const compassRose = () => `<svg viewBox="0 0 100 100" aria-hidden="true">
+  <circle class="compass-face" cx="50" cy="50" r="49"/>
   <circle class="compass-ring" cx="50" cy="50" r="32"/>
   <g class="compass-rotation">
     <path class="compass-ticks" d="M50 18v4m32 28h-4M50 82v-4M18 50h4M27.4 27.4l2.8 2.8m42.4-2.8-2.8 2.8m2.8 42.4-2.8-2.8m-42.4 2.8 2.8-2.8"/>

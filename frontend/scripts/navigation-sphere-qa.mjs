@@ -192,6 +192,8 @@ try {
   for (const mode of ["globe", "space-time"]) {
     await frame(mode);
     assert.equal(await page.locator(".navigation-compass").count(), 1);
+    assert.equal(await page.locator(".compass-face").evaluate((face) =>
+      getComputedStyle(face).fill), "rgb(255, 255, 255)");
     const file = path.join(dir, `compass-${mode}.png`);
     await page.screenshot({ path: file });
     report.screenshots.push(path.basename(file));
