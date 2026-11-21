@@ -34,6 +34,7 @@
       "view-boundaries-test.mjs",
       "preferences-controller-test.mjs",
       "scene-ack-test.mjs",
+      "native-requests-test.mjs",
       "scene-transitions-test.mjs",
       "view-snapshot-test.mjs",
       "resource-governor-test.mjs",

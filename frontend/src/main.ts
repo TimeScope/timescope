@@ -4526,6 +4526,15 @@ async function agentRequest(kind: string, args: Record<string, any> = {}) {
 
 let drainSceneEvents: () => Promise<unknown> = async () => {};
 function transitionIdle() { return sceneTransitions.idle(() => drainSceneEvents()); }
+/** Join committed document/UI work, without following an animated camera's
+ * future viewport requests. Live controls must be able to stop that motion.
+ * Full sceneIdle remains the barrier for settled snapshots and saved state. */
+async function nativeRequestIdle() {
+  await transitionIdle();
+  await Promise.all([refreshWork.catch(() => {}), sceneSyncWork.catch(() => {}), cameraSaveWork.catch(() => {})]);
+  await transitionIdle();
+  await view.snapshotIdle();
+}
 async function sceneIdle() {
   for (;;) {
     await transitionIdle();
@@ -4722,9 +4731,9 @@ async function initialize() {
           .then(async () => {
             try {
               await filterIntent.flush();
-              // This consumer runs outside the scene coordinator. Joining its
-              // full drain here cannot wait on our own queue turn.
-              await sceneIdle();
+              // A live command joins committed data/restores, not a quiet camera.
+              // Spectating and playback can keep viewport refinement busy forever.
+              await nativeRequestIdle();
               if (Date.now() > event.expires_at_ms)
                 throw Error(
                   "UNAVAILABLE: desktop request expired before execution",

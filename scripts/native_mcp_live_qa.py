@@ -9,6 +9,51 @@ from pathlib import Path
 from native_mcp import NativeMcp
 
 
+def check_track_spectating(client, cli, profile):
+    """Use the actual desktop event queue while its camera and clock keep moving."""
+    exchange = profile / 'agent-files'
+    exchange.mkdir(exist_ok=True)
+    source = exchange / 'native-spectate.csv'
+    source.write_text('entity,time,latitude,longitude\n'
+                      'Survey,2026-11-15T00:00:00Z,10,-75\n'
+                      'Survey,2026-11-15T01:00:00Z,11,-74\n'
+                      'Survey,2026-11-15T02:00:00Z,12,-73\n')
+    preview = client.call('import_preview', {'path': str(source)})
+    client.call('import_commit', {'import_id': preview['import_id']})
+    client.call('view_playback', {'action': 'configure', 'speed': .25, 'increment_seconds': 60})
+    client.call('view_set', {'mode': 'map'})
+    time.sleep(.8)
+    assert client.call('view_status')['mode'] == 'map'
+    started = client.call('view_navigate', {'action': 'spectate', 'entity': 'Survey'})
+    assert started['mode'] == 'globe', started
+    assert started['diagnostics']['spectatingEntity'] == 'Survey'
+    for direction in ['reverse', 'forward', 'reverse']:
+        result = client.call('view_navigate', {'action': 'spectate_direction', 'direction': direction})
+        assert result['diagnostics']['spectatingDirection'] == direction
+        status = client.call('view_status')
+        assert status['diagnostics']['spectatingEntity'] == 'Survey'
+        assert status['diagnostics']['renderErrorCount'] == 0
+    profile_trace = client.call('view_profile', {'action': 'start', 'max_seconds': 10})
+    assert client.call('view_wait', {'timeout_ms': 5000, 'imagery': False, 'terrain': False})['ready']
+    client.call('view_profile', {'action': 'stop', 'id': profile_trace['id']})
+    stopped = subprocess.run(
+        [str(cli), '--data-dir', str(profile), '--attach', 'view', 'spectate-stop'],
+        check=True, capture_output=True, text=True, timeout=20,
+    )
+    assert json.loads(stopped.stdout)['diagnostics']['spectatingEntity'] is None
+    # Keep a partial window so Play continues long enough to issue Pause through
+    # the same native queue; a full-range window can finish before the next call.
+    bounds = client.call('snapshot', {'compact': True})['time_bounds']
+    client.call('filter', {'filter': {'start': bounds[0], 'end': bounds[0] + 1800}})
+    client.call('view_playback', {'action': 'configure', 'speed': .25, 'increment_seconds': 1})
+    for _ in range(2):
+        assert client.call('view_playback', {'action': 'play'})['playing']
+        time.sleep(.2)
+        assert client.call('view_playback', {'action': 'status'})['playing']
+        assert not client.call('view_playback', {'action': 'pause'})['playing']
+    assert client.call('view_status')['diagnostics']['renderErrorCount'] == 0
+
+
 def check_globe_flight(client, cli, profile):
     target = 'view_navigate'
     status = lambda: client.call('view_status')
@@ -149,6 +194,8 @@ def main():
         passed('Native cancellation releases profile listeners and preserves completed actions')
         check_globe_flight(client, args.cli.resolve(), args.data_dir.resolve())
         passed('Native Globe flight moves, looks and stops through MCP and CLI, with terrain clearance and mode cleanup')
+        check_track_spectating(client, args.cli.resolve(), args.data_dir.resolve())
+        passed('Native moving-camera status, Spectate reverse/forward/CLI stop, profiling/readiness and repeated playback pause remain responsive')
         report['passed']=True
     finally:
         client.close();(out/'report.json').write_text(json.dumps(report,indent=2)+'\n')

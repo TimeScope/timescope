@@ -627,6 +627,10 @@ for (const kind of ["view_navigate", "capture-map", "capture-app", "capture-si"]
       filterIntent: { flush: async () => {} },
       guiSync: Promise.resolve(),
       sceneIdle: () => ui.transitions.idle(),
+      transitionIdle: () => ui.transitions.idle(),
+      refreshWork: Promise.resolve(),
+      sceneSyncWork: Promise.resolve(),
+      cameraSaveWork: Promise.resolve(),
       tab: "views",
       syncTimer: undefined,
       clearTimeout() {},
@@ -640,7 +644,12 @@ for (const kind of ["view_navigate", "capture-map", "capture-app", "capture-si"]
         return `data:app/${ui.context.mode}`;
       },
     });
+    const idleStart = main.indexOf("async function nativeRequestIdle()");
+    const idleEnd = main.indexOf("async function sceneIdle()", idleStart);
+    assert(idleStart > 0 && idleEnd > idleStart);
+    vm.runInContext(transpile(main.slice(idleStart, idleEnd)), ui.context);
     const captureScopes = [];
+    ui.context.view.snapshotIdle = async () => {};
     ui.context.view.captureConsistent = async (capture, identity) => {
       captureScopes.push(identity());
       return capture();
