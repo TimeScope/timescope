@@ -41,12 +41,9 @@ pub fn install_quit_guard(
     // thread, to the app's existing delegate. The callback matches AppKit's
     // object argument and NSUInteger return ABI on supported 64-bit Macs.
     let added = unsafe {
-        let callback: extern "C-unwind" fn(
-            &AnyObject,
-            Sel,
-            &NSApplication,
-        ) -> NSApplicationTerminateReply = should_terminate;
-        let imp = std::mem::transmute::<_, Imp>(callback);
+        type TerminateCallback =
+            extern "C-unwind" fn(&AnyObject, Sel, &NSApplication) -> NSApplicationTerminateReply;
+        let imp = std::mem::transmute::<TerminateCallback, Imp>(should_terminate);
         ffi::class_addMethod(
             std::ptr::from_ref(class).cast_mut(),
             selector,
