@@ -56,7 +56,7 @@ final class Transport: NSObject, URLSessionDataDelegate, URLSessionTaskDelegate 
         authenticationFailure = nil
         redirects = 0
         var req = URLRequest(url: url)
-        req.setValue(method == "POST" ? "Chronoscope (SI)" : "Chronoscope (desktop GIS; direct disk cache)", forHTTPHeaderField: "User-Agent")
+        req.setValue(method == "POST" ? "TimeScope (SI)" : "TimeScope (desktop GIS; direct disk cache)", forHTTPHeaderField: "User-Agent")
         req.httpMethod = method
         req.timeoutInterval = min(60, max(0.1, request.timeout ?? 40))
         if method == "POST" {

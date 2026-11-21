@@ -1,6 +1,6 @@
 # Mac Codex handoff: renderer performance and the next trail/stem step
 
-Prepared 2026-10-28 for `chronoscope-app/chronoscope-next`. The completed runtime
+Prepared 2026-10-28 for `TimeScope/timescope-dev`. The completed runtime
 is on `main` through `12d9052`; this documentation may have a later commit.
 The [Mac profiling follow-up](../performance/MAC_TRAIL_STEM_PROFILING_2026-10-28.md)
 records local Chrome/Metal and WKWebView validation, retained adverse results and
@@ -14,7 +14,7 @@ memory costs, correctness fallbacks, source entry points and acceptance criteria
 ## Scope and source
 
 Develop and validate locally in Next. Keep workflows manual-only; do not dispatch
-GitHub Actions or publish/promote to `chronoscope-public` without a new user
+GitHub Actions or publish/promote to `TimeScope/timescope` without a new user
 instruction. Preserve existing local edits and saved user work.
 
 From the Mac's Next checkout, inspect before updating:
@@ -212,7 +212,7 @@ to a separate user instruction. Report incomplete checks explicitly.
 
 ## Copy-ready brief for Mac Codex
 
-> Work in chronoscope-app/chronoscope-next. Read AGENTS.md,
+> Work in TimeScope/timescope-dev. Read AGENTS.md,
 > docs/performance/NEXT_PERFORMANCE_REPORT.md and
 > docs/handoffs/2026-10-28-renderer-performance-mac.md. Fetch and inspect Next/main
 > and local/pending work; preserve edits. Completed runtime changes are through
@@ -225,4 +225,4 @@ to a separate user instruction. Report incomplete checks explicitly.
 > order/budgets, fades, picking and bounded memory; retain useful rebuild
 > fallbacks. Record comparable raw/native evidence and limitations, update the
 > Next report, and integrate completed verified work into Next/main. Do not use
-> hosted runners or promote to chronoscope-public.
+> hosted runners or promote to TimeScope/timescope.

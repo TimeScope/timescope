@@ -34,7 +34,7 @@ pub async fn table_window(
                     tauri::WebviewUrl::App("tables.html".into()),
                 )
                 .title(format!(
-                    "Attribute tables — Chronoscope {}",
+                    "Attribute tables — TimeScope {}",
                     app.package_info().version
                 ))
                 .inner_size(1100., 600.)

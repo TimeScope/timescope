@@ -1,6 +1,6 @@
 # Prepared organization profile
 
-The organization is `TimeScope`; the canonical source repository is [TimeScope/timescope](https://github.com/TimeScope/timescope); the application remains Chronoscope. Publish only the owner-authorized clean snapshot, not the private development repository.
+The organization is `TimeScope`; the canonical source repository is [TimeScope/timescope](https://github.com/TimeScope/timescope); the application is also named TimeScope. Publish only the owner-authorized clean snapshot, not the private development repository.
 
 Suggested short description:
 
@@ -13,11 +13,11 @@ An organization introduction is displayed from `profile/README.md` in the organi
 ## Ready-to-use introduction
 
 ```markdown
-# Chronoscope
+# TimeScope
 
 Explore timestamped data through linked maps, tracks, charts and tables. Follow movement across space and time, compare groups and periods, and investigate patterns with analysis calculated locally in Rust and SQLite.
 
-Chronoscope is an experimental desktop application. Open your own data or start with documented real-world demos, then save a portable workspace.
+TimeScope is an experimental desktop application. Open your own data or start with documented real-world demos, then save a portable workspace.
 
 - [Explore the project](https://github.com/TimeScope/timescope)
 - [Installation and platform status](https://github.com/TimeScope/timescope/blob/main/docs/INSTALLATION.md)

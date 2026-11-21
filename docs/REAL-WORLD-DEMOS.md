@@ -1,6 +1,6 @@
 # Real-world demo datasets
 
-Open **Help → Demo datasets** in any installed Chronoscope build. These offline examples are compiled into the engine and work through the desktop, CLI and MCP. Each opens a new editable workspace; **Save** asks for your own file. Bundled originals are never overwritten. Normal startup remains empty. Map imagery may need network access or a previously populated cache.
+Open **Help → Demo datasets** in any installed TimeScope build. These offline examples are compiled into the engine and work through the desktop, CLI and MCP. Each opens a new editable workspace; **Save** asks for your own file. Bundled originals are never overwritten. Normal startup remains empty. Map imagery may need network access or a previously populated cache.
 
 | Demo | Observations | Entities | Period | Canonical Value |
 |---|---:|---:|---|---|
@@ -10,7 +10,7 @@ Open **Help → Demo datasets** in any installed Chronoscope build. These offlin
 
 The new demos each include **Space-time tracks**, **2D tracks**, **Globe tracks** and **Bloom** saved views. Events stay visible, tracks/stems default to 25% opacity, and all observations fit the display budget. The CSVs are suitable for testing imports and the projects are ready to open without mapping fields. Use the attributes table for the original source fields, including AIS course/heading, MMSI, dimensions and navigation status, or GPS altitude, temperature, satellite count and quality flags. Blank fields stay blank; they are not zeros.
 
-The source positions and numeric values are preserved. Chronoscope's event clock now retains seconds and fractions; reimport bundled CSVs to recover detail lost in older saved workspaces. The original seconds/milliseconds remain in CSV and event attributes (`base_date_time` / `original_timestamp`); no track interpolation or spatial aggregation is performed. Same-minute GPS fixes are retained as separate observations. These are deliberately bounded examples, not complete national AIS coverage or a complete animal study. AIS reception is incomplete and ground speed/altitude and tracking quality fields are observations, not validated ecological conclusions.
+The source positions and numeric values are preserved. TimeScope's event clock now retains seconds and fractions; reimport bundled CSVs to recover detail lost in older saved workspaces. The original seconds/milliseconds remain in CSV and event attributes (`base_date_time` / `original_timestamp`); no track interpolation or spatial aggregation is performed. Same-minute GPS fixes are retained as separate observations. These are deliberately bounded examples, not complete national AIS coverage or a complete animal study. AIS reception is incomplete and ground speed/altitude and tracking quality fields are observations, not validated ecological conclusions.
 
 ## Event and country-statistics demos
 

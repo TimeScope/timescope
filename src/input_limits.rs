@@ -26,7 +26,7 @@ fn inspect_limit(path: &Path, workspace_limit: Option<u64>) -> Result<Admission,
         .to_string_lossy()
         .to_ascii_lowercase();
     let limit = workspace_limit.unwrap_or(match ext.as_str() {
-        "csv" | "tsv" | "chronoscope" => MAX_INPUT,
+        "csv" | "tsv" | "timescope" | "chronoscope" => MAX_INPUT,
         "xls" | "xlsx" | "xlsb" => 100 * MIB,
         "kmz" => 256 * MIB,
         "glb" => 256 * MIB,

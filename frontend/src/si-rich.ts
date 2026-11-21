@@ -35,7 +35,7 @@ export async function renderRichBlock(
       throw Error("Unsupported image type");
     const picture = document.createElement("img");
     picture.src = image.data_url;
-    picture.alt = block.title || "Captured Chronoscope map view";
+    picture.alt = block.title || "Captured TimeScope map view";
     picture.loading = "lazy";
     picture.className = "si-map-picture";
     card.append(

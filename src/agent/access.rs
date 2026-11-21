@@ -153,7 +153,7 @@ pub fn status(data: &Path, executable: &Path) -> Result<Value, String> {
         .as_ref()
         .is_some_and(|c| Some(&c.root) == expected_root.as_ref());
     Ok(
-        json!({"enabled":settings.enabled,"connected":connection.is_some(),"pending":if settings.enabled {!ready} else {connection.is_some()},"root":connection.as_ref().map(|c|&c.root).or(settings.root.as_ref()),"exchange_folder":data.join("agent-files"),"descriptor":descriptor,"cli":executable,"codex_command":codex_command_for_data(executable,Some(data)),"config":config_for_data(executable,Some(data)),"next_step":if connection.is_some(){"Use mcp --attach or --attach call snapshot"}else if settings.enabled{"Open Chronoscope; access will start automatically"}else{"Run agent enable, then open Chronoscope"}}),
+        json!({"enabled":settings.enabled,"connected":connection.is_some(),"pending":if settings.enabled {!ready} else {connection.is_some()},"root":connection.as_ref().map(|c|&c.root).or(settings.root.as_ref()),"exchange_folder":data.join("agent-files"),"descriptor":descriptor,"cli":executable,"codex_command":codex_command_for_data(executable,Some(data)),"config":config_for_data(executable,Some(data)),"next_step":if connection.is_some(){"Use mcp --attach or --attach call snapshot"}else if settings.enabled{"Open TimeScope; access will start automatically"}else{"Run agent enable, then open TimeScope"}}),
     )
 }
 

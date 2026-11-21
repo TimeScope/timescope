@@ -1,19 +1,17 @@
 import assert from "node:assert/strict";
-import fs from "node:fs";
-import ts from "typescript";
+import { fileURLToPath } from "node:url";
+import { build } from "esbuild";
 async function load(name) {
-  const source = fs.readFileSync(
-    new URL(`../src/${name}.ts`, import.meta.url),
-    "utf8",
-  );
-  const js = ts.transpileModule(source, {
-    compilerOptions: {
-      target: ts.ScriptTarget.ES2022,
-      module: ts.ModuleKind.ESNext,
-    },
-  }).outputText;
+  const { outputFiles } = await build({
+    entryPoints: [fileURLToPath(new URL(`../src/${name}.ts`, import.meta.url))],
+    bundle: true,
+    write: false,
+    format: "esm",
+    platform: "node",
+  });
   return import(
-    "data:text/javascript;base64," + Buffer.from(js).toString("base64")
+    "data:text/javascript;base64," +
+      Buffer.from(outputFiles[0].text).toString("base64")
   );
 }
 const { EditorController } = await load("editor-controller");
@@ -177,7 +175,7 @@ const target = (workspace = "A", id = "1", revision = 1) => ({
   editorWork.resolve();
   await a;
   assert.equal(choices, 1);
-  assert.deepEqual(writes, ["study.chronoscope"]);
+  assert.deepEqual(writes, ["study.timescope"]);
   dirty = true;
   const autoA = workspace.autosave(),
     autoB = workspace.autosave();

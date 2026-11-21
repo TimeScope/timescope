@@ -1,7 +1,7 @@
-# Chronoscope on a Mac
+# TimeScope on a Mac
 
-Chronoscope uses CesiumJS WebGL2 for its geographic views. The installed app is
-**Chronoscope.app**, with bundle identifier `org.chronoscope.desktop`.
+TimeScope uses CesiumJS WebGL2 for its geographic views. The installed app is
+**TimeScope.app**, with bundle identifier `org.timescope.desktop`.
 
 ## Current Next performance handoff — 2026-10-28
 
@@ -33,12 +33,12 @@ repository:
 
 ```sh
 npm --prefix frontend ci
-cargo build --locked -p chronoscope --bin chronoscope
+cargo build --locked -p chronoscope --bin timescope
 node scripts/generate_contracts.mjs --check
 npm --prefix frontend run tauri -- build --bundles app,dmg
 ```
 
-Install `target/release/bundle/macos/Chronoscope.app` in `~/Applications`.
+Install `target/release/bundle/macos/TimeScope.app` in `~/Applications`.
 The installed app needs neither Rust nor Node. Signing/notarization uses your
 Apple identity; local unsigned builds follow normal macOS trust behavior.
 Run verification locally. GitHub Actions remains manual-only.
@@ -50,11 +50,13 @@ the map attribution control and exported screenshots.
 
 ## Settings and automatic document copies
 
+TimeScope uses the existing Chronoscope profile paths so settings, workspace references and automatic saves stay accessible.
+
 | Platform | Default data directory |
 | --- | --- |
 | macOS | `~/Library/Application Support/org.Chronoscope.Chronoscope` |
 | Linux | `$XDG_DATA_HOME/chronoscope`, normally `~/.local/share/chronoscope` |
-| Windows | `%LOCALAPPDATA%\Chronoscope\Chronoscope\data` |
+| Windows | `%LOCALAPPDATA%\TimeScope\TimeScope\data` |
 
 Automatic document copies use `Documents/Chronoscope/Autosaved`.
 On first launch, existing settings, recovery checkpoints, assets and automatic
@@ -71,10 +73,10 @@ The app executable is also the CLI/MCP launcher. No separate CLI download,
 admin installation or shell PATH change is required:
 
 ```sh
-"$HOME/Applications/Chronoscope.app/Contents/MacOS/chronoscope-desktop" agent enable
-"$HOME/Applications/Chronoscope.app/Contents/MacOS/chronoscope-desktop" agent status
-"$HOME/Applications/Chronoscope.app/Contents/MacOS/chronoscope-desktop" agent config
-"$HOME/Applications/Chronoscope.app/Contents/MacOS/chronoscope-desktop" --attach call snapshot --args '{"compact":true}'
+"$HOME/Applications/TimeScope.app/Contents/MacOS/chronoscope-desktop" agent enable
+"$HOME/Applications/TimeScope.app/Contents/MacOS/chronoscope-desktop" agent status
+"$HOME/Applications/TimeScope.app/Contents/MacOS/chronoscope-desktop" agent config
+"$HOME/Applications/TimeScope.app/Contents/MacOS/chronoscope-desktop" --attach call snapshot --args '{"compact":true}'
 ```
 
 Preferences → MCP setup generates client JSON and a

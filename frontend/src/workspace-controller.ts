@@ -1,3 +1,4 @@
+import { workspaceSavePath } from "./workspace-format";
 /** Coordinates document saves, unsaved-work policy and close requests.
  * Dialogs, notifications and layout remain with the presentation layer. */
 interface LifecycleStatus {
@@ -42,7 +43,7 @@ export class WorkspaceController {
       throw Error(
         "CONFLICT: workspace changed while choosing the save destination",
       );
-    if (!/\.(chronoscope|json)$/i.test(path)) path += ".chronoscope";
+    path = workspaceSavePath(path);
     await this.hooks.persist(path, identity);
     this.hooks.saved(path);
     return true;

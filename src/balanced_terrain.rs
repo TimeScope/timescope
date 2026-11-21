@@ -27,6 +27,9 @@ pub fn resource_path() -> Result<PathBuf, String> {
         if let Some(dir) = exe.parent() {
             paths.push(dir.join("terrain/balanced.cterrain"));
             paths.push(dir.join("../Resources/terrain/balanced.cterrain"));
+            paths.push(dir.join("../lib/TimeScope/terrain/balanced.cterrain"));
+            paths.push(dir.join("../lib/timescope/terrain/balanced.cterrain"));
+            paths.push(dir.join("../lib/org.timescope.desktop/terrain/balanced.cterrain"));
             paths.push(dir.join("../lib/Chronoscope/terrain/balanced.cterrain"));
             paths.push(dir.join("../lib/chronoscope/terrain/balanced.cterrain"));
             paths.push(dir.join("../lib/org.chronoscope.desktop/terrain/balanced.cterrain"));

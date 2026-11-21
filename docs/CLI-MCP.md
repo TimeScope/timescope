@@ -1,16 +1,16 @@
-# CLI and MCP — Chronoscope
+# CLI and MCP — TimeScope
 
-Chronoscope’s desktop, CLI and MCP share the Rust engine and enforced command schemas. The generated MCP registration and server name are `chronoscope`. Tool names (`chronoscope_*`), resource URIs and portable workspace files retain their contracts. See [Mac installation and profile migration](MAC_HANDOFF.md).
+TimeScope’s desktop, CLI and MCP share the Rust engine and enforced command schemas. The CLI command is `timescope`; existing scripts can still use the `chronoscope` compatibility command. The generated MCP registration and server name remain `chronoscope` so existing integrations continue to work. Tool names (`chronoscope_*`), resource URIs and portable workspace files retain their contracts. See [Mac installation and profile migration](MAC_HANDOFF.md).
 
-Automatic memory/graphics throttling needs no new settings. `chronoscope call system_resources` reads cached OS RAM/swap bytes; attached `chronoscope --attach view status` reports current automatic limits under `diagnostics.resourceGovernor`. [Policy and limits](performance/AUTOMATIC_RESOURCE_BUDGETS_2026-10-29.md).
+Automatic memory/graphics throttling needs no new settings. `timescope call system_resources` reads cached OS RAM/swap bytes; attached `timescope --attach view status` reports current automatic limits under `diagnostics.resourceGovernor`. [Policy and limits](performance/AUTOMATIC_RESOURCE_BUDGETS_2026-10-29.md).
 
 Build the CLI without a graphical toolkit:
 
 ```sh
-cargo build --locked --release -p chronoscope --bin chronoscope
-chronoscope --help
-chronoscope schema
-chronoscope schema query
+cargo build --locked --release -p timescope --bin timescope
+timescope --help
+timescope schema
+timescope schema query
 ```
 
 `schema` lists the MCP tool contracts; `schema COMMAND` returns the domain input schema. IDs are exact decimal **strings**, including values beyond JavaScript's integer range. Time is UTC Unix seconds including fractional seconds. Coordinates normalize to WGS84 DD; DD, UTM and variable-precision/spaced MGRS remain supported.
@@ -22,8 +22,8 @@ Fractional timestamps are supported throughout queries, edits, filters and analy
 `dataset_schema` discovers names and imported types. `field_profile` reads actual data for any canonical/derived field or imported column:
 
 ```sh
-chronoscope --attach --json call field_profile --args '{"fields":["label","time_utc","tags"],"scope":"visible"}'
-chronoscope --attach --json call field_profile --args '{"fields":["attribute:Temperature"],"scope":"all","example_limit":3}'
+timescope --attach --json call field_profile --args '{"fields":["label","time_utc","tags"],"scope":"visible"}'
+timescope --attach --json call field_profile --args '{"fields":["attribute:Temperature"],"scope":"all","example_limit":3}'
 ```
 
 Replace imported names with columns from your project. `chronoscope_field_profile` is the equivalent read-only MCP tool and is also available to hosted SI. It returns exact scoped present/null/empty/distinct/finite-numeric counts and bounded examples with exact Event IDs. Imported display names resolve when unambiguous; explicit `attribute:<name>` resolves collisions. `scope` is `visible` (default), `all`, or `selected`; selected respects current filters. Optional `source` and `expected_revision` constrain the read. `example_limit` is 0–5 per field, with at most four fields per call. `sampled:false` refers to counts; examples do not establish frequencies. Long values are explicitly omitted. Unknown fields fail; they are not reported as empty. No analysis artifact or source edit is created. Large inspections can use `job_start` with progress and cancellation.
@@ -33,15 +33,15 @@ Replace imported names with columns from your project. `chronoscope_field_profil
 Attach to the running desktop to inspect or navigate its actual view. `capabilities.renderer` advertises Cesium/WebGL2 and live commands; it does not prove hardware acceleration. `view_status` (also the MCP resource `chronoscope://view`) returns actual camera/scene state, backend, WebGPU API availability, viewport, renderer diagnostics, imagery/effect loading and native GIS readiness. A WebGPU API may exist even though this Cesium implementation uses WebGL2. `snapshot.scene` is stored workspace state; use live status for rendering evidence. Native camera coordinates are mode-specific display state, never measured Event coordinates.
 
 ```sh
-chronoscope --attach view status
-chronoscope --attach view fit
-chronoscope --attach view fit --layer LAYER_ID
-chronoscope --attach view look-at --longitude -79 --latitude 25 --height 0 --distance 500000 --heading 30 --tilt 40
-chronoscope --attach view zoom 2
-chronoscope --attach view north
-chronoscope --attach view capture --output capture.png
-chronoscope --attach view capture --target map --output map.png
-chronoscope --attach view capture --window si-chat --output chat.png
+timescope --attach view status
+timescope --attach view fit
+timescope --attach view fit --layer LAYER_ID
+timescope --attach view look-at --longitude -79 --latitude 25 --height 0 --distance 500000 --heading 30 --tilt 40
+timescope --attach view zoom 2
+timescope --attach view north
+timescope --attach view capture --output capture.png
+timescope --attach view capture --target map --output map.png
+timescope --attach view capture --window si-chat --output chat.png
 ```
 
 Use `view_set` to choose space-time/map/globe before navigating. Geographic look-at uses WGS84 longitude/latitude and ellipsoid height in metres. Distance is eye-to-target range, except 2D Map where it sets map width in metres; 2D heading/tilt must be zero. Heading is clockwise from north; tilt zero looks straight down. `fit_layer` requires an enabled native GIS layer. Fit can request `whole_globe:true` in Globe mode. The matching MCP tool is `chronoscope_view_navigate` with actions `fit`, `fit_layer`, `look_at`, `zoom` and `north_up`; it returns live state after camera persistence, while assets may still be loading. Poll `view_status.loading` and each enabled layer's readiness rather than assuming an accepted command rendered all content.
@@ -58,7 +58,7 @@ App snapshots preserve the entire visible layout and proportionally reduce high-
 
 ### Native window video recording
 
-`chronoscope_view_recording` records the displayed Chronoscope window through
+`chronoscope_view_recording` records the displayed TimeScope window through
 ScreenCaptureKit on **macOS 15 or later**. It captures real compositor frames,
 including the app's panels and window chrome, rather than polling screenshots.
 Only this process's `main` or `si-chat` window is eligible; audio and microphone
@@ -94,7 +94,7 @@ resource subscriptions and the external MCP Apps result viewer.
 
 `view_set.display` patches current display fields rather than resetting unrelated options; null resets overrides. Repeating the current mode preserves the camera. Changing mode or `fit:true` requests a new fit. Globe's `globe_time` and `globe_time_scale`, polygon `display.show_centroids`, native `gis_table` and `table_open` are shared CLI/MCP options.
 
-`view_set {"playback_fade_amount":75}` stores a Fade percentage from 0 to 100. During attached playback, `view_playback {"action":"configure","fade_amount":75}` changes the same slider; CLI `chronoscope --attach view fade 75` is the shortcut. Higher values shorten both history and departure lifetime. At 100, roughly the latest three distinct time slices remain (concurrent entities are preserved), with a 0.12-second departure fade. Lower values retain more history and can linger for about 4.4 seconds. At 50, the chosen moving-window width and former 0.8-second departure fade are preserved. Zero retains growing history until looping. Entering markers still fade over 0.18 seconds. The percentage persists in scenes, named views and portable workspaces. Visible Events stay in the exact filtered scope and rendering budgets; afterimages are visual only and bounded. Neither configuration command starts playback. Legacy `playback_fade`/`fade` false and true map to 0 and 50; an explicit percentage takes precedence. Older scenes without a percentage keep that legacy behavior. `time_height:0` flattens Space-time and persists as zero. The Globe UI also uses slider zero for Off, while the compatible agent contract remains `globe_time:false` and a separate positive `globe_time_scale` (0.05–20).
+`view_set {"playback_fade_amount":75}` stores a Fade percentage from 0 to 100. During attached playback, `view_playback {"action":"configure","fade_amount":75}` changes the same slider; CLI `timescope --attach view fade 75` is the shortcut. Higher values shorten both history and departure lifetime. At 100, roughly the latest three distinct time slices remain (concurrent entities are preserved), with a 0.12-second departure fade. Lower values retain more history and can linger for about 4.4 seconds. At 50, the chosen moving-window width and former 0.8-second departure fade are preserved. Zero retains growing history until looping. Entering markers still fade over 0.18 seconds. The percentage persists in scenes, named views and portable workspaces. Visible Events stay in the exact filtered scope and rendering budgets; afterimages are visual only and bounded. Neither configuration command starts playback. Legacy `playback_fade`/`fade` false and true map to 0 and 50; an explicit percentage takes precedence. Older scenes without a percentage keep that legacy behavior. `time_height:0` flattens Space-time and persists as zero. The Globe UI also uses slider zero for Off, while the compatible agent contract remains `globe_time:false` and a separate positive `globe_time_scale` (0.05–20).
 
 
 
@@ -102,23 +102,23 @@ resource subscriptions and the external MCP Apps result viewer.
 
 The record concept is **Event** throughout the UI, code and agent descriptions. Command names such as `events`, `query`, `attribute_table` and `display_data` are unchanged. Display bins now return `event_bounds` (formerly `observation_bounds`), and `capabilities` returns `max_events` (formerly `max_observations`). Clients that hard-code the old output keys must update; rediscover the current tool schemas. Reading serialized display bins still accepts the old bounds key, without changing coordinates.
 
-Saved workspace formats remain unchanged. Recovery accepts both the new `events.sqlite` filename and the older `observations.sqlite` filename. Import detection still accepts legacy source headers such as `observationDate` and `observationTime`; original source attributes and labels are never renamed automatically.
+TimeScope saves portable workspaces as `.timescope` by default and still accepts `.chronoscope` workspaces. Recovery accepts both the new `events.sqlite` filename and the older `observations.sqlite` filename. Import detection still accepts legacy source headers such as `observationDate` and `observationTime`; original source attributes and labels are never renamed automatically.
 
 ## Live desktop connection
 
 Enable desktop access once with **Preferences → Enable SI agent access**, or from the command line:
 
 ```sh
-chronoscope agent enable
-chronoscope agent status
-chronoscope agent config
-chronoscope --attach call snapshot --args '{"compact":true}'
-chronoscope mcp --attach
+timescope agent enable
+timescope agent status
+timescope agent config
+timescope --attach call snapshot --args '{"compact":true}'
+timescope mcp --attach
 ```
 
-No folder is required. The private `agent-files` exchange folder under app data is the default file scope; an optional `agent enable --root /absolute/studies` grants file access there instead. Access to the live workspace is independent of the original CSV location. `agent disable` revokes access and persists that choice. Access is initially off; an enabled choice survives app restarts. If the app is closed, enable reports `pending:true`; open Chronoscope to start access. The desktop polls a same-user private settings file, not a separate listening control server.
+No folder is required. The private `agent-files` exchange folder under app data is the default file scope; an optional `agent enable --root /absolute/studies` grants file access there instead. Access to the live workspace is independent of the original CSV location. `agent disable` revokes access and persists that choice. Access is initially off; an enabled choice survives app restarts. If the app is closed, enable reports `pending:true`; open TimeScope to start access. The desktop polls a same-user private settings file, not a separate listening control server.
 
-The **bundled desktop executable also runs every CLI/MCP command**. On macOS you can use the executable inside `Chronoscope.app/Contents/MacOS` directly. No separate CLI installation, shell PATH change or admin rights are needed. Preferences → **MCP setup** shows the actual executable path, copyable JSON and a `codex mcp add chronoscope -- ... mcp --attach` command, with proper quoting for spaces/apostrophes. `agent config` includes the exact data-directory argument so custom app data also works. Use a client that supports launching local stdio servers. Client versions and policy may require restarting/reconnecting after configuration.
+The **bundled desktop executable also runs every CLI/MCP command**. On macOS you can use the executable inside `TimeScope.app/Contents/MacOS` directly. No separate CLI installation, shell PATH change or admin rights are needed. Preferences → **MCP setup** shows the actual executable path, copyable JSON and a `codex mcp add timescope -- ... mcp --attach` command, with proper quoting for spaces/apostrophes. `agent config` includes the exact data-directory argument so custom app data also works. Use a client that supports launching local stdio servers. Client versions and policy may require restarting/reconnecting after configuration.
 
 `agent status` returns enabled/connected/pending, effective scope, exchange folder and client configuration, never bearer credentials. It probes with a one-second deadline. `--attach` works globally, before or after the subcommand; existing `--connect DESCRIPTOR` remains available. Attached CLI calls do not create an unrelated demo/working database. Agent access cannot be enabled by an untrusted MCP request; enabling is a local CLI or GUI action.
 
@@ -127,7 +127,7 @@ For custom app data locations, use `--data-dir DIR mcp --attach`, or `--connect 
 ## Standalone MCP
 
 ```sh
-chronoscope --project study.chronoscope mcp --root /absolute/path/to/studies
+timescope --project study.timescope mcp --root /absolute/path/to/studies
 ```
 
 Without `--project`, the server starts with clearly labeled synthetic data. A standalone process owns its workspace; use saved files to exchange work with another process. `--data-dir DIR` isolates preferences/cache. An operator-specified startup project is explicitly loaded; subsequent file operations remain root-scoped. Relative tool paths resolve against the canonical root. Symlink escapes and out-of-root terrain loads are rejected; validated embedded DTED can be read from the extraction directory.
@@ -141,13 +141,13 @@ Tool response metadata is bounded to 4 MiB. Raster tools omit data URLs by defau
 ## CLI automation
 
 ```sh
-chronoscope import events.csv --output study.chronoscope
-chronoscope import events.xlsx --sheet 1 --mapping mapping.json --output excel.chronoscope
-chronoscope --project study.chronoscope --json call query --args-file query.json
-chronoscope --project study.chronoscope call edit --args '{"id":"1","changes":{"note":"Reviewed"},"dry_run":true}'
-chronoscope --project study.chronoscope batch --file operations.json --output revised.chronoscope
-chronoscope --project study.chronoscope session --save revised.chronoscope
-chronoscope --connect /path/to/agent-connection.json call snapshot --args '{"compact":true}'
+timescope import events.csv --output study.timescope
+timescope import events.xlsx --sheet 1 --mapping mapping.json --output excel.chronoscope
+timescope --project study.timescope --json call query --args-file query.json
+timescope --project study.timescope call edit --args '{"id":"1","changes":{"note":"Reviewed"},"dry_run":true}'
+timescope --project study.timescope batch --file operations.json --output revised.chronoscope
+timescope --project study.timescope session --save revised.chronoscope
+timescope --connect /path/to/agent-connection.json call snapshot --args '{"compact":true}'
 ```
 
 `call --args-file -` reads JSON from stdin; files/stdin are capped at 4 MiB. `--json` uses `{ok:true,result}` or `{ok:false,error:{code,message}}`. Error exit codes are 2 invalid arguments, 3 conflict, 4 scope denial, 5 cancellation, 6 resource budget, 7 not found, and 1 other failures. Help/version use normal CLI output. Unix shell examples use single-quoted JSON; Windows quoting differs.
@@ -252,7 +252,7 @@ Import mapping accepts geometry_wkt: a source column index. Canonical geometry_w
 
 ## Version 0.8 contracts and workspace lifecycle
 
-`chronoscope schema` returns the complete registry, per-command input/output schemas and stable error-code enumeration. Command-specific schema discovery remains available. Output schemas are checked on MCP responses. Resource/render contracts derive from serialized Rust DTOs; the frontend contract is generated, with exact string IDs throughout saved groups, views and render packets. Jobs and batches validate their nested command/arguments before execution; batch excludes I/O/history and nested mutation controls.
+`timescope schema` returns the complete registry, per-command input/output schemas and stable error-code enumeration. Command-specific schema discovery remains available. Output schemas are checked on MCP responses. Resource/render contracts derive from serialized Rust DTOs; the frontend contract is generated, with exact string IDs throughout saved groups, views and render packets. Jobs and batches validate their nested command/arguments before execution; batch excludes I/O/history and nested mutation controls.
 
 `workspace_status` reports `dirty`, source path and checkpoint/recovery state. `recovery_checkpoint` explicitly checkpoints local unsaved data without a portable full copy. Recovery listing/restoration/deletion/clearing is a local GUI/direct-CLI facility, excluded from MCP and assistant tools so an attached agent cannot recover another session outside its filesystem scope. Use normal `save` to create a portable deliverable. Automatic document saving is enabled by default: the GUI writes local copies every 30 seconds and before leaving a workspace, and archives abandoned checkpoints without prompting. Preferences can restore manual prompts. The host-only `autosave_unsaved` and `recovery_archive` commands write only to the managed document folder and remain excluded from inbound MCP. `workspace_status` reports `document_directory`, `autosave_path`, `autosave_revision`, and `auto_save_unsaved`.
 
@@ -279,9 +279,9 @@ Jobs retain existing bounds and add structured `progress_event` fields (`phase`,
 
 ## Outbound client
 
-Chronoscope is also an MCP **client**, independently of the stdio server described above. See [MCP client setup and limits](MCP-CLIENT.md). `client_status`, `client_tools` and `client_call` are public tools; connection setup, tool grants and disconnection are local host controls available through GUI/CLI but not advertised or callable by inbound MCP, including through background jobs. SI receives only explicitly granted namespaced external tools, not these management controls.
+TimeScope is also an MCP **client**, independently of the stdio server described above. See [MCP client setup and limits](MCP-CLIENT.md). `client_status`, `client_tools` and `client_call` are public tools; connection setup, tool grants and disconnection are local host controls available through GUI/CLI but not advertised or callable by inbound MCP, including through background jobs. SI receives only explicitly granted namespaced external tools, not these management controls.
 
-Use `--attach` or a persistent `session` for connection setup/calls; a one-shot process loses its in-memory connections on exit. `chronoscope --attach ask "Read the connected data service"` can use granted query tools. `--allow-external-actions` permits already-granted action tools for that request; `--allow-edits` separately permits record edits. Explicit `client_call` action invocations require `allow_actions:true` and a matching reviewed fingerprint. File roots and Undo apply to Chronoscope operations, not external services. Never assume that retrying an interrupted external action is safe.
+Use `--attach` or a persistent `session` for connection setup/calls; a one-shot process loses its in-memory connections on exit. `timescope --attach ask "Read the connected data service"` can use granted query tools. `--allow-external-actions` permits already-granted action tools for that request; `--allow-edits` separately permits record edits. Explicit `client_call` action invocations require `allow_actions:true` and a matching reviewed fingerprint. File roots and Undo apply to TimeScope operations, not external services. Never assume that retrying an interrupted external action is safe.
 
 ## Exact attribute-table range selection
 
@@ -293,14 +293,14 @@ Use `--attach` or a persistent `session` for connection setup/calls; a one-shot 
 The CLI shortcuts operate on the attached Globe and match its sliding Time Height / Altitude control:
 
 ```sh
-chronoscope --attach view height altitude
-chronoscope --attach view height time --scale 2
-chronoscope --attach view height ground
+timescope --attach view height altitude
+timescope --attach view height time --scale 2
+timescope --attach view height ground
 ```
 
 `--scale` is valid only with `time`, between 0.05 and 20. The shortcuts select Globe mode explicitly. They configure the saved scene; inspect actual presentation with `view status` or `chronoscope_view_status`. Space-time keeps its independent `view_set.time_height` (0–5).
 
-MCP uses `chronoscope_view_set`, also available as `chronoscope --attach call view_set --args '…'`:
+MCP uses `chronoscope_view_set`, also available as `timescope --attach call view_set --args '…'`:
 
 | Selection | Arguments | UI behavior |
 | --- | --- | --- |
@@ -315,9 +315,9 @@ Enabling either boolean disables the other. Setting both true in one request is 
 `dataset_schema` exposes canonical `altitude_m` and `altitude_reference`. Both support queries, field profiles and semantic roles; `altitude_m` also supports numeric statistics/charts. For example:
 
 ```sh
-chronoscope --attach call field_profile --args '{"fields":["altitude_m","altitude_reference"],"scope":"all"}'
-chronoscope --attach call query --args '{"fields":["id","entity","altitude_m","altitude_reference"],"limit":20}'
-chronoscope --attach call edit --args '{"id":"1","changes":{"altitude":{"meters":12000,"reference":"ellipsoid"}}}'
+timescope --attach call field_profile --args '{"fields":["altitude_m","altitude_reference"],"scope":"all"}'
+timescope --attach call query --args '{"fields":["id","entity","altitude_m","altitude_reference"],"limit":20}'
+timescope --attach call edit --args '{"id":"1","changes":{"altitude":{"meters":12000,"reference":"ellipsoid"}}}'
 ```
 
 `altitude:null` clears the value; zero remains a valid height. JSON Events retain `{meters,reference}`; CSV export/reimport preserves normalized metres and mixed references. Portable altitude projects use format 7.
@@ -328,11 +328,11 @@ chronoscope --attach call edit --args '{"id":"1","changes":{"altitude":{"meters"
 
 ## Globe time elevation (CesiumJS)
 
-`view_set` accepts `globe_time` (boolean, default false) and `globe_time_scale` (0.05–20, default 1; independent of Space-time `time_height`). For example, `chronoscope --attach call view_set --args '{"mode":"globe","globe_time":true,"globe_time_scale":1,"fit":true}'` enables it and fits the view. In stdio MCP, call `chronoscope_view_set` with the same arguments. These fields also persist through `scene_sync`, named views and portable workspaces. Older workspaces default to surface events.
+`view_set` accepts `globe_time` (boolean, default false) and `globe_time_scale` (0.05–20, default 1; independent of Space-time `time_height`). For example, `timescope --attach call view_set --args '{"mode":"globe","globe_time":true,"globe_time_scale":1,"fit":true}'` enables it and fits the view. In stdio MCP, call `chronoscope_view_set` with the same arguments. These fields also persist through `scene_sync`, named views and portable workspaces. Older workspaces default to surface events.
 
 The default maximum time offset is 12% of study extent, capped at 50 km. The logarithmic Globe slider multiplies this by `globe_time_scale` and displays the resulting maximum offset in metres/kilometres. Smaller studies get a proportionally smaller default. UTC time maps to display elevation along the WGS84 surface normal above local terrain. This does not change source coordinates, timestamps or physical heights. Heat/bloom/density rasters stay on the ground. Globe time clusters retain UTC slabs; event/cell budgets remain bounded. Ground-footprint culling is disabled for elevated Globe events so an event visible above the horizon is not dropped because its ground location is off screen. The legend now defaults to a 210-pixel panel, wraps long entity labels and remains collapsible/resizable within a narrow width.
 
-## Native GIS operations (Chronoscope 0.14)
+## Native GIS operations (TimeScope 0.14)
 
 See [GIS file workflows](GIS-FILES.md#cli-and-mcp). `file_probe` distinguishes workspace JSON from GIS; `gis_load` adds local GeoJSON/TopoJSON/KML/KMZ/CZML/GPX/3D Tiles/glTF/GLB. `gis_layers`, `gis_set`, `gis_remove`, bounded `gis_table` and chunked `gis_read` expose the same reference layers as desktop. `gis_import_preview` prepares a standard import ticket from a packaged source, even when its original files are absent. `gis_table.feature_id` links a native object to source samples. `view_set {"gis_table":"LAYER_ID","table_open":true}` opens its table. Use source bounds with ordinary `view_set` to frame a study; model placement is explicit WGS84 longitude/latitude/ellipsoidal height. Jobs support `gis_load` and `gis_import_preview`.
 
@@ -350,12 +350,12 @@ All platforms expose the following shared operations through `call` and matching
 - `si_apple_status {}` checks actual on-device readiness on macOS 26+, or reports an unsupported platform. It does not enable Apple Intelligence or change OS settings.
 
 ```sh
-chronoscope --attach call analysis_context --args '{"scope":"selected"}'
-chronoscope --attach call analysis_prepare --args '{"pattern":"Gaps","scope":"visible","parameters":{"gap_s":21600}}'
-chronoscope --attach call si_apple_status
-chronoscope --attach call si_configure --args '{"url":"https://api.openai.com/v1","model":"YOUR_TOOL_CAPABLE_MODEL"}'
-chronoscope --attach ask 'Recommend analyses for this scope'
-chronoscope --attach ask 'Find gaps longer than 6 hours'
+timescope --attach call analysis_context --args '{"scope":"selected"}'
+timescope --attach call analysis_prepare --args '{"pattern":"Gaps","scope":"visible","parameters":{"gap_s":21600}}'
+timescope --attach call si_apple_status
+timescope --attach call si_configure --args '{"url":"https://api.openai.com/v1","model":"YOUR_TOOL_CAPABLE_MODEL"}'
+timescope --attach ask 'Recommend analyses for this scope'
+timescope --attach ask 'Find gaps longer than 6 hours'
 ```
 
 To execute a plan, copy the reviewed result into `{"plan":{...}}` and pass it to `call analysis_execute --args-file reviewed-plan.json`, using the returned plan. Do not use `call --output` to write a plan: that flag saves the workspace. Configure and ask within one persistent `session`/MCP connection or attach to the desktop; independent standalone CLI processes do not share SI connections.
@@ -384,7 +384,7 @@ Time elevation places the newest events at ground level and the oldest events at
 
 Heat map and bloom both overlay the Events layer in every map view. `display.show_points` independently controls event markers. New display defaults use `track_opacity:0.25` and `trail_opacity:0.25`; existing saved strengths are retained. Views sliders preview during input and persist the final value after a gesture. Effect generation coalesces pending input, retaining the preceding ground image while its replacement renders.
 
-The Reset map icon follows Preferences and uses a confirmation dialog with Cancel focused by default. CLI `chronoscope --attach view reset --confirm` and MCP `chronoscope_view_reset {"confirm":true}` expose the same graphics reload. Omitted/false confirmation is rejected before graphics are touched; explicit API confirmation does not open another modal. Data, filters, selection, camera and resources are retained. A successful result has `reset:true` plus the live `view_status` fields. A failed recovery returns an error. The command requires an attached responsive desktop and is excluded from batches, saved navigation recipes, dry runs and idempotency controls. After a timeout inspect `view_status` before retrying. Map-layer reloads may contact the configured imagery providers. An unexpected render failure still triggers one automatic recovery. `view_status.diagnostics.lastRenderError` retains the most recent renderer stack for diagnosis, while `renderErrorCount` counts errors in the current graphics session. A warning remaining after automatic recovery can be retried by explicitly confirming Reset map.
+The Reset map icon follows Preferences and uses a confirmation dialog with Cancel focused by default. CLI `timescope --attach view reset --confirm` and MCP `chronoscope_view_reset {"confirm":true}` expose the same graphics reload. Omitted/false confirmation is rejected before graphics are touched; explicit API confirmation does not open another modal. Data, filters, selection, camera and resources are retained. A successful result has `reset:true` plus the live `view_status` fields. A failed recovery returns an error. The command requires an attached responsive desktop and is excluded from batches, saved navigation recipes, dry runs and idempotency controls. After a timeout inspect `view_status` before retrying. Map-layer reloads may contact the configured imagery providers. An unexpected render failure still triggers one automatic recovery. `view_status.diagnostics.lastRenderError` retains the most recent renderer stack for diagnosis, while `renderErrorCount` counts errors in the current graphics session. A warning remaining after automatic recovery can be retried by explicitly confirming Reset map.
 
 ## Entity-preserving visual clusters
 

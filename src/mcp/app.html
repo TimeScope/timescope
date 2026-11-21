@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Chronoscope results</title>
+<title>TimeScope results</title>
 <style>
 :root{color-scheme:light dark;font:14px system-ui;background:var(--color-background-primary,Canvas);color:var(--color-text-primary,CanvasText)}body{margin:16px}header{display:flex;gap:10px;align-items:center;flex-wrap:wrap}h1{font-size:17px;margin:0 auto 0 0}button,input{font:inherit;padding:7px;border:1px solid #8886;border-radius:6px;background:transparent;color:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:default}#status{font-size:12px;white-space:pre-wrap;margin:12px 0}#table{overflow:auto;max-height:480px}table{border-collapse:collapse;width:100%;font-size:12px}th,td{padding:8px;text-align:left;border-bottom:1px solid #8883;max-width:280px;overflow-wrap:anywhere}th button{border:0;padding:0}tbody tr:hover{background:#8881}svg{width:100%;height:240px}svg rect,svg circle{fill:#438bbf}svg polyline{fill:none;stroke:#438bbf;stroke-width:2}svg text{fill:currentColor;font-size:10px}
 </style></head><body>
-<header><h1>Chronoscope results</h1><input id="search" aria-label="Search this page of results" placeholder="Search this page"><button id="refresh" disabled>Refresh</button></header>
+<header><h1>TimeScope results</h1><input id="search" aria-label="Search this page of results" placeholder="Search this page"><button id="refresh" disabled>Refresh</button></header>
 <p id="status" role="status">Connecting to the host…</p><div id="chart"></div><div id="table"></div>
 <script>
 (() => {
@@ -33,7 +33,7 @@
       $('refresh').disabled=true;
       const common={mode:'replace',expected_revision:data.revision,expected_workspace:data.workspace_id};
       const result=chart()?await call('chronoscope_select_query',{...common,config:data.config,chart_marks:[{x:row.x,series:row.series,value:row.y??row.value??null,axis:row.axis??0}]}):await call('chronoscope_select',{...common,ids:[String(row.id)]});
-      status(`Selected ${result.selected} Events in Chronoscope. Refresh to select again from current evidence.`);
+      status(`Selected ${result.selected} Events in TimeScope. Refresh to select again from current evidence.`);
       data=null;
       document.querySelectorAll('[data-select]').forEach(button=>button.disabled=true);
     }catch(error){status(String(error));}finally{$('refresh').disabled=!connected;}
@@ -85,7 +85,7 @@
       parent.postMessage({jsonrpc:'2.0',id:m.id,result:{}},'*');
     }
   });
-  rpc('ui/initialize',{appInfo:{name:'Chronoscope results',version:'1.0.0'},appCapabilities:{},protocolVersion:'2026-01-26'})
+  rpc('ui/initialize',{appInfo:{name:'TimeScope results',version:'1.0.0'},appCapabilities:{},protocolVersion:'2026-01-26'})
     .then(result=>{connected=true;document.documentElement.style.colorScheme=result.hostContext?.theme||'light dark';send('ui/notifications/initialized');$('refresh').disabled=false;status('Waiting for results…');})
     .catch(error=>status(`Interactive host unavailable: ${error}`));
 })();

@@ -5,7 +5,7 @@ Maps opens the Maps category in Settings. **Choose a map** offers offline geogra
 
 ## Direct map cache: no proxy required
 
-Chronoscope fetches WMTS resources directly and keeps a private disk cache on the same computer. This is ordinary client caching, not a proxy server, and adds no listener, service, account or administrator requirement. The optional MCP/development bridges are unrelated to map caching.
+TimeScope fetches WMTS resources directly and keeps a private disk cache on the same computer. This is ordinary client caching, not a proxy server, and adds no listener, service, account or administrator requirement. The optional MCP/development bridges are unrelated to map caching.
 
 Open **Map servers → Cache and loading**:
 
@@ -36,7 +36,7 @@ CLI/MCP:
 
 ## WKT in CSV or Excel
 
-The import dialog detects headers such as **geometry**, **geom**, **wkt**, **geometry_wkt** and matching sample values. You can change/unmap **WKT geometry** manually. Nonempty WKT takes precedence over other coordinates for that row; empty source cells fall back to the normal coordinate mapping. Records still need a timestamp as with other Chronoscope events.
+The import dialog detects headers such as **geometry**, **geom**, **wkt**, **geometry_wkt** and matching sample values. You can change/unmap **WKT geometry** manually. Nonempty WKT takes precedence over other coordinates for that row; empty source cells fall back to the normal coordinate mapping. Records still need a timestamp as with other TimeScope events.
 
 Supported OGC Simple Features:
 
@@ -69,7 +69,7 @@ Click a line, point or filled area to inspect/select it, or use its attribute-ta
 
 Original WKT is editable in the inspector and through CLI/MCP `edit`, queryable as `geometry_wkt`, exported as a canonical CSV column and saved in workspaces. Editing WKT revalidates it and synchronizes POINT coordinates. Editing scalar coordinates detaches the old WKT geometry. Existing point-distance/pattern tools do not calculate distance to entire lines or areas; non-point shapes are excluded from point-specific analysis.
 
-`render_geometries` exposes bounded shape parts/counts/bounds to agents separately from packed point render packets. `query`/`attribute_table` preserve original WKT. Shared geometry workspaces use ZIP v4, or SQLite v2 for large datasets; use Chronoscope 0.7+ to open them. Older ZIP v1–3 and SQLite v1 workspaces remain readable, with SQLite migration confined to the disposable working copy. The source workspace is never altered on open.
+`render_geometries` exposes bounded shape parts/counts/bounds to agents separately from packed point render packets. `query`/`attribute_table` preserve original WKT. Shared geometry workspaces use ZIP v4, or SQLite v2 for large datasets; use TimeScope 0.7+ to open them. Older ZIP v1–3 and SQLite v1 workspaces remain readable, with SQLite migration confined to the disposable working copy. The source workspace is never altered on open.
 
 
 In 0.9, resource changes invalidate pending map/terrain generations even when the data revision is unchanged. Decoded imagery and terrain results check that generation before publication. Terrain mesh reuse preserves the exact bounds, resolution, voids and registration; it is not a lower-detail substitute. `cache_hit` reports full mesh reuse, with zero new decoded tiles for that request. Normal app concurrency remains configurable; historical gentle public-server testing limits are not app limits.

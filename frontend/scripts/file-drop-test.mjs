@@ -46,6 +46,7 @@ export const call=async(command,args)=>{
   );
 }
 const { DroppedFiles } = await load("dropped-files");
+const { workspaceSavePath } = await load("workspace-format");
 function fixture() {
   let workspace = "A",
     available = true;
@@ -70,7 +71,7 @@ function fixture() {
         ? { kind: "gis", format: "glb" }
         : path.endsWith(".geojson")
           ? { kind: "gis", format: "geojson" }
-          : path.endsWith(".chronoscope")
+          : /\.(chronoscope|timescope)$/i.test(path)
             ? { kind: "workspace" }
             : { kind: "data" },
   };
@@ -139,6 +140,9 @@ test("workspace drops use the ordinary open guard, while mixed batches cannot sw
   const f = fixture();
   await f.queue.open(["a.chronoscope"]);
   assert.deepEqual(f.workspaces, ["a.chronoscope"], JSON.stringify(f.notices));
+  const renamed = fixture();
+  await renamed.queue.open(["a.timescope"]);
+  assert.deepEqual(renamed.workspaces, ["a.timescope"], JSON.stringify(renamed.notices));
   const g = fixture();
   await g.queue.open(["a.chronoscope", "b.csv"]);
   assert.deepEqual(g.workspaces, []);
@@ -217,4 +221,11 @@ test("a successful import follows its returned workspace identity but never an u
   await f.opened[1].navigation.imported("another-import-store");
   assert.match(f.notices.at(-1), /workspace changed/);
   assert.equal(f.opened.length, 2);
+});
+
+test("new workspace names default to .timescope and existing names retain their extensions", () => {
+  assert.equal(workspaceSavePath("example"), "example.timescope");
+  assert.equal(workspaceSavePath("example.TIMESCOPE"), "example.TIMESCOPE");
+  assert.equal(workspaceSavePath("example.chronoscope"), "example.chronoscope");
+  assert.equal(workspaceSavePath("example.json"), "example.json");
 });

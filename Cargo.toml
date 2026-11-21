@@ -3,7 +3,8 @@ name = "chronoscope"
 version = "0.16.16"
 edition = "2021"
 rust-version = "1.96"
-description = "Rust space-time engine, CLI and MCP server"
+description = "TimeScope space-time engine, CLI and MCP server"
+default-run = "timescope"
 license = "MIT"
 
 [workspace]
@@ -20,6 +21,11 @@ performance-sql-trace = ["rusqlite/trace"]
 performance-open-profile = []
 legacy = ["dep:eframe", "dep:egui_extras", "dep:rfd"]
 
+[[bin]]
+name = "timescope"
+path = "src/bin/timescope.rs"
+
+# Compatibility command for scripts and existing CLI installations.
 [[bin]]
 name = "chronoscope"
 path = "src/main.rs"

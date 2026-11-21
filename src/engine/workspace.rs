@@ -296,7 +296,7 @@ impl Engine {
         new_document: bool,
     ) {
         if let Err(error) = self.lifecycle_changed(command, revision, path, new_document) {
-            eprintln!("Chronoscope recovery unavailable: {error}");
+            eprintln!("TimeScope recovery unavailable: {error}");
         }
         self.notify(json!({"kind":"changed","command":command,"revision":revision}));
     }

@@ -6,7 +6,7 @@ use std::{path::PathBuf, sync::Arc};
 #[derive(Parser)]
 #[command(
     version,
-    about = "Chronoscope: spatial-temporal engine, CLI and MCP server"
+    about = "TimeScope: spatial-temporal engine, CLI and MCP server"
 )]
 struct Cli {
     #[arg(long, global = true)]
@@ -64,7 +64,7 @@ enum Command {
         #[arg(long)]
         input: String,
     },
-    /// Inspect, navigate or capture the live Chronoscope desktop (use --attach).
+    /// Inspect, navigate or capture the live TimeScope desktop (use --attach).
     View {
         #[command(subcommand)]
         command: ViewCommand,

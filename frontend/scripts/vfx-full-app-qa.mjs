@@ -60,7 +60,7 @@ await withLocalApp("vfx-full-app", async ({ page, api, out, root, pass }) => {
     assert.equal(await page.locator("#open").count(), 1);
     assert.equal(await page.locator("#save").count(), 1);
     assert.equal(await page.locator("#vfx-playground").count(), 0);
-    assert.match(await page.title(), /^Chronoscope \d/);
+    assert.match(await page.title(), /^TimeScope \d/);
     assert.equal(
       await page.getByText("VFX Experimental", { exact: true }).count(),
       0,
@@ -68,8 +68,8 @@ await withLocalApp("vfx-full-app", async ({ page, api, out, root, pass }) => {
     const desktopConfig = JSON.parse(
       fs.readFileSync(path.join(root, "src-tauri/tauri.conf.json"), "utf8"),
     );
-    assert.equal(desktopConfig.productName, "Chronoscope");
-    assert.equal(desktopConfig.identifier, "org.chronoscope.desktop");
+    assert.equal(desktopConfig.productName, "TimeScope");
+    assert.equal(desktopConfig.identifier, "org.timescope.desktop");
     assert.equal(await page.locator("#vfx-smooth-playback, .smooth-playback-controls").count(), 0);
     await page.evaluate(() => localStorage.setItem("chronoscope-smooth-playback", "false"));
     await page.reload();

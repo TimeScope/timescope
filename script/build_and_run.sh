@@ -19,7 +19,7 @@ case "$MODE" in
  --build-only) PROFILE=release; BUILD_ONLY=true;;
  --debug-build-only) BUILD_ONLY=true;;
 esac
-APP_BUNDLE="$TARGET_DIR/$PROFILE/bundle/macos/Chronoscope.app"
+APP_BUNDLE="$TARGET_DIR/$PROFILE/bundle/macos/TimeScope.app"
 if [[ "$BUILD_ONLY" != true ]]; then
   for task_pid in $(pgrep -f "^$APP_BUNDLE/Contents/MacOS/chronoscope-desktop$" || true); do kill "$task_pid"; done
 fi
@@ -51,5 +51,5 @@ esac
 case "$MODE" in
  --verify) sleep 2; pgrep -f "^$APP_BUNDLE/Contents/MacOS/chronoscope-desktop$" >/dev/null;;
  --logs) exec /usr/bin/log stream --info --style compact --predicate 'process == "chronoscope-desktop"';;
- --telemetry) exec /usr/bin/log stream --info --style compact --predicate 'subsystem == "org.chronoscope.desktop"';;
+ --telemetry) exec /usr/bin/log stream --info --style compact --predicate 'subsystem == "org.timescope.desktop"';;
 esac

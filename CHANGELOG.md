@@ -1,8 +1,10 @@
 # Changelog
 
-Chronoscope is experimental. Source versions and downloadable builds can differ; [installation status](docs/INSTALLATION.md) records current availability and verification limits. No production-ready release is currently advertised.
+TimeScope is experimental. Source versions and downloadable builds can differ; [installation status](docs/INSTALLATION.md) records current availability and verification limits. No production-ready release is currently advertised.
 
 ## Unreleased
+
+- Rename the app to TimeScope. The CLI command is now `timescope` and new portable workspaces use `.timescope`. The previous CLI command and existing `.chronoscope` workspace files are supported.
 
 ## 0.16.16 — experimental source preview, 2026-11-04
 
@@ -75,7 +77,7 @@ Chronoscope is experimental. Source versions and downloadable builds can differ;
 
 ## 0.16.11 — experimental preview, 2026-10-31
 
-- Check Chronoscope Public GitHub releases directly, including published previews. Notify desktop users of newer versions, add Help → Check for updates, and provide a daily automatic-check preference. Compare versions with the standard semver package; open the GitHub release for notes and downloads.
+- Check TimeScope releases on GitHub directly, including published previews. Notify desktop users of newer versions, add Help → Check for updates, and provide a daily automatic-check preference. Compare versions with the standard semver package; open the GitHub release for notes and downloads.
 - Remove the synthetic Madagascar UAV demo, its previews and bundled data.
 - Rotate horizontally with either right-button or middle-button dragging in Globe and Time. Hold the rotation pivot fixed throughout each drag to prevent sideways drift.
 - Add a table-local Show selected option to Event attribute tables and explain All sources with tooltips.

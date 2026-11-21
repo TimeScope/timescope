@@ -152,7 +152,7 @@ fn main() {
         Engine::new(
             chronoscope::project::Project::empty(),
             chronoscope::platform::prepare_default_profile()
-                .expect("Chronoscope profile migration failed"),
+                .expect("TimeScope profile migration failed"),
         )
         .expect("User data directory must be writable"),
     );
@@ -249,7 +249,11 @@ fn main() {
         })
         .setup(move |app| {
             if let Some(main) = app.get_webview_window("main") {
-                main.set_title(&format!("Chronoscope {}", app.package_info().version))?;
+                main.set_title(&format!(
+                    "{} {}",
+                    chronoscope::platform::PRODUCT_NAME,
+                    app.package_info().version
+                ))?;
             }
             #[cfg(target_os = "macos")]
             {
@@ -295,7 +299,7 @@ fn main() {
                         sub.append(&tauri::menu::MenuItem::with_id(
                             app,
                             "help-guide",
-                            "Chronoscope User Guide",
+                            "TimeScope User Guide",
                             true,
                             None::<&str>,
                         )?)?;

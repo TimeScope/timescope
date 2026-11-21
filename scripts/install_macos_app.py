@@ -9,7 +9,7 @@ import subprocess
 import sys
 import tempfile
 
-BUNDLE_ID = 'org.chronoscope.desktop'
+BUNDLE_ID = 'org.timescope.desktop'
 
 
 def metadata(bundle):
@@ -40,16 +40,16 @@ def install(source):
     source = source.resolve(strict=True)
     info = metadata(source)
     if info.get('CFBundleIdentifier') != BUNDLE_ID:
-        raise ValueError('Expected a Chronoscope app bundle')
+        raise ValueError('Expected a TimeScope app bundle')
     applications = Path.home()/'Applications'
     applications.mkdir(exist_ok=True)
-    destination = applications/'Chronoscope.app'
+    destination = applications/'TimeScope.app'
     if source == destination.resolve():
         raise ValueError('Build outside ~/Applications before installing')
     stage = Path(tempfile.mkdtemp(prefix='.chronoscope-install-', dir=applications))
     previous = stage/'previous.app'
     try:
-        staged = stage/'Chronoscope.app'
+        staged = stage/'TimeScope.app'
         subprocess.run(['/usr/bin/ditto', str(source), str(staged)], check=True)
         subprocess.run(['/usr/bin/codesign', '--verify', '--strict', str(staged)], check=True)
         if destination.exists() or destination.is_symlink():
@@ -65,7 +65,7 @@ def install(source):
             if old != destination and is_chronoscope(old):
                 remove(old)
                 print('Removed old app:', old)
-        print('Installed Chronoscope {}: {}'.format(
+        print('Installed TimeScope {}: {}'.format(
             info['CFBundleShortVersionString'], destination))
     finally:
         if (previous.exists() or previous.is_symlink()) and not destination.exists():

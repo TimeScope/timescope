@@ -1,3 +1,4 @@
+import { isWorkspacePath } from "./workspace-format";
 import { escape as esc } from "./types";
 import "./welcome.css";
 
@@ -47,7 +48,7 @@ export class Welcome {
             (r): r is Recent =>
               !!r &&
               typeof r.path === "string" &&
-              /\.chronoscope$/i.test(r.path) &&
+              isWorkspacePath(r.path) &&
               typeof r.name === "string" &&
               Number.isFinite(r.count) &&
               r.count >= 0 &&
@@ -66,11 +67,11 @@ export class Welcome {
     this.render();
   }
   remember(path: string, count: number) {
-    if (!/\.chronoscope$/i.test(path)) return;
+    if (!isWorkspacePath(path)) return;
     const name = path
       .split(/[\\/]/)
       .pop()!
-      .replace(/\.chronoscope$/i, "");
+      .replace(/\.(timescope|chronoscope)$/i, "");
     this.recents = [
       { path, name, count, updated: Date.now() },
       ...this.recents.filter((r) => r.path !== path),
@@ -109,7 +110,7 @@ export class Welcome {
       <p class="welcome-intro">Open your data, follow a recorded journey, or return to a saved investigation.</p>
       <div class="welcome-actions"><button id="welcome-open" class="primary">${icon("folder")} Open data <kbd>${/Mac/.test(navigator.platform) ? "⌘" : "Ctrl"} O</kbd></button><button id="welcome-demo" class="secondary">${icon("play")} Try a demo</button></div>
       <section class="welcome-recents" aria-labelledby="recent-title"><div class="row"><h2 id="recent-title">Recent workspaces</h2><span class="spacer"></span>${this.recents.length ? '<button id="welcome-clear">Clear list</button>' : ""}</div>
-      ${this.recents.map((r, i) => `<button class="welcome-file" data-recent="${i}" title="${esc(r.path)}">${icon("folder")}<span><strong>${esc(r.name)}</strong><small>${r.count.toLocaleString()} Events · ${esc(new Date(r.updated).toLocaleDateString())}</small></span><span class="spacer"></span><small>.chronoscope</small>${icon("collapse-right")}</button>`).join("") || '<p class="welcome-empty">Saved workspaces you open here will appear in this list.</p>'}</section>
+      ${this.recents.map((r, i) => `<button class="welcome-file" data-recent="${i}" title="${esc(r.path)}">${icon("folder")}<span><strong>${esc(r.name)}</strong><small>${r.count.toLocaleString()} Events · ${esc(new Date(r.updated).toLocaleDateString())}</small></span><span class="spacer"></span><small>${esc(r.path.slice(r.path.lastIndexOf(".")))}</small>${icon("collapse-right")}</button>`).join("") || '<p class="welcome-empty">Saved workspaces you open here will appear in this list.</p>'}</section>
       <p class="welcome-hint"><kbd>Tab</kbd> Move between controls <span>·</span><kbd>Enter</kbd> Open <span>·</span><button id="welcome-help"><kbd>F1</kbd> Help &amp; keyboard shortcuts</button></p>
       <button id="welcome-empty" class="welcome-skip">Continue with an empty workspace</button>
       </div><footer class="welcome-footer">${icon("folder")} Workspace processing stays on this device</footer>`;

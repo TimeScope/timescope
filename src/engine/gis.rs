@@ -63,7 +63,7 @@ impl Engine {
                     .and_then(|x| x.to_str())
                     .unwrap_or("")
                     .to_ascii_lowercase();
-                if ext == "chronoscope" {
+                if crate::project::is_workspace_bundle(path) {
                     return Ok(json!({"kind":"workspace","format":null}));
                 }
                 if ["csv", "tsv", "xls", "xlsx", "xlsb"].contains(&ext.as_str()) {

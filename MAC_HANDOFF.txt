@@ -1,4 +1,4 @@
-Chronoscope — local Mac handoff
+TimeScope — local Mac handoff
 
 Build and installation: docs/MAC_HANDOFF.md
 CLI and MCP: docs/CLI-MCP.md

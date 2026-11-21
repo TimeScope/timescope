@@ -1483,7 +1483,7 @@ impl Engine {
                 let scene = s.project.scene.clone();
                 let mut provenance = s.project.provenance.clone();
                 for credit in &mut provenance {
-                    credit.changes.push_str(&format!("; Chronoscope anchored space/time aggregation: window_minutes={}, radius_m={}, input_count={}, retained={}", options.window_minutes, options.radius_m, accumulator.input_count, retained));
+                    credit.changes.push_str(&format!("; TimeScope anchored space/time aggregation: window_minutes={}, radius_m={}, input_count={}, retained={}", options.window_minutes, options.radius_m, accumulator.input_count, retained));
                 }
                 let mut derived = Project::new(Dataset {
                     name: format!("{} (aggregated)", s.project.dataset.name),
@@ -2529,7 +2529,7 @@ impl Engine {
                         .is_some_and(|e| e.eq_ignore_ascii_case("json"))
                     {
                         return Err(
-                            "Large workspaces and saved analyses require the .chronoscope database format".into()
+                            "Large workspaces and saved analyses require the .timescope database format".into()
                         );
                     }
                     s.store.save_as(Path::new(&path), &s.project)?;

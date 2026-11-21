@@ -565,15 +565,16 @@ fn validate_context(filter: &Filter, c: &Camera) -> Result<(), String> {
     Ok(())
 }
 const MAX_TERRAIN_BYTES: u64 = 512 * 1024 * 1024;
-fn is_bundle(path: &Path) -> bool {
-    path.extension()
-        .is_some_and(|e| e.eq_ignore_ascii_case("chronoscope"))
+pub(crate) fn is_workspace_bundle(path: &Path) -> bool {
+    path.extension().is_some_and(|extension| {
+        extension.eq_ignore_ascii_case("timescope") || extension.eq_ignore_ascii_case("chronoscope")
+    })
 }
 pub fn save(path: &Path, project: &Project) -> Result<(), String> {
     project.validate()?;
     // GIS packages use the existing indexed container even for small datasets.
     // Raw resources never inflate the JSON manifest or UI snapshots.
-    if is_bundle(path) && !project.gis_layers.is_empty() {
+    if is_workspace_bundle(path) && !project.gis_layers.is_empty() {
         let scratch = tempfile::tempdir().map_err(|e| e.to_string())?;
         let mut store = crate::store::DataStore::new(scratch.path())?;
         let mut metadata = project.clone();
@@ -588,7 +589,7 @@ pub fn save(path: &Path, project: &Project) -> Result<(), String> {
     let mut temp = tempfile::NamedTempFile::new_in(parent).map_err(|e| e.to_string())?;
     let mut portable = migrate(project.clone())?;
     let mut files = Vec::new();
-    if is_bundle(path) {
+    if is_workspace_bundle(path) {
         if let Some(w) = &mut portable.workspace {
             if !w.terrain_files.is_empty() {
                 w.preferences.terrain_builtin = false;
@@ -622,7 +623,7 @@ pub fn save(path: &Path, project: &Project) -> Result<(), String> {
     if manifest.len() as u64 > MAX_FILE_BYTES {
         return Err("Project manifest exceeds 64 MiB".into());
     }
-    if is_bundle(path) {
+    if is_workspace_bundle(path) {
         let mut archive = zip::ZipWriter::new(&mut temp);
         let options = zip::write::SimpleFileOptions::default()
             .compression_method(zip::CompressionMethod::Deflated)
@@ -1044,7 +1045,7 @@ fn commit_export_pair(
         .and_then(|d| d.sync_all())
         .is_err()
         {
-            eprintln!("Chronoscope: export pair saved; parent directory sync unavailable");
+            eprintln!("TimeScope: export pair saved; parent directory sync unavailable");
         }
     }
     Ok(())

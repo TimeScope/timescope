@@ -97,7 +97,7 @@ def mac_metadata_check(app):
         raise ValueError('App Intents metadata missing or empty')
 
 def mac_archive_inventory(package, app_name):
-    prefix = 'Chronoscope/' + app_name
+    prefix = 'TimeScope/' + app_name
     inventory = {}
     total = 0
     with tarfile.open(package, 'r:xz') as archive:
@@ -149,7 +149,7 @@ def stage(target, output, max_bytes):
     subprocess.run(['python', str(ROOT / 'scripts/test_desktop_cli.py'), '--binary', str(gui)], check=True, timeout=180)
     evidence = {'target': target, 'architecture': expected, 'commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(), 'gui_sha256': hashlib.sha256(gui.read_bytes()).hexdigest(), 'automated_tests': ['built desktop CLI/agent/MCP smoke', 'built frontend notices'], 'real_device_tests': False}
     with tempfile.TemporaryDirectory(prefix='chronoscope-tester-') as temporary:
-        root = Path(temporary) / 'Chronoscope'
+        root = Path(temporary) / 'TimeScope'
         root.mkdir()
         if target == 'windows-x86_64':
             cargo_home = Path(os.environ.get('CARGO_HOME', str(Path.home() / '.cargo')))
@@ -190,7 +190,7 @@ def stage(target, output, max_bytes):
             shutil.copy2(packages[0], root / packages[0].name)
             inspect = shutil.which('llvm-objdump') or str(Path('C:/Program Files/LLVM/bin/llvm-objdump.exe'))
             evidence['linkage'] = subprocess.check_output([inspect, '-p', str(installed[0])], text=True)
-            (root / 'INSTALL.txt').write_text('Experimental builds for testing; you may encounter bugs.\n\nWindows x64: use the included current-user installer. The installed Chronoscope executable also supports CLI/MCP commands. Unsigned; Windows may display a publisher warning. Microsoft Edge WebView2 Evergreen Runtime must already be installed (not redistributed). Get it at https://developer.microsoft.com/microsoft-edge/webview2/ .\n')
+            (root / 'INSTALL.txt').write_text('Experimental builds for testing; you may encounter bugs.\n\nWindows x64: use the included current-user installer. The installed TimeScope executable also supports CLI/MCP commands. Unsigned; Windows may display a publisher warning. Microsoft Edge WebView2 Evergreen Runtime must already be installed (not redistributed). Get it at https://developer.microsoft.com/microsoft-edge/webview2/ .\n')
         elif target == 'macos-arm64':
             apps = list((release / 'bundle/macos').glob('*.app'))
             if len(apps) != 1:
@@ -221,14 +221,14 @@ def stage(target, output, max_bytes):
             if mac_app_inventory(packaged_app) != sealed_inventory:
                 raise ValueError('Sealed Mac app changed during validation')
             evidence['automated_tests'].extend(['copied app codesign --verify --deep --strict', 'copied app frontend notices', 'copied app App Intents metadata present', 'packaged desktop CLI/agent/MCP smoke'])
-            (root / 'INSTALL.txt').write_text('Experimental builds for testing; you may encounter bugs.\n\nApple Silicon macOS: extract and drag Chronoscope.app to Applications. Ad-hoc signed, not notarized. macOS may block first launch: after reviewing source/checksum, use System Settings > Privacy & Security > Open Anyway if offered. Not for Intel Macs.\n')
+            (root / 'INSTALL.txt').write_text('Experimental builds for testing; you may encounter bugs.\n\nApple Silicon macOS: extract and drag TimeScope.app to Applications. Ad-hoc signed, not notarized. macOS may block first launch: after reviewing source/checksum, use System Settings > Privacy & Security > Open Anyway if offered. Not for Intel Macs.\n')
         elif target == 'linux-x86_64':
             packages = list((release / 'bundle/appimage').glob('*.AppImage'))
             if len(packages) != 1:
                 raise ValueError('Actual GUI AppImage required')
             shutil.copy2(packages[0], root / packages[0].name)
             evidence['linkage'] = subprocess.check_output(['ldd', str(gui)], text=True)
-            (root / 'INSTALL.txt').write_text('Experimental builds for testing; you may encounter bugs.\n\nLinux x64: chmod +x Chronoscope_*.AppImage then run it. FUSE-free option: --appimage-extract-and-run. See native source/replacement record for covered shared libraries.\n')
+            (root / 'INSTALL.txt').write_text('Experimental builds for testing; you may encounter bugs.\n\nLinux x64: chmod +x TimeScope_*.AppImage then run it. FUSE-free option: --appimage-extract-and-run. See native source/replacement record for covered shared libraries.\n')
         shutil.copytree(ROOT / 'frontend/dist/third-party', root / 'third-party')
         (root / 'SOURCE-ACCESS.txt').write_text('Exact application source and dependency sources with retained licenses/NOTICE and SHA256 manifests accompany these downloads on the same prerelease: chronoscope-source.zip and chronoscope-dependency-sources.tar.xz. MPL covered source is included. Application source includes patched GLib and frontend Knockout modification. Root MIT does not replace upstream/data/media licenses. See third-party/docs/DISTRIBUTION.md. Linux additionally requires its native source archive and replacement instructions.\n')
         if target == 'windows-x86_64':
@@ -242,7 +242,7 @@ def stage(target, output, max_bytes):
             if mac_app_inventory(packaged_app) != sealed_inventory:
                 raise ValueError('Sealed Mac app changed before archive')
             with tarfile.open(staged_package, 'w:xz') as archive:
-                archive.add(root, arcname='Chronoscope')
+                archive.add(root, arcname='TimeScope')
             archived_inventory = mac_archive_inventory(staged_package, packaged_app.name)
             archived_gui = archived_inventory.get('Contents/MacOS/chronoscope-desktop')
             if not archived_gui or archived_gui[0] != 'file' or archived_gui[3] != smoked_hash:

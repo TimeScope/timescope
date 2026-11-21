@@ -20,7 +20,7 @@ pub(crate) fn persist(file: tempfile::NamedTempFile, path: &Path) -> Result<(), 
     #[cfg(unix)]
     if parent.is_none_or(|directory| directory.sync_all().is_err()) {
         // The rename already committed: never misreport it as an aborted save.
-        eprintln!("Chronoscope: output saved; parent directory sync unavailable");
+        eprintln!("TimeScope: output saved; parent directory sync unavailable");
     }
     Ok(())
 }

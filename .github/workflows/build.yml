@@ -156,10 +156,10 @@ jobs:
       - name: Native desktop lint
         if: inputs.verification_run_id == ''
         run: cargo clippy --locked -p chronoscope-desktop -- -D warnings
-      - run: python scripts/build_portable.py build --locked --release --timings -p chronoscope --bin chronoscope
+      - run: python scripts/build_portable.py build --locked --release --timings -p chronoscope --bin timescope
       - name: Verify generated contracts from the release CLI
         run: |
-          CLI=target/release/chronoscope
+          CLI=target/release/timescope
           if [ "$RUNNER_OS" = Windows ]; then CLI="$CLI.exe"; fi
           python -B scripts/source_checks.py --contracts-only --cli "$CLI" --report "$RUNNER_TEMP/contracts-validation/report.json"
       - name: Seal source verification
@@ -188,6 +188,7 @@ jobs:
         if: runner.os == 'Linux' && !inputs.verify_only
         timeout-minutes: 10
         run: |
+          export CHRONOSCOPE_CLI="$PWD/target/release/timescope"
           cd frontend
           npx playwright install --with-deps chromium
           npm run test:ui

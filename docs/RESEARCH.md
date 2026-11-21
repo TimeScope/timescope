@@ -1,10 +1,10 @@
 # Implementation notes
 
-Chronoscope’s model, algorithms, interface, persistence format and synthetic examples were written independently. Open-source dependencies and public geographic data retain their licenses and attribution.
+TimeScope’s model, algorithms, interface, persistence format and synthetic examples were written independently. Open-source dependencies and public geographic data retain their licenses and attribution.
 
 ## Workspace capabilities
 
-| Workflow | Chronoscope implementation | Boundary |
+| Workflow | TimeScope implementation | Boundary |
 | --- | --- | --- |
 | Space-time trails and map examination | Large Three.js volume, vertical time, stems, trails and focus plane; map/calendar | WMTS and DTED added in 0.2; split map remains in the optional legacy frontend |
 | Filtering and linked selection | Unified IDs across rendered views, histogram, table and charts; time/attribute/entity/category/region filters | Selection stays local to this app |

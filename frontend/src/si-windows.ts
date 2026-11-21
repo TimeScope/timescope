@@ -50,7 +50,7 @@ export async function workspaceAction(action: Action): Promise<any> {
       clean();
       reject(
         Error(
-          "Main workspace did not respond. Return to Chronoscope and try again.",
+          "Main workspace did not respond. Return to TimeScope and try again.",
         ),
       );
     }, 20000);

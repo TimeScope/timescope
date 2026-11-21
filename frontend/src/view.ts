@@ -973,7 +973,7 @@ export class SpaceTimeView {
       },
       { signal: this.abort.signal },
     );
-    // Chronoscope owns picking/table linkage; Cesium's default handler also
+    // TimeScope owns picking/table linkage; Cesium's default handler also
     // queries imagery with a 3D-only ray and throws in 2D/Columbus views.
     this.viewer.screenSpaceEventHandler.removeInputAction(
       ScreenSpaceEventType.LEFT_CLICK,

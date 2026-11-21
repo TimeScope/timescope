@@ -139,11 +139,11 @@ class WindowsInstallerStagingTests(unittest.TestCase):
         package = self.output / evidence['package']
         with zipfile.ZipFile(package) as archive:
             executables = [n for n in archive.namelist() if n.lower().endswith('.exe')]
-            self.assertEqual(executables, ['Chronoscope/' + self.installer.name])
+            self.assertEqual(executables, ['TimeScope/' + self.installer.name])
             self.assertEqual(archive.read(executables[0]), self.installer.read_bytes())
-            self.assertIn('Chronoscope/third-party/LICENSE', archive.namelist())
-            self.assertIn('Chronoscope/SOURCE-ACCESS.txt', archive.namelist())
-            instructions = archive.read('Chronoscope/INSTALL.txt').decode()
+            self.assertIn('TimeScope/third-party/LICENSE', archive.namelist())
+            self.assertIn('TimeScope/SOURCE-ACCESS.txt', archive.namelist())
+            instructions = archive.read('TimeScope/INSTALL.txt').decode()
             self.assertIn('included current-user installer', instructions)
             self.assertNotIn('or run chronoscope-desktop.exe', instructions)
         self.assertEqual(evidence['package_sha256'], self.real_sha256(package.read_bytes()).hexdigest())
@@ -208,7 +208,7 @@ class MacBundleStagingTests(unittest.TestCase):
         self.repo = self.base / 'repo'
         self.release = self.repo / 'target/release'
         self.gui = self.put(self.release / 'chronoscope-desktop', self.macho() + b'raw build')
-        self.app = self.release / 'bundle/macos/Chronoscope.app'
+        self.app = self.release / 'bundle/macos/TimeScope.app'
         self.bundled = self.put(self.app / 'Contents/MacOS/chronoscope-desktop', self.macho() + b'bundler signed GUI')
         self.put(self.app / 'Contents/Resources/third-party/LICENSE', b'packaged fixture license')
         self.metadata = self.put(self.app / 'Contents/Resources/Metadata.appintents/extract.actionsdata', b'inert metadata')
@@ -316,13 +316,13 @@ class MacBundleStagingTests(unittest.TestCase):
         self.assertEqual(evidence['archived_gui_sha256'], evidence['gui_sha256'])
         package = self.output / evidence['package']
         with tarfile.open(package, 'r:xz') as archive:
-            base = 'Chronoscope/Chronoscope.app/Contents/'
+            base = 'TimeScope/TimeScope.app/Contents/'
             data = archive.extractfile(base + 'MacOS/chronoscope-desktop').read()
             self.assertEqual(data, self.bundled.read_bytes())
             self.assertEqual(hashlib.sha256(data).hexdigest(), evidence['gui_sha256'])
             self.assertEqual(archive.extractfile(base + 'Resources/Metadata.appintents/extract.actionsdata').read(), self.metadata.read_bytes())
             self.assertEqual(archive.extractfile(base + 'Resources/third-party/LICENSE').read(), b'packaged fixture license')
-            self.assertNotIn('Chronoscope/chronoscope-desktop', archive.getnames())
+            self.assertNotIn('TimeScope/chronoscope-desktop', archive.getnames())
         self.assertEqual(evidence['package_sha256'], hashlib.sha256(package.read_bytes()).hexdigest())
         for line in (self.output / 'SHA256SUMS-macos-arm64.txt').read_text().splitlines():
             digest, name = line.split('  ', 1)
@@ -440,7 +440,7 @@ class MacBundleStagingTests(unittest.TestCase):
                 self.output = self.base / ('archive-mutation-' + mode)
                 def add(archive, name, *args, **kwargs):
                     # Inject after final checks, immediately before tar reads it.
-                    if kwargs.get('arcname') == 'Chronoscope':
+                    if kwargs.get('arcname') == 'TimeScope':
                         gui = self.copied_app / 'Contents/MacOS/chronoscope-desktop'
                         if mode == 'gui':
                             gui.write_bytes(gui.read_bytes() + b'archive boundary mutation')
@@ -457,7 +457,7 @@ class MacBundleStagingTests(unittest.TestCase):
     def test_archived_only_gui_mutation_rejected_even_if_staged_copy_restored(self):
         real_add = tarfile.TarFile.add
         def add(archive, name, *args, **kwargs):
-            if kwargs.get('arcname') != 'Chronoscope':
+            if kwargs.get('arcname') != 'TimeScope':
                 return real_add(archive, name, *args, **kwargs)
             gui = self.copied_app / 'Contents/MacOS/chronoscope-desktop'
             original = gui.read_bytes()
@@ -477,7 +477,7 @@ class MacBundleStagingTests(unittest.TestCase):
         (self.app / 'Contents/Resources/license-link').symlink_to('third-party/LICENSE')
         self.stage()
         with tarfile.open(self.output / 'chronoscope-macos-arm64.tar.xz') as archive:
-            prefix = 'Chronoscope/Chronoscope.app/Contents/'
+            prefix = 'TimeScope/TimeScope.app/Contents/'
             self.assertEqual(archive.getmember(prefix + 'MacOS/chronoscope-desktop').mode, expected_mode)
             link = archive.getmember(prefix + 'Resources/license-link')
             self.assertTrue(link.issym())

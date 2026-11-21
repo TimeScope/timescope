@@ -7,7 +7,7 @@
 
 - Completed work intended for Next must be integrated into `TimeScope/timescope-dev`'s `main` branch, not left only on a feature branch. Before building the latest version, check pending Next branches so recent completed work is not omitted.
 
-- After every successful macOS app build, copy the finished bundle to `~/Applications/Chronoscope.app` and keep only the latest Chronoscope app in that directory. The user explicitly authorizes replacing or deleting older Chronoscope app copies there. `script/build_and_run.sh` does this automatically; for other build commands, run `python3 scripts/install_macos_app.py /path/to/Chronoscope.app` afterward.
+- After every successful macOS app build, copy the finished bundle to `~/Applications/TimeScope.app` and keep only the latest TimeScope app in that directory. The user explicitly authorizes replacing or deleting older TimeScope app copies there. `script/build_and_run.sh` does this automatically; for other build commands, run `python3 scripts/install_macos_app.py /path/to/TimeScope.app` afterward.
 
 - Finish user-facing Mac builds with `script/build_and_run.sh --build-only`, which creates an optimized release copy. `--debug-build-only` and interactive diagnostic modes create slower debug copies; rebuild the optimized copy after those checks.
 

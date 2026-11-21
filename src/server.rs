@@ -123,7 +123,7 @@ pub async fn serve(
         .await
         .map_err(|e| e.to_string())?;
     eprintln!(
-        "Chronoscope local development bridge: http://{}",
+        "TimeScope local development bridge: http://{}",
         listener.local_addr().map_err(|e| e.to_string())?
     );
     axum::serve(listener, router)

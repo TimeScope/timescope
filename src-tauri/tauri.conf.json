@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Chronoscope",
+  "productName": "TimeScope",
   "version": "0.16.16",
-  "identifier": "org.chronoscope.desktop",
+  "identifier": "org.timescope.desktop",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://127.0.0.1:5173",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "Chronoscope",
+        "title": "TimeScope",
         "dragDropEnabled": true,
         "width": 1600,
         "height": 1000,

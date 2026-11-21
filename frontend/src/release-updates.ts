@@ -202,7 +202,7 @@ export class ReleaseUpdates {
             {
               id: `release:${release.version}`,
               source: "updates",
-              title: `Chronoscope ${release.version} is available`,
+              title: `TimeScope ${release.version} is available`,
               message: `You’re using ${this.currentVersion}. ${release.preview ? "Experimental preview. " : ""}Open the GitHub release for notes and downloads.`,
               actions: [
                 {

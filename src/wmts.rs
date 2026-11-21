@@ -750,7 +750,7 @@ impl TileService {
             .unwrap_or(0);
         let client = reqwest::Client::builder()
             .user_agent(concat!(
-                "Chronoscope/",
+                "TimeScope/",
                 env!("CARGO_PKG_VERSION"),
                 " (desktop GIS; direct disk cache)"
             ))

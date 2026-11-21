@@ -1,3 +1,4 @@
+import { isWorkspacePath } from "./workspace-format";
 import {
   inspectInput,
   confirmLargeInputs,
@@ -105,7 +106,7 @@ export class DroppedFiles {
       const confirmed = await confirmLargeInputs(
         this.entries
           .filter(
-            (entry) => !entry.error && !/\.chronoscope$/i.test(entry.path),
+            (entry) => !entry.error && !isWorkspacePath(entry.path),
           )
           .map((entry) => entry.admission!),
       );
@@ -114,7 +115,7 @@ export class DroppedFiles {
         for (const entry of this.entries)
           if (
             entry.admission?.requires_confirmation &&
-            !/\.chronoscope$/i.test(entry.path)
+            !isWorkspacePath(entry.path)
           )
             entry.status = "Skipped";
       for (const entry of this.entries) {

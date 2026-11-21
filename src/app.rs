@@ -507,11 +507,11 @@ impl Chronoscope {
                 .add_filter("Tabular data", &["csv", "tsv", "xlsx", "xls", "xlsb"])
                 .pick_file(),
             FileAction::Open => rfd::FileDialog::new()
-                .add_filter("Chronoscope project", &["json"])
+                .add_filter("TimeScope project", &["json"])
                 .pick_file(),
             FileAction::Save => rfd::FileDialog::new()
                 .set_file_name("study.chrono.json")
-                .add_filter("Chronoscope project", &["json"])
+                .add_filter("TimeScope project", &["json"])
                 .save_file(),
             FileAction::Export => rfd::FileDialog::new()
                 .set_file_name("events.csv")

@@ -1,6 +1,6 @@
 # Outbound MCP client and SI tools
 
-Chronoscope 0.13 is both an MCP server and an MCP client. The existing server lets another agent drive Chronoscope. The new client lets built-in SI call tools offered by trusted local apps and remote services, alongside its Chronoscope tools.
+TimeScope 0.13 is both an MCP server and an MCP client. The existing server lets another agent drive Chronoscope. The new client lets built-in SI call tools offered by trusted local apps and remote services, alongside its TimeScope tools.
 
 ## Connect and grant
 
@@ -19,9 +19,9 @@ Discovery alone gives SI no access. Review tool descriptions, JSON schemas and h
 | SI query | SI may use it on subsequent messages without a separate action checkbox. Choose this only after deciding the actual tool is appropriate for read access. |
 | SI action | Available only for a message with **Allow granted external actions** checked. |
 
-Server annotations are hints, not authorization. Definitions are SHA-256 fingerprinted and each connection has a random namespace. Reconnect clears grants; changed definitions discovered on reconnect require another review. The discovered catalogue is fixed for a connection; tool-list change notifications are not applied yet. Reconnect when a service changes its tools. The action checkbox resets after sending, as does the separate Chronoscope record-edit permission. SI is never offered tools to create connections or change grants.
+Server annotations are hints, not authorization. Definitions are SHA-256 fingerprinted and each connection has a random namespace. Reconnect clears grants; changed definitions discovered on reconnect require another review. The discovered catalogue is fixed for a connection; tool-list change notifications are not applied yet. Reconnect when a service changes its tools. The action checkbox resets after sending, as does the separate TimeScope record-edit permission. SI is never offered tools to create connections or change grants.
 
-SI may send data from a conversation or one tool into another approved tool. Grant only services you intend to exchange data with. External results are untrusted content. Chronoscope validates tool arguments and declared structured output schemas, but cannot guarantee a remote service's claims or a model's conclusions.
+SI may send data from a conversation or one tool into another approved tool. Grant only services you intend to exchange data with. External results are untrusted content. TimeScope validates tool arguments and declared structured output schemas, but cannot guarantee a remote service's claims or a model's conclusions.
 
 ## CLI and other agents
 
@@ -52,20 +52,20 @@ Use `client_tools` to obtain current names and fingerprints. Grant entries use `
 
 Inbound MCP exposes `client_status`, `client_tools` and explicitly granted `client_call`. It deliberately cannot connect/disconnect services or edit grants, directly or through jobs. Those controls require the local host UI/CLI. `job_start` supports `client_call` for cancellation. A standalone CLI process has its own session; use `--attach`, a persistent NDJSON session, or the running desktop to retain connections. `ask --allow-external-actions` is the CLI equivalent of the per-message external-action checkbox; `--allow-edits` remains separate.
 
-External actions are outside Chronoscope Undo, its file-root restriction and workspace transactions. Cancellation, disconnect or timeout may occur after a service performed an action. Inspect the outcome before retrying. Neither SDK reconnection retries nor HTTP request retries are enabled for these calls.
+External actions are outside TimeScope Undo, its file-root restriction and workspace transactions. Cancellation, disconnect or timeout may occur after a service performed an action. Inspect the outcome before retrying. Neither SDK reconnection retries nor HTTP request retries are enabled for these calls.
 
 ## Protocol, bounds and current limitations
 
 The client uses the [official Rust MCP SDK](https://github.com/modelcontextprotocol/rust-sdk), pinned to rmcp 3.5.1. It supports stdio and Streamable HTTP, current **2026-07-28** discovery plus compatibility initialization for older servers, including **2025-11-25**. A thin adapter bounds response allocation while leaving negotiation, sessions and protocol messages to the SDK. See the [MCP transport specification](https://modelcontextprotocol.io/specification/2026-07-28/basic/transports).
 
-Connections are limited to 16. Discovery is limited to 16 pages, 256 tools and 2 MiB of tool definitions per server; responses and stdio frames are bounded to 2 MiB. Four calls per connection may be in flight, with at most two HTTP posts concurrently. Operations time out after 60 seconds. SI exposes at most 128 total functions/256 KiB of schemas, counting both Chronoscope and external tools, and retains its existing turn, call and context budgets. Excess data fails explicitly rather than silently executing an incomplete request. Connection/authentication errors avoid echoing credentials and server response bodies into the app log.
+Connections are limited to 16. Discovery is limited to 16 pages, 256 tools and 2 MiB of tool definitions per server; responses and stdio frames are bounded to 2 MiB. Four calls per connection may be in flight, with at most two HTTP posts concurrently. Operations time out after 60 seconds. SI exposes at most 128 total functions/256 KiB of schemas, counting both TimeScope and external tools, and retains its existing turn, call and context budgets. Excess data fails explicitly rather than silently executing an incomplete request. Connection/authentication errors avoid echoing credentials and server response bodies into the app log.
 
-This release supports tool listing/calling, anonymous or bearer HTTP authentication, and local environment-based credentials. Remote OAuth browser login, client-certificate authentication for these MCP connections, sampling, interactive elicitation, resource browsing and prompt catalogues are not implemented. WMTS has its separate native PKI support. External records can inform SI; importing a service's exported CSV/Excel still uses Chronoscope's validated import workflow and appropriate file/edit permissions.
+This release supports tool listing/calling, anonymous or bearer HTTP authentication, and local environment-based credentials. Remote OAuth browser login, client-certificate authentication for these MCP connections, sampling, interactive elicitation, resource browsing and prompt catalogues are not implemented. WMTS has its separate native PKI support. External records can inform SI; importing a service's exported CSV/Excel still uses TimeScope's validated import workflow and appropriate file/edit permissions.
 
 ## WebMCP status
 
-The extension-based browser bridge is **deactivated** in standard builds. There is no extension installation, pairing or browser connection interface, and its host commands are unavailable. Chronoscope does not currently access WebMCP websites directly. Configuring an external SI provider does not add browser capabilities by itself.
+The extension-based browser bridge is **deactivated** in standard builds. There is no extension installation, pairing or browser connection interface, and its host commands are unavailable. TimeScope does not currently access WebMCP websites directly. Configuring an external SI provider does not add browser capabilities by itself.
 
-The intended future direction is extension-free website access driven by Chronoscope's SI, using an appropriate browser runtime and WebMCP agent integration. This is separate from ordinary remote MCP endpoints, which remain supported today. The earlier extension implementation is retained as developer research, excluded by default; see [archived bridge notes](../browser/README.md).
+The intended future direction is extension-free website access driven by TimeScope's SI, using an appropriate browser runtime and WebMCP agent integration. This is separate from ordinary remote MCP endpoints, which remain supported today. The earlier extension implementation is retained as developer research, excluded by default; see [archived bridge notes](../browser/README.md).
 
-Local verification covers a real managed Chronoscope stdio child and synthetic HTTP MCP services: current discovery, legacy initialization/session headers, JSON/SSE results, bearer failure, grant revocation, action gating, size limits and invalid structured output. It does not imply compatibility with every third-party server or provider.
+Local verification covers a real managed TimeScope stdio child and synthetic HTTP MCP services: current discovery, legacy initialization/session headers, JSON/SSE results, bearer failure, grant revocation, action gating, size limits and invalid structured output. It does not imply compatibility with every third-party server or provider.

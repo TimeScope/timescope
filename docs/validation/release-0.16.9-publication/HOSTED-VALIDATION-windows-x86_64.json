@@ -6403,6 +6403,6 @@
   },
   "status": "passed-narrow",
   "target": "windows-x86_64",
-  "workflow_url": "https://github.com/chronoscope-app/chronoscope-public/actions/runs/40910679424",
+  "workflow_url": "https://github.com/TimeScope/timescope/actions/runs/40910679424",
   "workflow_run": 40910679424
 }

@@ -52,13 +52,13 @@ fn main() -> eframe::Result<()> {
     }
     let options = eframe::NativeOptions {
         viewport: eframe::egui::ViewportBuilder::default()
-            .with_title("Chronoscope — Space & time")
+            .with_title("TimeScope — Space & time")
             .with_inner_size([1440., 980.])
             .with_min_inner_size([1050., 720.]),
         ..Default::default()
     };
     eframe::run_native(
-        "Chronoscope",
+        "TimeScope",
         options,
         Box::new(move |cc| Ok(Box::new(Chronoscope::new(cc, initial)))),
     )

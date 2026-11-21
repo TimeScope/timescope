@@ -1,4 +1,4 @@
-# GIS files in Chronoscope 0.14
+# GIS files in TimeScope 0.14
 
 Use **Open** for workspaces, CSV/Excel data and these Cesium-supported formats:
 
@@ -36,7 +36,7 @@ Canonical coordinates and `location_kind: "polygon-centroid"` explicitly identif
 
 Keep **`.chronoscope`** as the project format. CZML is useful for scene interchange and animated presentation, but does not encode the complete indexed Event database, filter state, analysis context, table state, SI settings boundaries, map stack, DTED resources and all other imported GIS packages.
 
-Projects containing GIS reference layers use the existing SQLite `.chronoscope` container, with version-5 project metadata and checksummed asset blobs. Each import has a hash-addressed local asset package; raw data is excluded from snapshots. Save embeds the packages and their local companions. Recipients do not need the original source folders. Existing ZIP/SQLite projects still load. Version-5 centroid/GIS projects require Chronoscope 0.14 or newer. Legacy JSON saves reference managed resource files and are not portable. Automatic local copies also reference managed assets to avoid copying large packages every 30 seconds; retain the local profile if relying on those copies. Explicit Save produces a portable deliverable.
+Projects containing GIS reference layers use the existing SQLite `.chronoscope` container, with version-5 project metadata and checksummed asset blobs. Each import has a hash-addressed local asset package; raw data is excluded from snapshots. Save embeds the packages and their local companions. Recipients do not need the original source folders. Existing ZIP/SQLite projects still load. Version-5 centroid/GIS projects require TimeScope 0.14 or newer. Legacy JSON saves reference managed resource files and are not portable. Automatic local copies also reference managed assets to avoid copying large packages every 30 seconds; retain the local profile if relying on those copies. Explicit Save produces a portable deliverable.
 
 ## Performance and file boundaries
 

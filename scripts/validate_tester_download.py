@@ -470,8 +470,9 @@ def validate(args, receipt):
             records[name] = checksum
         require(set(records) == wanted, 'Incomplete SHA256SUMS')
         extracted = extract_archive(package, temporary / 'package')
-        require([p.name for p in extracted.iterdir()] == ['Chronoscope'], 'Unexpected package root')
-        root = extracted / 'Chronoscope'
+        roots = list(extracted.iterdir())
+        require(len(roots) == 1 and roots[0].name in {'TimeScope', 'Chronoscope'}, 'Unexpected package root')
+        root = roots[0]
         receipt['notices'] = [notices(root / 'third-party', args.source_root)]
         source_text = (root / 'SOURCE-ACCESS.txt').read_text()
         require('chronoscope-source.zip' in source_text and 'chronoscope-dependency-sources.tar.xz' in source_text, 'Missing source-access companion instructions')

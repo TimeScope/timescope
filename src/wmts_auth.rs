@@ -455,7 +455,7 @@ pub fn fetch(profile: Option<&Profile>, url: &str, max: u64) -> Result<Response,
         &max.to_string(),
         "--user-agent",
         concat!(
-            "Chronoscope/",
+            "TimeScope/",
             env!("CARGO_PKG_VERSION"),
             " (desktop GIS; direct disk cache)"
         ),

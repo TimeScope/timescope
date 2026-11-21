@@ -1,4 +1,4 @@
-# Chronoscope validation
+# TimeScope validation
 
 Latest Next integration on this Mac: [25 October 2026 report](validation/next-integration-mac-2026-10-25/README.md). Restores the previously unmerged workflow/navigation work alongside Balanced terrain and the idle-camera fix. All 401 Rust tests, 27 frontend cases, 15 selected browser suites and 10 attached native checks pass locally.
 
@@ -8,7 +8,7 @@ Current Next workflow changes and local verification: [Next workflows, demo prev
 
 > Historical validation context: earlier source identifiers, runs and package measurements below are not new tests of this one-commit snapshot. Earlier Git history and hosted run logs are not included. See [current platform status](INSTALLATION.md).
 
-This repository replaces the geographic renderer with CesiumJS WebGL2. Earlier reports below describe the upstream Chronoscope renderer and retain their original evidence; they do not establish Cesium rendering correctness. Current Cesium evidence is tracked in [the parity report](CESIUM-PARITY.md).
+This repository replaces the geographic renderer with CesiumJS WebGL2. Earlier reports below describe the upstream TimeScope renderer and retain their original evidence; they do not establish Cesium rendering correctness. Current Cesium evidence is tracked in [the parity report](CESIUM-PARITY.md).
 
 ## Idle render and Radeon performance — 24 October 2026
 
@@ -80,7 +80,7 @@ All **176 Rust tests** and **16 local checks** pass on the final implementation:
 
 Map checks cover two simultaneous WMTS configurations, bottom-to-top alpha/opacity blending into one GPU surface, inclusive/exclusive zoom switching, portable save/reopen and view-centre zoom at the dateline. The test loads all 64 planned fixture tiles, verifies cache/offline reuse, and drapes the composite on real bundled public DTED. Both GUI disabling and agent-style terrain reconciliation clear imagery while retaining terrain. [Current screenshot gallery](screenshots/current/README.md), [Current screenshot gallery](screenshots/current/README.md) and [map evidence](validation/0.12/wkt-wmts.json) are retained. The coloured raster is a local fixture, not real street imagery.
 
-Client checks use an actual managed Chronoscope stdio child and local HTTP MCP services. They verify discovery/grants, schema fingerprints, input validation, revocation, action gating, disconnection/shutdown, session-only state and private management commands that cannot be called by inbound MCP/SI or jobs. HTTP checks cover current 2026-07-28 discovery, 2025-11-25 initialize/session fallback, JSON/SSE results, bearer failure, a 2 MiB response bound and declared output-schema rejection. SI rejects 128 external functions plus its domain functions before contacting the provider. [Current screenshot gallery](screenshots/current/README.md), [SI client evidence](validation/0.12/si-client.json) and [Current screenshot gallery](screenshots/current/README.md) are retained.
+Client checks use an actual managed TimeScope stdio child and local HTTP MCP services. They verify discovery/grants, schema fingerprints, input validation, revocation, action gating, disconnection/shutdown, session-only state and private management commands that cannot be called by inbound MCP/SI or jobs. HTTP checks cover current 2026-07-28 discovery, 2025-11-25 initialize/session fallback, JSON/SSE results, bearer failure, a 2 MiB response bound and declared output-schema rejection. SI rejects 128 external functions plus its domain functions before contacting the provider. [Current screenshot gallery](screenshots/current/README.md), [SI client evidence](validation/0.12/si-client.json) and [Current screenshot gallery](screenshots/current/README.md) are retained.
 
 No GitHub runners, paid models or public WMTS requests were used. Software WebGPU/WebGL2 and fallback were exercised; physical GPU performance, Mac/Windows runtime, hardware smartcard, signing and notarization remain unverified. Outbound connections/grants are session-only; remote OAuth, resource/prompt browsing, dynamic tool catalogue refresh and a browser WebMCP bridge remain future work. See [map layers](MAP-LAYERS.md) and [MCP client setup and boundaries](MCP-CLIENT.md).
 

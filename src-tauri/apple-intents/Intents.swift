@@ -10,10 +10,10 @@ private final class BridgeState: @unchecked Sendable {
  let lock=NSLock(); var call:Call?; var free:Free?
  func request(_ command:String,_ args:[String:Any]=[:]) throws -> [String:Any] {
   lock.lock(); let call=self.call; let free=self.free; lock.unlock()
-  guard let call,let free else {throw IntentFailure("Open Chronoscope first")}
+  guard let call,let free else {throw IntentFailure("Open TimeScope first")}
   let input=try JSONSerialization.data(withJSONObject:["command":command,"args":args])
   let text=String(decoding:input,as:UTF8.self)
-  guard let pointer=text.withCString({call($0)}) else {throw IntentFailure("Chronoscope is unavailable")}
+  guard let pointer=text.withCString({call($0)}) else {throw IntentFailure("TimeScope is unavailable")}
   let data=Data(String(cString:pointer).utf8); free(pointer)
   let result=try JSONSerialization.jsonObject(with:data) as! [String:Any]
   if let error=result["error"] as? String {throw IntentFailure(error)}
@@ -27,7 +27,7 @@ private func engine(_ command:String,_ args:[String:Any]=[:]) async throws -> [S
 }
 @available(macOS 13.0, *)
 enum ChronoscopeView: String, AppEnum {
- static var typeDisplayRepresentation:TypeDisplayRepresentation="Chronoscope view"
+ static var typeDisplayRepresentation:TypeDisplayRepresentation="TimeScope view"
  static var caseDisplayRepresentations:[Self:DisplayRepresentation]=[.spaceTime:"Space-time",.map:"2D Map",.globe:"Globe"]
  case spaceTime,map,globe
  var mode:String {switch self{case .spaceTime:"space-time";case .map:"map";case .globe:"globe"}}
@@ -41,7 +41,7 @@ enum AnalysisScope: String, AppEnum {
 }
 @available(macOS 13.0, *)
 struct WorkspaceSummaryIntent: AppIntent {
- static var title:LocalizedStringResource="Summarize Chronoscope workspace"
+ static var title:LocalizedStringResource="Summarize TimeScope workspace"
  static var description=IntentDescription("Read exact event and selection counts for the current workspace.")
  static var openAppWhenRun:Bool=true
  static var authenticationPolicy:IntentAuthenticationPolicy = .requiresLocalDeviceAuthentication
@@ -53,7 +53,7 @@ struct WorkspaceSummaryIntent: AppIntent {
 }
 @available(macOS 13.0, *)
 struct ShowChronoscopeViewIntent: AppIntent {
- static var title:LocalizedStringResource="Show Chronoscope view"
+ static var title:LocalizedStringResource="Show TimeScope view"
  static var description=IntentDescription("Switch the current workspace to a named map or time view.")
  static var openAppWhenRun:Bool=true
  static var authenticationPolicy:IntentAuthenticationPolicy = .requiresLocalDeviceAuthentication
@@ -66,7 +66,7 @@ struct ShowChronoscopeViewIntent: AppIntent {
 }
 @available(macOS 13.0, *)
 struct RecommendChronoscopeAnalysisIntent: AppIntent {
- static var title:LocalizedStringResource="Recommend Chronoscope analyses"
+ static var title:LocalizedStringResource="Recommend TimeScope analyses"
  static var description=IntentDescription("Check which analyses have usable inputs. No model or cloud required; does not run an analysis.")
  static var openAppWhenRun:Bool=true
  static var authenticationPolicy:IntentAuthenticationPolicy = .requiresLocalDeviceAuthentication
@@ -80,7 +80,7 @@ struct RecommendChronoscopeAnalysisIntent: AppIntent {
 }
 @available(macOS 13.0, *)
 struct FindChronoscopeGapsIntent: AppIntent {
- static var title:LocalizedStringResource="Find Chronoscope track gaps"
+ static var title:LocalizedStringResource="Find TimeScope track gaps"
  static var description=IntentDescription("Find gaps longer than an explicit number of hours. Read-only; uses exact track timestamps and reports input limits.")
  static var openAppWhenRun:Bool=true
  static var authenticationPolicy:IntentAuthenticationPolicy = .requiresLocalDeviceAuthentication
@@ -97,7 +97,7 @@ struct FindChronoscopeGapsIntent: AppIntent {
 }
 @available(macOS 13.0, *)
 struct SelectChronoscopeEntityIntent: AppIntent {
- static var title:LocalizedStringResource="Select Chronoscope entity"
+ static var title:LocalizedStringResource="Select TimeScope entity"
  static var description=IntentDescription("Add all events for an exact entity name to selection without clearing other entities. Set Remove to deselect it.")
  static var openAppWhenRun:Bool=true
  static var authenticationPolicy:IntentAuthenticationPolicy = .requiresLocalDeviceAuthentication

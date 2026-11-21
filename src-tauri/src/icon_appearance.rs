@@ -86,6 +86,6 @@ pub fn sync(app: &AppHandle, system_theme: Theme) {
         .map_err(|_| "Icon state unavailable".to_owned())
         .and_then(|preference| apply_cached(app, preference.unwrap_or(system_theme)));
     if let Err(error) = result {
-        eprintln!("Chronoscope icon appearance: {error}");
+        eprintln!("TimeScope icon appearance: {error}");
     }
 }

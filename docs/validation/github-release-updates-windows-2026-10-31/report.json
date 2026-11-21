@@ -4,7 +4,7 @@
   "source_commit": "8cc4bc4662c28a9de29379c740a004f29d0a9696",
   "validated_utc": "2026-10-31T20:19:55.840515+00:00",
   "design": {
-    "api": "https://api.github.com/repos/chronoscope-app/chronoscope-public/releases?per_page=20",
+    "api": "https://api.github.com/repos/TimeScope/timescope/releases?per_page=20",
     "documentation": "https://docs.github.com/en/rest/releases/releases",
     "api_version": "2026-03-10",
     "authentication": "none; fetch credentials omitted",

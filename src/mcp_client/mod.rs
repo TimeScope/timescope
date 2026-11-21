@@ -138,7 +138,7 @@ impl Drop for CancelRequest {
                 let _ = peer
                     .notify_cancelled(rmcp::model::CancelledNotificationParam::new(
                         Some(id),
-                        Some("Chronoscope call cancelled".into()),
+                        Some("TimeScope call cancelled".into()),
                     ))
                     .await;
             });

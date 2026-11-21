@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import { fileURLToPath } from "node:url";
+import { build } from "esbuild";
 import vm from "node:vm";
 import test from "node:test";
 import ts from "typescript";
@@ -529,13 +531,16 @@ test("actual workspace Save settles a prior restore and queued Map before captur
   const ui = toolbar(),
     gate = deferred(),
     entered = deferred();
-  const controller = fs.readFileSync(
-    new URL("../src/workspace-controller.ts", import.meta.url),
-    "utf8",
-  );
+  const { outputFiles } = await build({
+    entryPoints: [fileURLToPath(new URL("../src/workspace-controller.ts", import.meta.url))],
+    bundle: true,
+    write: false,
+    format: "esm",
+    platform: "node",
+  });
   const { WorkspaceController } = await import(
     "data:text/javascript;base64," +
-      Buffer.from(transpile(controller)).toString("base64")
+      Buffer.from(outputFiles[0].text).toString("base64")
   );
   const main = fs.readFileSync(
     new URL("../src/main.ts", import.meta.url),

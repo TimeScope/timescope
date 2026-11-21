@@ -39,12 +39,12 @@ async function theme() {
   chat.setNaming(!!p.ai_toolbar_si);
   const name = assistantName(true);
   if (name !== lastName) {
-    document.title = `${name} — Chronoscope`;
+    document.title = `${name} — TimeScope`;
     if (native) {
       const { getCurrentWindow } = await import("@tauri-apps/api/window");
       const { getVersion } = await import("@tauri-apps/api/app");
       await getCurrentWindow().setTitle(
-        `${name} — Chronoscope ${await getVersion()}`,
+        `${name} — TimeScope ${await getVersion()}`,
       );
     }
     lastName = name;

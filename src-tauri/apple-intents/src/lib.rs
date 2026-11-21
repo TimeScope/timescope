@@ -28,7 +28,7 @@ extern "C" fn call(input: *const c_char) -> *mut c_char {
         HANDLER
             .get()
             .map(|h| h(request))
-            .unwrap_or_else(|| "{\"error\":\"Open Chronoscope first\"}".into())
+            .unwrap_or_else(|| "{\"error\":\"Open TimeScope first\"}".into())
     })
     .unwrap_or_else(|_| "{\"error\":\"Intent failed\"}".into());
     CString::new(response)

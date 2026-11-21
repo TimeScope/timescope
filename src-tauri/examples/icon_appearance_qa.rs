@@ -89,7 +89,7 @@ fn main() {
             output: std::path::Path::new(&report).parent().unwrap().to_path_buf(),
         })
         .setup(|app| {
-            app.get_webview_window("main").unwrap().set_title("Chronoscope icon appearance QA")?;
+            app.get_webview_window("main").unwrap().set_title("TimeScope icon appearance QA")?;
             Ok(())
         })
         .on_window_event(move |window, event| {

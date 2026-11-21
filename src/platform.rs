@@ -1,10 +1,12 @@
-//! Chronoscope identity and one-time import of the former Cesium profile.
+//! TimeScope identity and one-time import of the former Cesium profile.
 use std::{
     fs,
     path::{Path, PathBuf},
 };
 
-pub const PRODUCT_NAME: &str = "Chronoscope";
+pub const PRODUCT_NAME: &str = "TimeScope";
+// Keep existing profiles, autosaves and saved references under their original paths.
+const PROFILE_PRODUCT: &str = "Chronoscope";
 pub const MCP_SERVER_NAME: &str = "chronoscope";
 const LEGACY_PRODUCT: &str = "Chronoscope Cesium";
 const MIGRATION_MARKER: &str = ".chronoscope-branding-v1";
@@ -15,7 +17,7 @@ fn profile_dir(product: &str, fallback: &str) -> PathBuf {
         .unwrap_or_else(|| PathBuf::from(fallback))
 }
 pub fn default_data_dir() -> PathBuf {
-    profile_dir(PRODUCT_NAME, ".chronoscope")
+    profile_dir(PROFILE_PRODUCT, ".chronoscope")
 }
 
 /// Explicit --data-dir profiles are untouched by the default-profile migration.
@@ -36,7 +38,7 @@ pub fn prepare_default_profile() -> Result<PathBuf, String> {
     {
         migrate_directory(
             &documents.join(LEGACY_PRODUCT).join("Autosaved"),
-            &documents.join(PRODUCT_NAME).join("Autosaved"),
+            &documents.join(PROFILE_PRODUCT).join("Autosaved"),
             false,
         )?;
     }
@@ -199,7 +201,7 @@ pub fn autosave_directory(data_dir: &Path) -> PathBuf {
         if let Some(documents) =
             directories::UserDirs::new().and_then(|d| d.document_dir().map(Path::to_path_buf))
         {
-            return documents.join(PRODUCT_NAME).join("Autosaved");
+            return documents.join(PROFILE_PRODUCT).join("Autosaved");
         }
     }
     data_dir.join("Documents").join("Autosaved")

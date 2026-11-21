@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Measure dataset opening and idle CPU in an isolated native macOS app.
 
-Requires an unlocked display and an already-built Chronoscope.app. This launches
+Requires an unlocked display and an already-built TimeScope.app. This launches
 one private-profile instance, exercises three bundled demos, captures only its
 app window, and terminates only the PID it launched. The process inventory uses
 before/after snapshots; avoid launching other WebKit apps during the measurement.

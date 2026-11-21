@@ -1,11 +1,11 @@
 # Privacy and connections
 
-Chronoscope is a desktop application that processes workspace data locally in Rust and SQLite. Connecting a map provider, SI service or external MCP tool can send information to that service. Review these choices before opening a sensitive dataset.
+TimeScope is a desktop application that processes workspace data locally in Rust and SQLite. Connecting a map provider, SI service or external MCP tool can send information to that service. Review these choices before opening a sensitive dataset.
 
 ## What stays on your computer
 
 - Imported records, saved views, charts, analysis results and dataset provenance are stored in your workspace and local application files. A portable `.chronoscope` project can contain the underlying records and imported assets; treat it as sensitive when sharing.
-- Explicit MCP video recording on macOS saves a local MP4 of the selected Chronoscope window within the granted file scope. It includes visible app content and window chrome, with no audio or microphone capture. It does not record other applications and is not automatically embedded in a workspace.
+- Explicit MCP video recording on macOS saves a local MP4 of the selected TimeScope window within the granted file scope. It includes visible app content and window chrome, with no audio or microphone capture. It does not record other applications and is not automatically embedded in a workspace.
 - MCP performance traces and scenario run histories are bounded and session-local. Saved navigation recipes persist in the app profile and may contain locations or time windows. Interactive MCP results send the same query/chart data to the connected client; the viewer requests no additional external network access.
 - Preferences, recovery checkpoints, automatic document copies and downloaded map data can remain on disk. The default profile and automatic-copy locations are listed in [the platform guide](docs/MAC_HANDOFF.md#settings-and-automatic-document-copies). An explicit `--data-dir` uses a separate profile.
 - The engine writes a bounded local diagnostic log containing command names, times, revisions, durations and success/failure. That logger excludes record values, command arguments, tokens and paths. Other platform or external-service logs have their own behavior; review any log before sharing it.
@@ -23,12 +23,12 @@ Local storage is not a promise of application-level encryption. Protect your dev
 | External MCP tools | A configured remote service receives granted tool calls and their arguments. Results used by hosted SI can also be sent to the SI provider. Local stdio servers run as programs with your user permissions; a tool grant does not sandbox the program or prevent its own networking. |
 | Sharing files and images | Saving locally does not publish a project. Sending a project, CSV, chart, screenshot, recording or support attachment shares its contents with the recipient you choose. Review location histories, identifiers, visible chat, paths and map/data attribution first. |
 
-Client-certificate authentication uses operating-system identity handling. Chronoscope stores identity references, not private keys or PINs. Previously authorized map imagery can remain in the disk cache after a card is removed or an authentication session is reset. [Certificate and cache details](docs/WMTS-AUTH.md).
+Client-certificate authentication uses operating-system identity handling. TimeScope stores identity references, not private keys or PINs. Previously authorized map imagery can remain in the disk cache after a card is removed or an authentication session is reset. [Certificate and cache details](docs/WMTS-AUTH.md).
 
 ## Practical controls
 
 Use an offline map/reference when you do not want online map requests. Disconnect hosted SI and external MCP services when they are unnecessary. Grant the narrowest useful tools and file scope, and review each external-action permission. [External MCP behavior and limits](docs/MCP-CLIENT.md).
 
-Clearing SI history, disconnecting a service or removing a card does not delete data already received by another service, saved exports, automatic copies, backups or map caches. Close Chronoscope before manually removing local profile/cache files; preserve any work you need first. Use your provider's own account controls for remote retention or deletion requests.
+Clearing SI history, disconnecting a service or removing a card does not delete data already received by another service, saved exports, automatic copies, backups or map caches. Close TimeScope before manually removing local profile/cache files; preserve any work you need first. Use your provider's own account controls for remote retention or deletion requests.
 
 This document describes the reviewed source behavior. Historical preview downloads can differ; consult their [source and platform status](docs/INSTALLATION.md). For a suspected disclosure or vulnerability, follow [SECURITY.md](SECURITY.md). Do not attach private datasets or credentials to public issues.

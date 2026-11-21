@@ -466,7 +466,7 @@ impl DataStore {
             .pragma_query_value(None, "user_version", |r| r.get(0))
             .map_err(err)?;
         if app != APPLICATION_ID || !matches!(version, 1..=3) {
-            return Err("Unsupported Chronoscope database format".into());
+            return Err("Unsupported TimeScope database format".into());
         }
         let triggers: i64 = source
             .query_row(
@@ -506,7 +506,7 @@ impl DataStore {
                 .map_err(err)?
             {
                 if !allowed.contains(&name.map_err(err)?.as_str()) {
-                    return Err("Unsupported table in Chronoscope workspace".into());
+                    return Err("Unsupported table in TimeScope workspace".into());
                 }
             }
         }

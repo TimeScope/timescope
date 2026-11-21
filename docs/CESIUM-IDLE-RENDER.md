@@ -1,12 +1,12 @@
 # Idle camera roundoff and unnecessary Cesium renders
 
-This is the handoff for investigating an upstream CesiumJS issue. Chronoscope
+This is the handoff for investigating an upstream CesiumJS issue. TimeScope
 ships a small application workaround; a Cesium PR should address the underlying
 camera-state mutation. Upstream [PR #13982](https://github.com/CesiumGS/cesium/pull/13982) is open as checked on 25 October 2026. The pinned application dependency does not include that unmerged change. See the [workaround index](maintenance/WORKAROUNDS.md) for the retirement gate.
 
 ## Observed behavior
 
-An idle Chronoscope scene continued drawing despite `requestRenderMode`. With
+An idle TimeScope scene continued drawing despite `requestRenderMode`. With
 the same data, camera, drawing-buffer size and display budget, stabilizing only
 tiny orientation changes stopped those draws. Three native Linux/Radeon rounds
 measured 24–41 idle draws per four seconds before the workaround and zero after
@@ -55,7 +55,7 @@ during the loop. The recorded Node 24.22.1 result is:
 | --- | ---: | --- |
 | No `changed` listener | 0 | No |
 | One no-op `changed` listener | 93 | No |
-| Same listener, Chronoscope stabilizer enabled | 0 | No |
+| Same listener, TimeScope stabilizer enabled | 0 | No |
 
 The listener case accumulated a maximum basis-component difference of about
 `1.02e-13`. The control and stabilized cases ended with an exact zero difference.
@@ -82,7 +82,7 @@ issues before submitting. Other request-render issues, such as
 [billboard image readiness #11820](https://github.com/CesiumGS/cesium/issues/11820),
 have different triggers; their existence does not establish a duplicate.
 
-## Chronoscope's workaround and its limits
+## TimeScope's workaround and its limits
 
 Implementation: [camera-stability.ts](../frontend/src/camera-stability.ts), wired
 once per viewer to `scene.preUpdate` in [view.ts](../frontend/src/view.ts).
@@ -135,7 +135,7 @@ Before opening a PR:
   rotation, zoom/frustum changes and mode transitions still request frames.
 - Follow the current [Cesium testing guide](https://github.com/CesiumGS/cesium/blob/main/Documentation/Contributors/TestingGuide/README.md)
   and contribution requirements. Keep the eventual upstream patch independent
-  of Chronoscope's data, Tauri setup and GPU-specific launch workarounds.
+  of TimeScope's data, Tauri setup and GPU-specific launch workarounds.
 
 The CPU-only diagnostic and measured app behavior make a strong starting case;
 the minimal browser reproduction and an upstream implementation remain to be

@@ -151,6 +151,6 @@
   },
   "status": "passed-narrow",
   "target": "macos-arm64",
-  "workflow_url": "https://github.com/chronoscope-app/chronoscope-public/actions/runs/40921037437",
+  "workflow_url": "https://github.com/TimeScope/timescope/actions/runs/40921037437",
   "workflow_run": 40921037437
 }

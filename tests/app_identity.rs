@@ -1,4 +1,4 @@
-use chronoscope::{agent, engine::Engine, project::Project};
+use chronoscope::{agent, engine::Engine, platform, project::Project};
 use serde_json::{json, Value};
 use std::{path::PathBuf, process::Command, sync::Arc};
 
@@ -7,6 +7,7 @@ fn canonical_identity_uses_chronoscope_profile_documents_and_client_registration
     let expected = directories::ProjectDirs::from("org", "Chronoscope", "Chronoscope")
         .map(|d| PathBuf::from(d.data_local_dir()))
         .unwrap_or_else(|| PathBuf::from(".chronoscope"));
+    assert_eq!(platform::PRODUCT_NAME, "TimeScope");
     let profile = chronoscope::engine::default_data_dir();
     assert_eq!(profile, expected);
     if let Some(documents) =
@@ -59,7 +60,7 @@ fn explicit_profiles_attach_to_their_own_live_engine() {
     let _original_agent = agent::start(original.clone(), &original_root).unwrap();
     let _second_agent = agent::start(second.clone(), &second_root).unwrap();
     let original_descriptor = std::fs::read(original_data.join("agent-connection.json")).unwrap();
-    let output = Command::new(env!("CARGO_BIN_EXE_chronoscope"))
+    let output = Command::new(env!("CARGO_BIN_EXE_timescope"))
         .arg("--data-dir")
         .arg(&second_data)
         .args([
@@ -92,4 +93,25 @@ fn explicit_profiles_attach_to_their_own_live_engine() {
         std::fs::read(original_data.join("agent-connection.json")).unwrap(),
         original_descriptor
     );
+}
+
+#[test]
+fn rebranded_workspace_extension_and_legacy_extension_round_trip() {
+    let root = tempfile::tempdir().unwrap();
+    let original = Project::new(chronoscope::demo::dataset());
+    let engine = Engine::new(Project::empty(), root.path().join("profile")).unwrap();
+
+    for extension in ["timescope", "chronoscope"] {
+        let path = root.path().join(format!("study.{extension}"));
+        chronoscope::project::save(&path, &original).unwrap();
+        let archive = std::fs::read(&path).unwrap();
+        assert!(archive.starts_with(b"PK"));
+        let probe = engine.invoke("file_probe", json!({"path": path})).unwrap();
+        assert_eq!(probe["kind"], "workspace");
+        engine.invoke("open", json!({"path": path})).unwrap();
+        assert_eq!(
+            engine.invoke("snapshot", json!({"compact": true})).unwrap()["count"],
+            original.dataset.events.len()
+        );
+    }
 }

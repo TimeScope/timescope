@@ -9,7 +9,7 @@ export async function openVfxPlayground() {
   root.style.cssText =
     "position:fixed;inset:0;z-index:10000;background:#10141b;display:flex;flex-direction:column;color:#dce7f1";
   root.innerHTML = `<header style="padding:12px 18px;display:flex;flex-wrap:wrap;align-items:center;gap:12px;border-bottom:1px solid #3b4656">
-    <strong>Chronoscope · Local VFX preview</strong>
+    <strong>TimeScope · Local VFX preview</strong>
     <button id="vfx-play" type="button">Pause</button>
     <label>Renderer <select id="vfx-renderer"><option value="gpu">GPU preview</option><option value="current">Current renderer</option></select></label>
     <label>Events <select id="vfx-count"><option value="100000">100,000</option><option value="10000">10,000</option></select></label>
@@ -21,7 +21,7 @@ export async function openVfxPlayground() {
   <div style="padding:6px 18px;font-size:12px;color:#aebdcd">Local visual experiment · Synthetic regional Globe data · Drag to pan; wheel to zoom; Ctrl-drag to orbit · Picking, terrain and exact workspace filtering are not included.</div>
   <div id="vfx-canvas" style="position:relative;flex:1;min-height:0"></div>`;
   document.body.append(root);
-  document.title = "Chronoscope — Local VFX Preview";
+  document.title = "TimeScope — Local VFX Preview";
   const host = root.querySelector<HTMLElement>("#vfx-canvas")!;
   const play = root.querySelector<HTMLButtonElement>("#vfx-play")!;
   const renderer = root.querySelector<HTMLSelectElement>("#vfx-renderer")!;

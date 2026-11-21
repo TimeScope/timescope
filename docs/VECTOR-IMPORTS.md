@@ -2,7 +2,7 @@
 
 Use **Open** and select a `.shp` or `.gpkg` file. Choose **Add reference layer**
 for shapes and attributes without a required timestamp, or **Import as Events**
-to review timestamp/entity mappings and use Chronoscope's Event filters and
+to review timestamp/entity mappings and use TimeScope's Event filters and
 analysis. The same inputs work through CLI/MCP `file_probe`, `gis_load` and
 `import_preview`. Packaged layers can later use `gis_import_preview`.
 
@@ -61,7 +61,7 @@ table names are available in the attribute table and Event source attributes.
 Registry versions and hashes are recorded in `Cargo.lock` and
 [the dependency review record](security/vector-readers.json). Only the needed
 Rust features are enabled; GDAL, PROJ, GEOS, SQLx and MVT are not added. SQLite is
-the existing C implementation already used by Chronoscope, not a Rust rewrite.
+the existing C implementation already used by TimeScope, not a Rust rewrite.
 
 Binary files are snapshotted before normalization. Shapefile counts, record
 sizes, index offsets and DBF layouts are checked before reader allocation.

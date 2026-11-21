@@ -1,7 +1,7 @@
 # Next renderer performance report
 
 Updated 2026-10-28. Completed renderer work is on
-`chronoscope-app/chronoscope-next/main` through `12d9052`. Mac native profiling
+`TimeScope/timescope-dev/main` through `12d9052`. Mac native profiling
 and refresh-scoped marker-position sharing for trails/stems are now recorded
 below. Trail/stem topology, run/chunk reuse and shader transforms remain planned.
 

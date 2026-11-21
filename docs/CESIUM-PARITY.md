@@ -1,10 +1,10 @@
 # Chronoscope CesiumJS renderer: scope and verification
 
-Chronoscope uses the shared Rust engine, Tauri host and application controls. It replaces geographic rendering with CesiumJS **WebGL**, including the globe, top-down 2D map and Columbus-view space-time display. It does not add a second independent data model or require Cesium ion. WebGPU is outside the current renderer's scope.
+TimeScope uses the shared Rust engine, Tauri host and application controls. It replaces geographic rendering with CesiumJS **WebGL**, including the globe, top-down 2D map and Columbus-view space-time display. It does not add a second independent data model or require Cesium ion. WebGPU is outside the current renderer's scope.
 
-The source baseline is original Chronoscope commit `74a3a59a67d2bc250169a9702335b9bf03ee03bc`. The current Chronoscope main branch contains the CesiumJS implementation.
+The source baseline is original TimeScope commit `74a3a59a67d2bc250169a9702335b9bf03ee03bc`. The current TimeScope main branch contains the CesiumJS implementation.
 
-This is a traceable inventory, not a declaration that a renderer migration has passed. A feature is verified only when a recorded local run exercises it. Existing Chronoscope screenshots and validation reports describe the original renderer unless explicitly labelled Cesium.
+This is a traceable inventory, not a declaration that a renderer migration has passed. A feature is verified only when a recorded local run exercises it. Existing TimeScope screenshots and validation reports describe the original renderer unless explicitly labelled Cesium.
 
 ## Retained application contracts
 

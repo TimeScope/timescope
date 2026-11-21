@@ -19,10 +19,10 @@ ROOT = Path(__file__).resolve().parent.parent
 
 def cli_build_config(target, release=False):
     profile = 'release' if release else 'debug'
-    command = ['cargo', 'build', '--locked', '-p', 'chronoscope', '--bin', 'chronoscope']
+    command = ['cargo', 'build', '--locked', '-p', 'chronoscope', '--bin', 'timescope']
     if release:
         command.append('--release')
-    return profile, Path(target)/profile/('chronoscope.exe' if os.name == 'nt' else 'chronoscope'), command
+    return profile, Path(target)/profile/('timescope.exe' if os.name == 'nt' else 'timescope'), command
 
 
 def source_digest():
@@ -247,7 +247,7 @@ def main():
                 launch = run('native-bundle-launch', ['bash', 'script/build_and_run.sh', '--verify'], extra={'CHRONOSCOPE_DATA_DIR': str(profile)}, timeout=1800)
                 ok = launch and ok
                 if launch:
-                    binary = target/'debug/bundle/macos/Chronoscope.app/Contents/MacOS/chronoscope-desktop'
+                    binary = target/'debug/bundle/macos/TimeScope.app/Contents/MacOS/chronoscope-desktop'
                     ok = run('native-terrain-gui', [sys.executable, 'scripts/native_terrain_qa.py', '--cli', binary, '--data-dir', profile, '--output', work/'artifacts/native-terrain-gui']) and ok
                     ok = run('native-mcp-live-gui', [sys.executable, 'scripts/native_mcp_live_qa.py', '--cli', binary, '--data-dir', profile, '--output', work/'artifacts/native-mcp-live-gui']) and ok
                     if args.native_video:

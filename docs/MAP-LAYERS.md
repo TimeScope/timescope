@@ -1,6 +1,6 @@
 # Multiple WMTS servers and map layers
 
-Chronoscope displays Streets by default and can also display imagery from several WMTS servers at once in space-time, 2D map and globe views. The combined image also drapes over loaded DTED terrain.
+TimeScope displays Streets by default and can also display imagery from several WMTS servers at once in space-time, 2D map and globe views. The combined image also drapes over loaded DTED terrain.
 
 ## Add sources and layers
 

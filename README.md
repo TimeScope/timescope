@@ -1,9 +1,9 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="src-tauri/icons/icon-dark.png">
-  <img src="src-tauri/icons/icon-light.png" width="72" height="72" alt="Chronoscope">
+  <img src="src-tauri/icons/icon-light.png" width="72" height="72" alt="TimeScope">
 </picture>
 
-# Chronoscope
+# TimeScope
 
 See your data across space and time. Explore linked maps, tracks, charts and tables, with analysis calculated locally.
 
@@ -90,7 +90,7 @@ Sixteen selected views from the October 22, 2026 capture set. Open any image for
 
 Time heights, tracks and density colors describe recorded samples, not physical altitude, continuous routes or independent activity. [Data, map credits and interpretation](assets/screenshots/showcase/README.md).
 
-Open a bundled demo from **Help → Demo datasets**, or import CSV, TSV, Excel or GIS files. Filter, select, chart and save a portable `.chronoscope` project. Optional SI chat and CLI/MCP tools use the same analysis engine. [Features and guides](docs/USER-GUIDE.md) · [Privacy](PRIVACY.md).
+Open a bundled demo from **Help → Demo datasets**, or import CSV, TSV, Excel or GIS files. Filter, select, chart and save a portable `.timescope` workspace. Existing `.chronoscope` workspaces still open. Optional SI chat and CLI/MCP tools use the same analysis engine. [Features and guides](docs/USER-GUIDE.md) · [Privacy](PRIVACY.md).
 
 **[Download the 0.16.15 experimental Windows preview](https://github.com/TimeScope/timescope/releases/tag/v0.16.15)**. The [0.16.14 Mac and Linux previews](https://github.com/TimeScope/timescope/releases/tag/v0.16.14) remain available. Windows is unsigned; macOS is ad hoc signed and not notarized. Linux was tested on Ubuntu 26.04.1 with glibc 2.43; older distributions remain unverified. Exact sources, notices, checksums and scoped native validation receipts accompany the downloads. [Platform status](docs/INSTALLATION.md) · [Changes](CHANGELOG.md).
 

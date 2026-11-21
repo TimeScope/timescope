@@ -76,7 +76,7 @@ to all matching source rows, independently of the map's latest-record display.
   These are cumulative administrative reports, not new weekly cases or individual
   case locations. Date-only observations use UTC display anchors. Testing and
   reporting definitions differ across places and time. This is a newly prepared
-  example, not a recovered old Chronoscope COVID file.
+  example, not a recovered old TimeScope COVID file.
 
 Dataset credits are embedded in the portable projects and mirrored in each CSV's
 `.attribution.json` companion. No provider logo or endorsement is implied.

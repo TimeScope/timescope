@@ -1,6 +1,6 @@
 # SI analytics engine
 
-Chronoscope calculates structured-data answers in Rust and SQLite. SI chooses a capability, submits a validated plan and explains evidence. It does not need to read thousands of Events into its context or calculate their statistics. The same engine is available to the UI, CLI, MCP server and connected SI model services.
+TimeScope calculates structured-data answers in Rust and SQLite. SI chooses a capability, submits a validated plan and explains evidence. It does not need to read thousands of Events into its context or calculate their statistics. The same engine is available to the UI, CLI, MCP server and connected SI model services.
 
 ## In the app
 

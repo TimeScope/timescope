@@ -268,7 +268,7 @@ impl Engine {
                         let directory = document_directory(&self.data_dir);
                         let path = status.autosave_path.clone().unwrap_or_else(|| {
                             directory.join(format!(
-                                "Autosaved-{}-{}-{}.chronoscope",
+                                "Autosaved-{}-{}-{}.timescope",
                                 chrono::Utc::now().format("%Y%m%d-%H%M%S"),
                                 self.lifecycle.session,
                                 status.document
@@ -301,7 +301,7 @@ impl Engine {
                                 &self.data_dir,
                             )?;
                             let path = directory.join(format!(
-                                "Recovered-{}-r{}.chronoscope",
+                                "Recovered-{}-r{}.timescope",
                                 record.session, record.revision
                             ));
                             store.save_autosave(&path, &project)?;

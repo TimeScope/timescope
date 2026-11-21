@@ -450,7 +450,7 @@ async fn mcp(State(shared): State<Arc<Shared>>, h: HeaderMap, Json(v): Json<Valu
     match v["method"].as_str().unwrap_or("") {
         "initialize" => rpc(
             id,
-            json!({"protocolVersion":"2025-11-25","capabilities":{"tools":{}},"serverInfo":{"name":"Chronoscope Browser WebMCP","version":env!("CARGO_PKG_VERSION")}}),
+            json!({"protocolVersion":"2025-11-25","capabilities":{"tools":{}},"serverInfo":{"name":"TimeScope Browser WebMCP","version":env!("CARGO_PKG_VERSION")}}),
         ),
         "ping" => rpc(id, json!({})),
         "notifications/initialized" => StatusCode::ACCEPTED.into_response(),

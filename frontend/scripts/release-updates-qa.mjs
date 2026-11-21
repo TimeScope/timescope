@@ -81,7 +81,7 @@ await withLocalApp("release-updates", async ({ page, out, pass }) => {
   await page.locator("#notifications").click();
   await page
     .getByRole("heading", {
-      name: `Chronoscope ${newVersion} is available`,
+      name: `TimeScope ${newVersion} is available`,
       exact: true,
     })
     .waitFor();

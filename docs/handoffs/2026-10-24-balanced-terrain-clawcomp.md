@@ -15,15 +15,15 @@ explicitly requested transfer of this work to their connected Codex system
 `clawcomp` because the cloud executor blocks the source download.
 
 Continue the existing implementation; do not rebuild it from scratch. Read
-`AGENTS.md`. Develop and validate in `chronoscope-app/chronoscope-next`. Do not
-promote to `chronoscope-public`, merge the incomplete work into main, or dispatch
+`AGENTS.md`. Develop and validate in `TimeScope/timescope-dev`. Do not
+promote to `TimeScope/timescope`, merge the incomplete work into main, or dispatch
 GitHub Actions. Public promotion needs explicit user authorization. This branch
 is an incomplete handoff, not a release. No completed world pack or measured
 compressed size is claimed.
 
 ## Checkout
 
-Repository: `https://github.com/chronoscope-app/chronoscope-next.git`
+Repository: `https://github.com/TimeScope/timescope-dev.git`
 
 Branch: `feat/bundled-balanced-terrain`
 
@@ -39,7 +39,7 @@ git worktree add -b codex/clawcomp-balanced-terrain ../chronoscope-balanced-claw
 
 Choose another new worktree/branch name if either already exists; do not reset or
 overwrite another task. A fresh clone can use `git clone --branch
-feat/bundled-balanced-terrain https://github.com/chronoscope-app/chronoscope-next.git`.
+feat/bundled-balanced-terrain https://github.com/TimeScope/timescope-dev.git`.
 
 ## Implemented
 

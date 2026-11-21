@@ -14,9 +14,9 @@ afterimages under pressure. Recovery requires 45 seconds of healthy headroom per
 step. There is no new tuning control; existing render-budget choices remain upper
 bounds, and original records, query scope, selection and saved settings persist.
 
-Use `chronoscope_system_resources` (CLI `chronoscope call system_resources`) for
+Use `chronoscope_system_resources` (CLI `timescope call system_resources`) for
 cached OS memory bytes and sample age. This is not a process or GPU-allocation
-measurement. Attached `view_status` / `chronoscope --attach view status` exposes
+measurement. Attached `view_status` / `timescope --attach view status` exposes
 `diagnostics.resourceGovernor`: current profile, reason, effective caps, memory
 sample age and transition count. Renderer strings are hints and may be masked;
 measured work remains an independent throttling signal. See
@@ -24,9 +24,9 @@ measured work remains an independent throttling signal. See
 
 ## Height selection and map reset
 
-Use `chronoscope_view_set` with `mode:"globe", globe_altitude:true` for physical altitude, or `globe_time:true` and optional `globe_time_scale` for timestamp elevation. Each selection turns the other off; both false gives ground placement. Altitude leaves the Time Height slider visible but disabled and retains its scale. The CLI equivalents are `chronoscope --attach view height altitude`, `view height time --scale 2`, and `view height ground`.
+Use `chronoscope_view_set` with `mode:"globe", globe_altitude:true` for physical altitude, or `globe_time:true` and optional `globe_time_scale` for timestamp elevation. Each selection turns the other off; both false gives ground placement. Altitude leaves the Time Height slider visible but disabled and retains its scale. The CLI equivalents are `timescope --attach view height altitude`, `view height time --scale 2`, and `view height ground`.
 
-`chronoscope_view_reset` requires `{"confirm":true}` and recreates map graphics while preserving Events, filters, selection, camera and saved workspace. The CLI equivalent is `chronoscope --attach view reset --confirm`. Missing/false confirmation is rejected, and no graphical modal appears after explicit API confirmation. Success returns `reset:true` and live status; failed recovery returns an error. Reloads may contact configured imagery providers. After a timeout inspect `view_status` before retrying; reset is intentionally excluded from saved recipes and atomic batches.
+`chronoscope_view_reset` requires `{"confirm":true}` and recreates map graphics while preserving Events, filters, selection, camera and saved workspace. The CLI equivalent is `timescope --attach view reset --confirm`. Missing/false confirmation is rejected, and no graphical modal appears after explicit API confirmation. Success returns `reset:true` and live status; failed recovery returns an error. Reloads may contact configured imagery providers. After a timeout inspect `view_status` before retrying; reset is intentionally excluded from saved recipes and atomic batches.
 
 Altitude units/references, inspection fields, example demos and import/export contracts are described in the [CLI/MCP guide](CLI-MCP.md#globe-height-selection-and-altitude-0161). The tools/list contracts and generated frontend types share the Rust registry. Reconnect an existing MCP client after updating the executable to refresh its tool list.
 
@@ -39,9 +39,9 @@ looks up. All step fields default to zero. Movement is immediate and stops at
 the resulting pose. Use `{"action":"flight_mode","enabled":false}` to exit at
 that pose. Inspect `diagnostics.flightActive` in `view_status`.
 
-The corresponding CLI commands are `chronoscope --attach view flight on`,
-`chronoscope --attach view flight-step --forward 100 --right -20 --up 10 --yaw 15`
-and `chronoscope --attach view flight off`.
+The corresponding CLI commands are `timescope --attach view flight on`,
+`timescope --attach view flight-step --forward 100 --right -20 --up 10 --yaw 15`
+and `timescope --attach view flight off`.
 
 ## Performance traces
 
@@ -126,7 +126,7 @@ MCP Apps-capable clients can render `query` and `chart_data` using the static
 `io.modelcontextprotocol/ui` with that MIME type during initialization; other
 clients retain existing structured-data results without UI metadata. The viewer
 sorts/searches the returned page, displays a bar-chart preview, and links row/mark
-selection to real Chronoscope Events with workspace and revision guards. Other
+selection to real TimeScope Events with workspace and revision guards. Other
 chart kinds remain available as exact interactive tables.
 
 The UI displays at most 1,000 rows/32 columns and previews 200 bar marks, with limits
@@ -141,7 +141,7 @@ and subscriptions for the server's negotiated 2025-era MCP protocol versions.
 
 Playback Fade is an integer slider shared by UI, MCP and CLI: configure
 `view_playback` with `fade_amount:0..100`, or run
-`chronoscope --attach view fade 75`. Higher values retain less visible history
+`timescope --attach view fade 75`. Higher values retain less visible history
 and shorten departing marker/track/stem afterimages. Maximum keeps roughly three
 recent time slices while preserving simultaneous entities. Status returns
 `fade_amount` and the compatible boolean `fade`; `view_set.playback_fade_amount`

@@ -14,7 +14,7 @@ const markdown = (text) =>
     .replace(/<p>/g, "")
     .replace(/<\/p>/g, "\n\n")
     .replace(/<[^>]*>/g, "");
-let out = `# Chronoscope ${JSON.parse(fs.readFileSync(new URL("../package.json", import.meta.url), "utf8")).version} user guide\n\nThe same guide is available offline from **Help → Full user guide** in the app.\n\n`;
+let out = `# TimeScope ${JSON.parse(fs.readFileSync(new URL("../package.json", import.meta.url), "utf8")).version} user guide\n\nThe same guide is available offline from **Help → Full user guide** in the app.\n\n`;
 for (const [title, body] of guide)
   out += "## " + title + "\n\n" + markdown(body);
 out +=

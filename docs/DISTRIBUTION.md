@@ -1,6 +1,6 @@
 # Distribution payload and release gates
 
-Chronoscope's first-party license does not relicense bundled libraries, data,
+TimeScope's first-party license does not relicense bundled libraries, data,
 fonts, maps or media. Read [the root exceptions index](../THIRD_PARTY.md),
 [data attribution](DATA-ATTRIBUTION.md), [asset notices](../assets/NOTICE.md)
 and the upstream texts in [assets/licenses](../assets/licenses). Preserve their

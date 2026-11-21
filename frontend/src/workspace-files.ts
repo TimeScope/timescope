@@ -2,6 +2,7 @@ import { call, chooseFile } from "./bridge";
 import { inspectInput, confirmLargeInputs } from "./file-preflight";
 import { runInputJob } from "./input-job";
 import type { EngineContracts } from "./contracts";
+import { isWorkspacePath, workspaceExtensions } from "./workspace-format";
 
 type OpenResult = Exclude<EngineContracts["open"]["result"], { dry_run: true }>;
 interface Host {
@@ -37,10 +38,10 @@ export class WorkspaceFiles {
       title: "Open workspace or data",
       filters: [
         {
-          name: "Chronoscope workspaces and data",
-          extensions: [...new Set(["chronoscope", ...tabular, ...gis])],
+          name: "TimeScope workspaces and data",
+          extensions: [...new Set([...workspaceExtensions, ...tabular, ...gis])],
         },
-        { name: "Chronoscope workspaces", extensions: ["chronoscope", "json"] },
+        { name: "TimeScope workspaces", extensions: [...workspaceExtensions, "json"] },
         { name: "CSV and Excel", extensions: tabular },
         { name: "GIS data and 3D assets", extensions: gis },
         { name: "All files", extensions: ["*"] },
@@ -62,8 +63,7 @@ export class WorkspaceFiles {
           runInputJob("file_probe", { path }, "Identifying file…"),
         )
       : null;
-    const workspace =
-      extension === "chronoscope" || probe?.kind === "workspace";
+    const workspace = isWorkspacePath(path) || probe?.kind === "workspace";
     await this.host.settle();
     if (
       !(await this.host.guard(

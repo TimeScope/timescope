@@ -1,6 +1,6 @@
 # GIS library notices
 
-Chronoscope 0.5.1 uses `mgrs-convert` 0.1.0 for UTM/UPS/MGRS (MIT option; https://github.com/hey-jj/mgrs-convert) and `geographiclib-rs` 0.2.7 for ellipsoidal geodesics (MIT; https://github.com/georust/geographiclib-rs). Both are separately implemented open-source libraries. Independent test oracles and data provenance are recorded in GIS-ACCURACY.md.
+TimeScope 0.5.1 uses `mgrs-convert` 0.1.0 for UTM/UPS/MGRS (MIT option; https://github.com/hey-jj/mgrs-convert) and `geographiclib-rs` 0.2.7 for ellipsoidal geodesics (MIT; https://github.com/georust/geographiclib-rs). Both are separately implemented open-source libraries. Independent test oracles and data provenance are recorded in GIS-ACCURACY.md.
 
 ## mgrs-convert
 
