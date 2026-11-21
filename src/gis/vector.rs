@@ -808,7 +808,7 @@ fn geopackage(
     let mut snapshot = tempfile::NamedTempFile::new().map_err(|e| e.to_string())?;
     snapshot.write_all(source).map_err(|e| e.to_string())?;
     snapshot.flush().map_err(|e| e.to_string())?;
-    let conn = rusqlite::Connection::open_with_flags(
+    let mut conn = rusqlite::Connection::open_with_flags(
         snapshot.path(),
         rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY | rusqlite::OpenFlags::SQLITE_OPEN_NO_MUTEX,
     )
@@ -835,7 +835,8 @@ fn geopackage(
             start.elapsed() > std::time::Duration::from_secs(30)
                 || crate::operation::check().is_err()
         }),
-    );
+    )
+    .map_err(|e| e.to_string())?;
     let app_id: i64 = conn
         .query_row("PRAGMA application_id", [], |r| r.get(0))
         .map_err(|e| e.to_string())?;

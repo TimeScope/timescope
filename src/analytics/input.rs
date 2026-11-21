@@ -208,7 +208,7 @@ impl Input {
     }
     pub fn rows(&self, sql: &str, args: Vec<Sql>, limit: usize) -> Result<Vec<Value>, String> {
         let mut q = self.c().prepare(sql).map_err(|e| e.to_string())?;
-        let names: Vec<_> = q.column_names().into_iter().map(str::to_owned).collect();
+        let names: Vec<_> = q.column_names().map(str::to_owned).collect();
         let mut rows = q.query(params_from_iter(args)).map_err(|e| e.to_string())?;
         let mut out = vec![];
         while let Some(row) = rows.next().map_err(|e| e.to_string())? {

@@ -10,6 +10,7 @@ TimeScope is experimental. Source versions and downloadable builds can differ; [
 - Add Globe flight and track spectating in Globe and Time. Follow an entity, change direction, or stop through the attached CLI or MCP.
 - Keep the compass and direction labels readable while spectating. Manual orbit remains disabled until spectating stops.
 - Wait for the desktop view to initialize before accepting attached CLI and MCP connections. Complete pending camera saves before acknowledging navigation.
+- Update bundled SQLite and the MCP SDK to versions that address newly reported security advisories.
 
 ## 0.16.16 — experimental preview, 2026-11-04
 

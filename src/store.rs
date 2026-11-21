@@ -231,13 +231,15 @@ pub(crate) struct AnalyticsRead {
 impl DataStore {
     pub(crate) fn analytics_read(&self) -> Result<AnalyticsRead, String> {
         self.connection.execute("INSERT OR IGNORE INTO meta VALUES('analytics_generation',lower(hex(randomblob(16))))",[]).map_err(err)?;
-        let c = Connection::open_with_flags(&self.path, rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY)
-            .map_err(err)?;
-        Self::register_functions(&c)?;
+        let mut c =
+            Connection::open_with_flags(&self.path, rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY)
+                .map_err(err)?;
+        Self::register_functions(&mut c)?;
         c.execute_batch("PRAGMA trusted_schema=OFF; PRAGMA temp_store=FILE; PRAGMA cache_size=-8192; PRAGMA temp.cache_size=-8192; PRAGMA temp.max_page_count=65536; PRAGMA busy_timeout=2000; BEGIN;").map_err(err)?;
         c.query_row("SELECT count(*) FROM meta", [], |r| r.get::<_, u64>(0))
             .map_err(err)?;
-        c.progress_handler(10000, Some(crate::operation::cancelled));
+        c.progress_handler(10000, Some(crate::operation::cancelled))
+            .map_err(err)?;
         Ok(AnalyticsRead {
             connection: c,
             _directory: self._directory.clone(),
@@ -259,8 +261,8 @@ impl DataStore {
             .map_err(err)?;
         lease.lock().map_err(err)?;
         let path = dir.path().join("events.sqlite");
-        let connection = Connection::open(&path).map_err(err)?;
-        Self::configure(&connection)?;
+        let mut connection = Connection::open(&path).map_err(err)?;
+        Self::configure(&mut connection)?;
         connection.execute_batch(SCHEMA).map_err(err)?;
         connection
             .pragma_update(None, "application_id", APPLICATION_ID)
@@ -311,7 +313,7 @@ impl DataStore {
         .map_err(err)?;
         Ok(())
     }
-    fn register_functions(c: &Connection) -> Result<(), String> {
+    fn register_functions(c: &mut Connection) -> Result<(), String> {
         Self::harden(c)?;
         display::register(c)?;
         c.create_scalar_function(
@@ -366,7 +368,8 @@ impl DataStore {
             },
         )
         .map_err(err)?;
-        c.progress_handler(10000, Some(crate::operation::cancelled));
+        c.progress_handler(10000, Some(crate::operation::cancelled))
+            .map_err(err)?;
         c.create_scalar_function(
             "utc_time",
             1,
@@ -410,7 +413,7 @@ impl DataStore {
         .map_err(err)?;
         Ok(())
     }
-    fn configure(c: &Connection) -> Result<(), String> {
+    fn configure(c: &mut Connection) -> Result<(), String> {
         Self::register_functions(c)?;
         let page_size: u64 = c
             .pragma_query_value(None, "page_size", |r| r.get(0))
@@ -452,10 +455,13 @@ impl DataStore {
         if std::fs::metadata(path).map_err(err)?.len() > 32 * 1024 * 1024 * 1024 {
             return Err("Database exceeds 32 GiB workspace budget".into());
         }
-        let source = Connection::open_with_flags(path, rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY)
-            .map_err(err)?;
+        let mut source =
+            Connection::open_with_flags(path, rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY)
+                .map_err(err)?;
         Self::harden(&source)?;
-        source.progress_handler(10000, Some(crate::operation::cancelled));
+        source
+            .progress_handler(10000, Some(crate::operation::cancelled))
+            .map_err(err)?;
         source
             .pragma_update(None, "trusted_schema", false)
             .map_err(err)?;
@@ -525,10 +531,14 @@ impl DataStore {
         drop(store.connection);
         std::fs::remove_file(&store.path).map_err(err)?;
         source
-            .backup(rusqlite::MAIN_DB, &store.path, None)
+            .backup(
+                rusqlite::MAIN_DB,
+                &store.path,
+                rusqlite::backup::NO_PROGRESS,
+            )
             .map_err(err)?;
         profile.lap("prepare_and_backup");
-        let connection = Connection::open(&store.path).map_err(err)?;
+        let mut connection = Connection::open(&store.path).map_err(err)?;
         if version == 1 {
             connection
                 .execute_batch(
@@ -556,7 +566,7 @@ impl DataStore {
         if validation::index_definitions(&connection)? != expected_indexes {
             return Err("Workspace index definitions do not match the supported schema".into());
         }
-        Self::configure(&connection)?;
+        Self::configure(&mut connection)?;
         connection
             .execute_batch("CREATE TEMP TABLE selection(id TEXT PRIMARY KEY)")
             .map_err(err)?;
@@ -1859,7 +1869,9 @@ impl DataStore {
             .unwrap_or(Path::new("."));
         let tmp = tempfile::NamedTempFile::new_in(parent).map_err(err)?;
         let mut destination = Connection::open(tmp.path()).map_err(err)?;
-        destination.progress_handler(1000, Some(crate::operation::cancelled));
+        destination
+            .progress_handler(1000, Some(crate::operation::cancelled))
+            .map_err(err)?;
         crate::persistence::backup(&self.connection, &mut destination)?;
         let mut portable = metadata.clone();
         portable.resources_external = false;

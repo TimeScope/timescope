@@ -51,8 +51,9 @@ impl Accumulator {
             .prefix("aggregate-")
             .tempdir_in(dir)
             .map_err(error)?;
-        let db = Connection::open(directory.path().join("groups.sqlite")).map_err(error)?;
-        db.progress_handler(10000, Some(crate::operation::cancelled));
+        let mut db = Connection::open(directory.path().join("groups.sqlite")).map_err(error)?;
+        db.progress_handler(10000, Some(crate::operation::cancelled))
+            .map_err(error)?;
         db.execute_batch("PRAGMA journal_mode=OFF; PRAGMA synchronous=OFF; PRAGMA cache_size=-8192; PRAGMA max_page_count=8388608;
         CREATE TABLE groups(g INTEGER PRIMARY KEY,bucket INTEGER,entity TEXT,category TEXT,source TEXT,x INTEGER,y INTEGER,z INTEGER,lat REAL,lon REAL,payload TEXT,n INTEGER,first INTEGER,last INTEGER,last_row INTEGER,numeric_count INTEGER,mean REAL);
         CREATE INDEX neighbours ON groups(bucket,entity,category,source,x,y,z);
