@@ -39,6 +39,7 @@
       "view-snapshot-test.mjs",
       "resource-governor-test.mjs",
       "resident-track-test.mjs",
+      "resident-preparation-test.mjs",
       "file-drop-test.mjs",
       "radius-center-test.mjs",
       "table-column-widths-test.mjs",

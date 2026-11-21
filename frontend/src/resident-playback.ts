@@ -239,7 +239,10 @@ export class ResidentPlayback {
       // The line material was created at seal(), after the first discarded window.
       this.setWindow(this.epoch + this.span, this.epoch - this.span);
     }
-    const limit = performance.now() + 30000;
+    // This optional optimization also runs before attached Play replies. Leave
+    // room inside the desktop's 15-second deadline for standard playback when
+    // an occluded/hidden WebView or stalled GPU never uploads the primitives.
+    const limit = performance.now() + 5000;
     const ready = () => this.primitives.every(p => p.ready) && (!this.lines || this.lines.ready);
     const warmStarted = performance.now();
     // One bounded upload at a time. Waking the view keeps the idle frame-rate
