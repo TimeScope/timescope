@@ -3327,6 +3327,7 @@ export class SpaceTimeView {
     entity: string,
     points: readonly TrackPoint[],
     window: { start: number; end: number; speed: number; increment: number },
+    interactive = true,
   ) {
     if (this.mode === "map" || !this.viewer || this.recovering || this.disposed)
       throw Error("Spectate requires Globe or Time view");
@@ -3346,8 +3347,15 @@ export class SpaceTimeView {
       pitch: -25,
     };
     this.placeSpectateCamera();
-    this.focusFlight();
+    if (interactive) this.focusFlight();
     this.onFlightChange();
+  }
+  setSpectateDirection(direction: "forward" | "reverse") {
+    if (!this.spectate)
+      throw Error("INVALID_ARGUMENT: start spectating an entity before changing direction");
+    this.updateSpectate(performance.now());
+    this.spectate.direction = direction === "forward" ? 1 : -1;
+    this.placeSpectateCamera();
   }
   updateSpectateRate(speed?: number, increment?: number) {
     const clock = this.spectate?.clock;
@@ -3438,9 +3446,7 @@ export class SpaceTimeView {
     if (this.spectate && (horizontal || sprint)) {
       event.preventDefault();
       if (!event.repeat && (key === "KeyW" || key === "KeyS")) {
-        this.updateSpectate(performance.now());
-        this.spectate.direction = key === "KeyW" ? 1 : -1;
-        this.placeSpectateCamera();
+        this.setSpectateDirection(key === "KeyW" ? "forward" : "reverse");
       }
       return true;
     }
@@ -4314,6 +4320,9 @@ export class SpaceTimeView {
       timeAxisAnchor: this.timeAxisAnchor,
       flightActive: this.flightActive,
       spectatingEntity: this.spectatingEntity ?? null,
+      spectatingDirection: this.spectate
+        ? (this.spectate.direction === 1 ? "forward" : "reverse")
+        : null,
       requestRenderMode: this.scene.requestRenderMode,
       performance: {
         updateRateLimitHz: this.viewer.targetFrameRate ?? null,

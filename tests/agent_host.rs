@@ -280,6 +280,78 @@ fn attached_errors_keep_exit_codes_and_legacy_descriptors_fail_clearly() {
 }
 
 #[test]
+fn attached_timescope_cli_and_mcp_route_spectate_actions_to_the_desktop() {
+    let data = tempfile::tempdir().unwrap();
+    let engine = engine(data.path());
+    let weak = Arc::downgrade(&engine);
+    engine
+        .set_observer(Arc::new(move |event| {
+            if event["kind"] == "view_navigate" {
+                weak.upgrade()
+                    .unwrap()
+                    .invoke(
+                        "view_response",
+                        json!({
+                            "request_id": event["request_id"],
+                            "result": {
+                                "revision":1, "renderer":"cesium", "backend":"WebGL2",
+                                "webgpu_api_available":false, "hardware_acceleration":"unknown",
+                                "mode":"globe", "scene":{"mode":"globe"},
+                                "viewport":{"width":1280,"height":800},
+                                "loading":{"imagery":false,"effects":false,"gis":0},
+                                "gis_layers":[], "diagnostics":{"received":event["arguments"]}
+                            }
+                        }),
+                    )
+                    .unwrap();
+            }
+        }))
+        .unwrap();
+    let running = agent::start(engine.clone(), data.path()).unwrap();
+    for (arguments, received) in [
+        (
+            vec!["spectate", "Survey vessel"],
+            json!({"action":"spectate","entity":"Survey vessel"}),
+        ),
+        (
+            vec!["spectate-direction", "reverse"],
+            json!({"action":"spectate_direction","direction":"reverse"}),
+        ),
+        (vec!["spectate-stop"], json!({"action":"spectate_stop"})),
+    ] {
+        let output = Command::new(env!("CARGO_BIN_EXE_timescope"))
+            .args(["--json", "--connect"])
+            .arg(&running.descriptor)
+            .arg("view")
+            .args(arguments)
+            .output()
+            .unwrap();
+        assert_eq!(success(output)["diagnostics"]["received"], received);
+        let response = agent::request_remote(
+            &running.info,
+            &json!({
+                "jsonrpc":"2.0","id":1,"method":"tools/call",
+                "params":{"name":"chronoscope_view_navigate","arguments":received}
+            }),
+        )
+        .unwrap()
+        .unwrap();
+        assert_eq!(
+            response["result"]["structuredContent"]["diagnostics"]["received"],
+            received
+        );
+    }
+    for invalid in [
+        json!({"action":"spectate"}),
+        json!({"action":"spectate_direction","direction":"up"}),
+        json!({"action":"spectate_stop","entity":"Survey vessel"}),
+    ] {
+        let error = engine.invoke("view_navigate", invalid).unwrap_err();
+        assert!(error.contains("Invalid arguments"), "{error}");
+    }
+}
+
+#[test]
 fn stdio_proxy_cannot_dispatch_host_management_requests() {
     let data = tempfile::tempdir().unwrap();
     let engine = engine(data.path());

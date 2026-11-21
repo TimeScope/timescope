@@ -21,6 +21,31 @@ await withLocalApp("spectate", async ({ page, api, out, pass }) => {
   await page.locator('[data-view="map"]').click();
   await page.evaluate(() => window.__chronoscope.viewModeIdle());
 
+  const navigate = (args) => page.evaluate((args) =>
+    window.__chronoscope.liveViewRequest("view_navigate", args), args);
+  await assert.rejects(navigate({ action: "spectate", entity: "Single" }), /at least two located events/);
+  const attached = await navigate({ action: "spectate", entity: "Survey" });
+  assert.equal(attached.mode, "globe");
+  assert.equal(attached.diagnostics.spectatingEntity, "Survey");
+  assert.equal(attached.diagnostics.spectatingDirection, "forward");
+  assert.equal((await navigate({ action: "spectate_direction", direction: "reverse" }))
+    .diagnostics.spectatingDirection, "reverse");
+  const stopped = await navigate({ action: "spectate_stop" });
+  assert.equal(stopped.diagnostics.spectatingEntity, null);
+  assert.equal(stopped.diagnostics.flightActive, false);
+  await assert.rejects(navigate({ action: "spectate_direction", direction: "forward" }), /start spectating/);
+  pass("Attached navigation starts spectating from Map, reports the entity and direction, and stops");
+
+  const freeFlight = await navigate({ action: "flight_mode", enabled: true });
+  assert.equal(freeFlight.diagnostics.flightActive, true);
+  assert.equal((await navigate({ action: "spectate_stop" })).diagnostics.flightActive, true);
+  const step = await navigate({ action: "flight_step", forward_m: 50, yaw_degrees: 10 });
+  assert.notDeepEqual(step.scene.cesium_camera, freeFlight.scene.cesium_camera);
+  assert.equal((await navigate({ action: "flight_mode", enabled: false })).diagnostics.flightActive, false);
+  await page.locator('[data-view="map"]').click();
+  await page.evaluate(() => window.__chronoscope.viewModeIdle());
+  pass("Attached free-flight controls move the camera independently of track spectating");
+
   const row = (entity) => page.locator("#entities .entity").filter({ has: page.getByText(entity, { exact: true }) });
   const menuItem = (name) => page.getByRole("menuitem", { name, exact: true });
   await row("Single").click({ button: "right" });

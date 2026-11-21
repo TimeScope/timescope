@@ -48,6 +48,26 @@ Use `view_set` to choose space-time/map/globe before navigating. Geographic look
 
 These live tools require a responsive attached GUI; headless engines return UNAVAILABLE. Navigation is outside data undo/atomic batches and accepts no dry-run/idempotency/revision controls. After timeout/cancellation inspect live status before repeating relative zoom. PNG capture uses MCP image content; the dedicated CLI command saves it atomically and requires `--overwrite` to replace an existing file. Generic `call --output` still means saving a workspace, not saving a screenshot.
 
+### Track spectating
+
+```sh
+timescope --attach view spectate "Survey vessel"
+timescope --attach view spectate-direction reverse
+timescope --attach view status
+timescope --attach view spectate-stop
+```
+
+For MCP, call `chronoscope_view_navigate` with
+`{"action":"spectate","entity":"Survey vessel"}`,
+`{"action":"spectate_direction","direction":"reverse"}`, or
+`{"action":"spectate_stop"}`. The direction can be `forward` or `reverse`.
+Spectating follows the exact entity name within the selected time window in
+Globe or Time. Starting in Map switches to Globe. Configure the rate with
+`chronoscope_view_playback` or `timescope --attach call view_playback` using
+`{"action":"configure","speed":0.5,"increment_seconds":60}`.
+Check `diagnostics.spectatingEntity` and `diagnostics.spectatingDirection`
+in `chronoscope_view_status`.
+
 ### Whole-app screenshots
 
 `chronoscope_view_capture {}` now captures the **whole visible main app content**, including the map, sidebars, Charts, attribute table, timeline, docked SI chat and any visible app dialog. `{"target":"map"}` retains the previous attributed canvas-only export. `{"window":"si-chat"}` captures the open detached SI chat window. The default is `{"target":"app","window":"main"}`; map capture is valid only for the main window. Returned metadata identifies `target` and `window`; MCP returns the PNG as image content without duplicating base64 in structured metadata.

@@ -150,32 +150,24 @@ await withLocalApp("flight-pan", async ({ page, api, out, pass }) => {
   );
   await page.evaluate(() => window.__chronoscope.view.fit());
   await page.waitForTimeout(250);
-  const handle = await page.evaluate(() => {
-    const v = window.__chronoscope.view;
-    for (let i = 0; i < v.handles.length; i++) {
-      const h = v.handles.get(i),
-        p = v.project(h.position);
-      if (p && p.x > 0 && p.y > 0) return { ...p, bearing: v.bearing() };
-    }
-    throw Error("No navigation handle");
-  });
-  rect = await canvas.boundingBox();
-  const before = await page.evaluate(() => window.__panChecks.picks);
-  await page.mouse.move(rect.x + handle.x, rect.y + handle.y);
+  const compass = await page.locator(".navigation-compass").boundingBox();
+  assert(compass);
+  const x = compass.x + compass.width / 2, y = compass.y + compass.height / 2;
+  const before = await page.evaluate(() => ({
+    picks: window.__panChecks.picks,
+    bearing: window.__chronoscope.view.bearing(),
+  }));
+  await page.mouse.move(x, y);
   await page.mouse.down();
-  await page.mouse.move(rect.x + handle.x + 45, rect.y + handle.y + 15, {
-    steps: 6,
-  });
+  await page.mouse.move(x + 45, y + 15, { steps: 6 });
   await page.mouse.up();
   const after = await page.evaluate(() => ({
     picks: window.__panChecks.picks,
     bearing: window.__chronoscope.view.bearing(),
   }));
-  assert.equal(after.picks, before);
-  assert(Math.abs(after.bearing - handle.bearing) > 1);
-  pass(
-    "Time navigation handles use their screen-space hit test and still orbit without a GPU scene pick",
-  );
+  assert.equal(after.picks, before.picks);
+  assert(Math.abs(((after.bearing - before.bearing + 540) % 360) - 180) > 1);
+  pass("The Time compass orbits without a GPU scene pick");
   // A real memory limit still frees the resident representation and caps drawing.
   await page.route("**/api/invoke", async (route) => {
     const request = route.request().postDataJSON();

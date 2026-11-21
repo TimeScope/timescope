@@ -7,6 +7,7 @@ interface ViewHost {
   snapshot: () => Snapshot;
   mode: () => string;
   captureScene: () => Scene;
+  settleCameraSave?: () => Promise<void>;
   syncScene: (
     scene: Scene,
     expectedRevision?: number,
@@ -15,6 +16,8 @@ interface ViewHost {
     Exclude<EngineContracts["scene_sync"]["result"], { dry_run: true }>
   >;
   fitGisLayer: (id: string) => Promise<void>;
+  spectateEntity: (entity: string) => Promise<boolean>;
+  stopSpectating: () => void;
 }
 /** One native live-view adapter, shared by CLI/MCP requests and browser QA. */
 export function createAgentView(host: ViewHost) {
@@ -65,6 +68,13 @@ export function createAgentView(host: ViewHost) {
           args.yaw_degrees,
           args.pitch_degrees,
         );
+      } else if (args.action === "spectate") {
+        if (!(await host.spectateEntity(args.entity)))
+          throw Error("CONFLICT: workspace, view, or track request changed before spectating");
+      } else if (args.action === "spectate_direction") {
+        view.setSpectateDirection(args.direction);
+      } else if (args.action === "spectate_stop") {
+        host.stopSpectating();
       } else if (args.action === "fit") {
         if (args.whole_globe && host.mode() !== "globe")
           throw Error("Whole-globe fit requires Globe mode");
@@ -93,6 +103,8 @@ export function createAgentView(host: ViewHost) {
       } else throw Error("Unsupported navigation action");
       view.requestRender();
       view.viewer.render();
+      // Drain an older native camera write before choosing the revision for this pose.
+      await host.settleCameraSave?.();
       // Publish the completed camera immediately instead of relying on the idle timer.
       const scene = host.captureScene();
       const synced = await host.syncScene(

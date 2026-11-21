@@ -492,7 +492,7 @@ spectateStatus.id = "spectate-status";
 spectateStatus.type = "button";
 spectateStatus.hidden = true;
 spectateStatus.title = "Stop spectating · Esc";
-spectateStatus.onclick = () => view.setGlobeFlight(false);
+spectateStatus.onclick = stopSpectating;
 $("#scene").append(navigationHost, spectateStatus);
 const navigation = new NavigationSphere(navigationHost, view, () => {
   return fitEvents().catch((error) => toast(String(error), true));
@@ -781,6 +781,7 @@ let viewportDataGeneration = 0;
 let refreshWork: Promise<unknown> = Promise.resolve();
 let cameraSaveWork: Promise<unknown> = Promise.resolve();
 let flushSceneSync: () => Promise<unknown> = async () => {};
+let settleCameraSave = async () => {};
 let snapshotRequestSerial = 0;
 function snapshotIntent(lane: SnapshotRequestIntent["lane"], refreshGeneration: number, viewportGeneration: number, scoped = false): SnapshotRequestIntent {
   return Object.freeze({ ui_request_id: String(++snapshotRequestSerial), lane,
@@ -1358,7 +1359,11 @@ function showLayerMenu(layer: HTMLElement, x: number, y: number) {
   });
   layerMenu.querySelector<HTMLButtonElement>("button:not(:disabled)")?.focus();
 }
-async function spectateEntity(entity: string) {
+function stopSpectating() {
+  spectateRequest++;
+  if (view.spectatingEntity !== undefined) view.setGlobeFlight(false);
+}
+async function spectateEntity(entity: string, interactive = false) {
   const request = ++spectateRequest;
   const workspace = snapshot.workspace_id;
   const data = currentDataIdentity;
@@ -1381,7 +1386,7 @@ async function spectateEntity(entity: string) {
       cursor,
     });
     if (!current() || initialModeGeneration !== viewModeGeneration ||
-        (page.workspace_id && page.workspace_id !== workspace)) return;
+        (page.workspace_id && page.workspace_id !== workspace)) return false;
     for (const row of page.events) {
       if (
         row.entity !== entity ||
@@ -1394,39 +1399,34 @@ async function spectateEntity(entity: string) {
     }
     cursor = page.next_cursor ?? undefined;
   } while (cursor);
-  if (points[0]?.time === points.at(-1)?.time) {
-    toast("Spectate needs at least two located events at different times.");
-    return;
-  }
+  if (points[0]?.time === points.at(-1)?.time)
+    throw Error("INVALID_ARGUMENT: Spectate needs at least two located events at different times.");
   if (playTimer !== undefined || playbackPreparing) await togglePlayback();
   await filterIntent.flush();
   await view.resources.prepareAltitude(points);
-  if (!current() || initialModeGeneration !== viewModeGeneration) return;
+  if (!current() || initialModeGeneration !== viewModeGeneration) return false;
   const useAltitude = mode === "space-time" ? view.timeAltitude : view.globeAltitude;
   const eligible = useAltitude
     ? points.filter((point) => view.resources.altitudeHeight(point) !== null)
     : points;
   const track = eligible.filter((point, i) => point.time !== eligible[i - 1]?.time);
-  if (track.length < 2) {
-    toast("Spectate in Altitude mode needs two events with usable heights at different times.");
-    return;
-  }
+  if (track.length < 2)
+    throw Error("INVALID_ARGUMENT: Spectate in Altitude mode needs two events with usable heights at different times.");
   const start = Math.max(track[0].time, snapshot.filter.start ?? -Infinity);
   const end = Math.min(track.at(-1)!.time, snapshot.filter.end ?? Infinity);
-  if (start >= end) {
-    toast("This entity has no track to follow in the selected time window.");
-    return;
-  }
+  if (start >= end)
+    throw Error("INVALID_ARGUMENT: This entity has no track to follow in the selected time window.");
   if (mode === "map") $('button[data-view="globe"]').click();
   const spectateModeGeneration = viewModeGeneration;
   await viewModeWork;
   if (
-    current() && spectateModeGeneration === viewModeGeneration &&
-    view.mode !== "map" && view.physicalAltitude === useAltitude
-  )
-    view.startSpectating(entity, track, {
-      start, end, speed: playbackSpeed.value, increment: playbackIncrement.value,
-    });
+    !current() || spectateModeGeneration !== viewModeGeneration ||
+    view.mode === "map" || view.physicalAltitude !== useAltitude
+  ) return false;
+  view.startSpectating(entity, track, {
+    start, end, speed: playbackSpeed.value, increment: playbackIncrement.value,
+  }, interactive);
+  return true;
 }
 function openEntityMenu(row: HTMLElement, x: number, y: number) {
   const trigger = row.querySelector<HTMLButtonElement>("[data-select-entity]")!;
@@ -1448,10 +1448,12 @@ function openEntityMenu(row: HTMLElement, x: number, y: number) {
   button.addEventListener("click", () => {
     closeLayerMenu();
     if (active) {
-      view.setGlobeFlight(false);
+      stopSpectating();
       trigger.focus();
     } else {
-      void spectateEntity(entity).catch((error) => toast(String(error), true));
+      void spectateEntity(entity, true).catch((error) =>
+        toast(error instanceof Error ? error.message.replace(/^INVALID_ARGUMENT: /, "") : String(error), true),
+      );
     }
   });
   menu.addEventListener("keydown", (event) => {
@@ -4491,7 +4493,10 @@ const liveViewRequest = createAgentView({
   mode: () => mode,
   captureScene,
   syncScene,
+  settleCameraSave: () => settleCameraSave(),
   fitGisLayer,
+  spectateEntity,
+  stopSpectating,
 });
 
 const agentLab = createAgentLab({
@@ -4604,6 +4609,11 @@ async function initialize() {
       return work;
     };
     flushSceneSync = runSceneSync;
+    settleCameraSave = async () => {
+      cancelSceneSync();
+      await cameraSaveWork;
+      cancelSceneSync();
+    };
     view.onSceneChange = () => {
       if (restoringScene) return;
       cancelSceneSync(); sceneSyncPending = true;

@@ -73,7 +73,9 @@ impl Engine {
                     "tilt_degrees",
                 ],
                 "zoom" => &["action", "factor"],
-                "north_up" => &["action"],
+                "north_up" | "spectate_stop" => &["action"],
+                "spectate" => &["action", "entity"],
+                "spectate_direction" => &["action", "direction"],
                 "flight_mode" => &["action", "enabled"],
                 "flight_step" => &[
                     "action",
@@ -98,6 +100,8 @@ impl Engine {
                 "look_at" => &["center", "distance_m"],
                 "zoom" => &["factor"],
                 "flight_mode" => &["enabled"],
+                "spectate" => &["entity"],
+                "spectate_direction" => &["direction"],
                 _ => &[],
             };
             if required.iter().any(|key| args.get(*key).is_none()) {

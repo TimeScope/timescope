@@ -542,7 +542,8 @@ pub fn command_schema(command: &str) -> Option<Value> {
             vec!["confirm"],
         ),
         "view_navigate" => (
-            json!({"action":choice(&["fit","fit_layer","look_at","zoom","north_up","flight_mode","flight_step"]),"layer_id":{"type":"string","pattern":"^[0-9a-fA-F]{32}$"},"center":{"type":"array","prefixItems":[{"type":"number","minimum":-180,"maximum":180},{"type":"number","minimum":-90,"maximum":90},{"type":"number","minimum":-12000,"maximum":10000000}],"items":false,"minItems":3,"maxItems":3},"distance_m":{"type":"number","minimum":1,"maximum":100000000},"heading_degrees":{"type":"number","minimum":0,"maximum":360},"tilt_degrees":{"type":"number","minimum":0,"maximum":89},"factor":{"type":"number","minimum":0.05,"maximum":20},"whole_globe":boolean(),"enabled":boolean(),
+            json!({"action":choice(&["fit","fit_layer","look_at","zoom","north_up","flight_mode","flight_step","spectate","spectate_direction","spectate_stop"]),"layer_id":{"type":"string","pattern":"^[0-9a-fA-F]{32}$"},"center":{"type":"array","prefixItems":[{"type":"number","minimum":-180,"maximum":180},{"type":"number","minimum":-90,"maximum":90},{"type":"number","minimum":-12000,"maximum":10000000}],"items":false,"minItems":3,"maxItems":3},"distance_m":{"type":"number","minimum":1,"maximum":100000000},"heading_degrees":{"type":"number","minimum":0,"maximum":360},"tilt_degrees":{"type":"number","minimum":0,"maximum":89},"factor":{"type":"number","minimum":0.05,"maximum":20},"whole_globe":boolean(),"enabled":boolean(),
+                "entity":{"type":"string","maxLength":8192},"direction":choice(&["forward","reverse"]),
                 "forward_m":{"type":"number","minimum":-1000000,"maximum":1000000},
                 "right_m":{"type":"number","minimum":-1000000,"maximum":1000000},
                 "up_m":{"type":"number","minimum":-1000000,"maximum":1000000},
@@ -605,6 +606,9 @@ pub fn command_schema(command: &str) -> Option<Value> {
                 ],
                 &[],
             ),
+            ("spectate", &["entity"], &["entity"]),
+            ("spectate_direction", &["direction"], &["direction"]),
+            ("spectate_stop", &[], &[]),
         ];
         schema["oneOf"] = json!(variants
             .iter()

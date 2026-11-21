@@ -213,6 +213,18 @@ enum ViewCommand {
         #[arg(long, default_value_t = 0.0, allow_negative_numbers = true)]
         pitch: f64,
     },
+    /// Follow an entity in the attached Globe or Time view.
+    Spectate {
+        #[arg(allow_hyphen_values = true)]
+        entity: String,
+    },
+    /// Change the direction of the active spectated track.
+    SpectateDirection {
+        #[arg(value_parser = ["forward", "reverse"])]
+        direction: String,
+    },
+    /// Stop following the active track.
+    SpectateStop,
     /// Save the whole app (default) or map as PNG, without base64 on stdout.
     Capture {
         #[arg(short, long)]
@@ -492,6 +504,17 @@ fn run() -> Result<(), String> {
                 "view_navigate",
                 json!({"action":"flight_step","forward_m":forward,"right_m":right,"up_m":up,"yaw_degrees":yaw,"pitch_degrees":pitch}),
             )?,
+            ViewCommand::Spectate { entity } => invoke(
+                "view_navigate",
+                json!({"action":"spectate","entity":entity}),
+            )?,
+            ViewCommand::SpectateDirection { direction } => invoke(
+                "view_navigate",
+                json!({"action":"spectate_direction","direction":direction}),
+            )?,
+            ViewCommand::SpectateStop => {
+                invoke("view_navigate", json!({"action":"spectate_stop"}))?
+            }
             ViewCommand::Capture {
                 output,
                 overwrite,

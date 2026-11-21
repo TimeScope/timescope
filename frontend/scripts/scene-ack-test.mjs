@@ -119,6 +119,7 @@ function host(editor = editorAt(), call = async () => receipt()) {
     transitionIdle: async () => {},
     cameraSaveWork: Promise.resolve(),
     flushSceneSync: async () => {},
+    settleCameraSave: async () => {},
     clearTimeout() {},
     captureScene: () => ({ mode: "map" }),
     toast: (...value) => toasts.push(value),
@@ -532,4 +533,52 @@ test("actual classic GIS-fit navigation retains original workspace through later
   h.snapshot.workspace_id = "store-a:8"; h.snapshot.revision = 1; const scene = { mode: "globe", marker: "new-document" }; h.snapshot.scene = scene;
   gate.resolve(); await assert.rejects(request, /CONFLICT: workspace changed before scene synchronization/);
   assert.equal(writes, 1); assert.equal(h.snapshot.revision, 1); assert.equal(h.snapshot.scene, scene);
+});
+
+test("attached spectating waits for the previous camera ACK before fencing the new scene", async () => {
+  const ready = deferred(), release = deferred(), settling = deferred(), revisions = [];
+  const h = host(editorAt(), async (_, args) => {
+    revisions.push(args.expected_revision);
+    if (revisions.length === 1) {
+      ready.resolve();
+      await release.promise;
+    }
+    return receipt(args.expected_revision);
+  });
+  const agent = fs.readFileSync(new URL("../src/agent-view.ts", import.meta.url), "utf8");
+  h.context.navigator = {};
+  h.context.agentHost = {
+    view: {
+      ready: Promise.resolve(),
+      diagnostics: () => ({}),
+      requestRender() {},
+      viewer: { render() {} },
+      gis: { descriptors: [] },
+      host: { clientWidth: 320, clientHeight: 240 },
+      scene: { globe: { show: true, tilesLoaded: true } },
+      displayLayer: { diagnostics: {} },
+    },
+    snapshot: () => h.snapshot,
+    captureScene: () => ({ mode: "globe" }),
+    mode: () => "globe",
+    syncScene: h.context.syncScene,
+    settleCameraSave: () => {
+      settling.resolve();
+      return h.context.settleCameraSave();
+    },
+    spectateEntity: async () => true,
+  };
+  vm.runInContext(transpile(agent).replace("export function", "function"), h.context);
+  vm.runInContext('view.onSceneChange()', h.context);
+  h.timer();
+  await ready.promise;
+  const navigation = vm.runInContext(
+    'createAgentView(agentHost)("view_navigate", {action:"spectate", entity:"Survey"})',
+    h.context,
+  );
+  await settling.promise;
+  assert.deepEqual(revisions, [23]);
+  release.resolve();
+  assert.equal((await navigation).revision, 25);
+  assert.deepEqual(revisions, [23, 24]);
 });
