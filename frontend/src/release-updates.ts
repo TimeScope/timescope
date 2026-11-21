@@ -1,10 +1,9 @@
 import { gt, rcompare, valid } from "semver";
 import type { AppNotification } from "./notifications";
 
-export const releasesPage =
-  "https://github.com/chronoscope-app/chronoscope-public/releases";
+export const releasesPage = "https://github.com/TimeScope/timescope/releases";
 export const releasesApi =
-  "https://api.github.com/repos/chronoscope-app/chronoscope-public/releases?per_page=20";
+  "https://api.github.com/repos/TimeScope/timescope/releases?per_page=20";
 const storageKey = "chronoscope-github-releases-v1";
 const hour = 60 * 60 * 1000;
 const day = 24 * hour;

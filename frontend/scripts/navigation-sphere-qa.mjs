@@ -402,8 +402,14 @@ try {
           orb: read(".navigation-sphere"),
         };
       });
+      const topInset = bounds.scene.height < 600 ? 16 : 32;
       assert(
-        bounds.rail.bottom <= bounds.scene.bottom + 1,
+        Math.abs(bounds.orb.y - bounds.scene.y - topInset) <= 1,
+        JSON.stringify({ size, table, bounds }),
+      );
+      assert(
+        bounds.orb.y >= bounds.scene.y &&
+          bounds.rail.bottom <= bounds.scene.bottom + 1,
         JSON.stringify({ size, table, bounds }),
       );
       assert(
@@ -414,7 +420,7 @@ try {
     }
   }
   check(
-    "Compass and rail fit large/small windows, with and without attribute table",
+    "Compass and rail keep their top inset in large/small windows, with and without attribute table",
   );
   await page.setViewportSize({ width: 1720, height: 1080 });
   if (
@@ -464,14 +470,15 @@ try {
     await page.screenshot({ path: file });
     report.screenshots.push(path.basename(file));
     const scene = await page.locator("#scene").boundingBox();
+    const navigator = await page.locator(".sphere-navigator").boundingBox();
     const closeup = path.join(dir, `sphere-controls-${theme}.png`);
     await page.screenshot({
       path: closeup,
       clip: {
         x: scene.x + scene.width - 410,
-        y: scene.y + 2,
+        y: navigator.y - 8,
         width: 408,
-        height: 490,
+        height: navigator.height + 16,
       },
     });
     report.screenshots.push(path.basename(closeup));

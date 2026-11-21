@@ -108,8 +108,8 @@ class BuildAccelerationTests(unittest.TestCase):
                     with self.subTest(field=field),self.assertRaises(ValueError):verification.seal(root/'sealed',source,contracts)
 
     def test_reuse_rejects_unreviewed_run_before_download(self):
-        run={'head_sha':'wrong','head_branch':'main','event':'workflow_dispatch','path':'.github/workflows/build.yml','status':'completed','head_repository':{'full_name':'chronoscope-app/chronoscope-public'}}
-        with patch.dict(verification.os.environ,{'GITHUB_REPOSITORY':'chronoscope-app/chronoscope-public'}),patch.object(verification,'identity',return_value={'source':'reviewed'}),patch.object(verification,'command',return_value=json.dumps(run)) as command:
+        run={'head_sha':'wrong','head_branch':'main','event':'workflow_dispatch','path':'.github/workflows/build.yml','status':'completed','head_repository':{'full_name':'TimeScope/timescope'}}
+        with patch.dict(verification.os.environ,{'GITHUB_REPOSITORY':'TimeScope/timescope'}),patch.object(verification,'identity',return_value={'source':'reviewed'}),patch.object(verification,'command',return_value=json.dumps(run)) as command:
             with self.assertRaises(ValueError):verification.reuse('123',Path('/unused'))
             self.assertEqual(command.call_count,1)
 

@@ -30,6 +30,19 @@ Use `chronoscope_view_set` with `mode:"globe", globe_altitude:true` for physical
 
 Altitude units/references, inspection fields, example demos and import/export contracts are described in the [CLI/MCP guide](CLI-MCP.md#globe-height-selection-and-altitude-0161). The tools/list contracts and generated frontend types share the Rust registry. Reconnect an existing MCP client after updating the executable to refresh its tool list.
 
+## Globe flight
+
+In Globe, call `chronoscope_view_navigate` with `{"action":"flight_mode","enabled":true}`.
+Then call `{"action":"flight_step","forward_m":100,"right_m":-20,"up_m":10,"yaw_degrees":15}`
+to move relative to the current heading and turn right. Positive `pitch_degrees`
+looks up. All step fields default to zero. Movement is immediate and stops at
+the resulting pose. Use `{"action":"flight_mode","enabled":false}` to exit at
+that pose. Inspect `diagnostics.flightActive` in `view_status`.
+
+The corresponding CLI commands are `chronoscope --attach view flight on`,
+`chronoscope --attach view flight-step --forward 100 --right -20 --up 10 --yaw 15`
+and `chronoscope --attach view flight off`.
+
 ## Performance traces
 
 Start `chronoscope_view_profile` with `{"action":"start","max_seconds":30}`,

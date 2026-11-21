@@ -3,9 +3,9 @@
 - Run verification locally. Do not dispatch or rerun GitHub Actions workflows or start GitHub-hosted runners unless the user explicitly requests it.
 - Keep GitHub Actions workflows manual-only so normal pushes and pull requests do not consume the user's runner allowance.
 
-- Develop and validate updates in chronoscope-app/chronoscope-next. Do not push or publish changes to chronoscope-app/chronoscope-public until the user explicitly authorizes promotion.
+- Develop and validate updates in TimeScope/timescope-dev. Do not push or publish changes to TimeScope/timescope until the user explicitly authorizes promotion.
 
-- Completed work intended for Next must be integrated into `chronoscope-next/main`, not left only on a feature branch. Before building the latest version, check pending Next branches so recent completed work is not omitted.
+- Completed work intended for Next must be integrated into `TimeScope/timescope-dev`'s `main` branch, not left only on a feature branch. Before building the latest version, check pending Next branches so recent completed work is not omitted.
 
 - After every successful macOS app build, copy the finished bundle to `~/Applications/Chronoscope.app` and keep only the latest Chronoscope app in that directory. The user explicitly authorizes replacing or deleting older Chronoscope app copies there. `script/build_and_run.sh` does this automatically; for other build commands, run `python3 scripts/install_macos_app.py /path/to/Chronoscope.app` afterward.
 

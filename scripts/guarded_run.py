@@ -25,7 +25,7 @@ def trusted_hosted(environ):
     or an authentication boundary against a caller who controls its own env.
     """
     repository = environ.get('GITHUB_REPOSITORY')
-    return (repository in {'chronoscope-app/chronoscope-public', 'chronoscope-app/chronoscope-next'}
+    return (repository in {'TimeScope/timescope', 'TimeScope/timescope-dev'}
             and environ.get('GITHUB_ACTIONS') == 'true'
             and environ.get('RUNNER_ENVIRONMENT') == 'github-hosted'
             and environ.get('GITHUB_EVENT_NAME') == 'workflow_dispatch'

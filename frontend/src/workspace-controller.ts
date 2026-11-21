@@ -8,7 +8,7 @@ export interface WorkspaceHooks {
   settle: () => Promise<unknown>;
   status: () => Promise<LifecycleStatus>;
   autosave: () => Promise<unknown>;
-  source: () => string | null;
+  source: () => string | null | Promise<string | null>;
   identity: () => string;
   chooseSavePath: () => Promise<string | null>;
   persist: (path: string, workspace: string) => Promise<unknown>;
@@ -35,7 +35,7 @@ export class WorkspaceController {
   private async saveOnce(saveAs: boolean) {
     await this.hooks.settle();
     const identity = this.hooks.identity();
-    let path = saveAs ? null : this.hooks.source();
+    let path = saveAs ? null : await this.hooks.source();
     if (!path) path = await this.hooks.chooseSavePath();
     if (!path) return false;
     if (this.hooks.identity() !== identity)

@@ -382,6 +382,13 @@ impl DataStore {
         )
         .map_err(err)?;
         c.create_scalar_function(
+            "utc_epoch_floor",
+            1,
+            rusqlite::functions::FunctionFlags::SQLITE_DETERMINISTIC,
+            |ctx| Ok(ctx.get::<f64>(0)?.floor()),
+        )
+        .map_err(err)?;
+        c.create_scalar_function(
             "unicode_lower",
             1,
             rusqlite::functions::FunctionFlags::SQLITE_DETERMINISTIC,
@@ -2284,9 +2291,10 @@ impl DataStore {
                 "entity" => "e.entity",
                 "category" => "e.category",
                 "source" => "e.source",
-                "hour" => "strftime('%Y-%m-%dT%H:00:00Z',e.time,'unixepoch')",
-                "day" => "strftime('%Y-%m-%d',e.time,'unixepoch')",
-                "month" => "strftime('%Y-%m',e.time,'unixepoch')",
+                // Use the same flooring rule as chart calendar calculations.
+                "hour" => "strftime('%Y-%m-%dT%H:00:00Z',utc_epoch_floor(e.time),'unixepoch')",
+                "day" => "strftime('%Y-%m-%d',utc_epoch_floor(e.time),'unixepoch')",
+                "month" => "strftime('%Y-%m',utc_epoch_floor(e.time),'unixepoch')",
                 "year" => "CAST(utc_year(e.time) AS TEXT)",
                 _ => return Err("Unknown grouping".into()),
             }

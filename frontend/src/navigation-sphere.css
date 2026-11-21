@@ -2,7 +2,7 @@
 .sphere-navigator {
   position: absolute;
   z-index: 6;
-  top: var(--map-controls-top, 18px);
+  top: 32px;
   right: 12px;
   width: 60px;
   display: flex;
@@ -254,7 +254,7 @@
   outline-offset: 2px;
 }
 .compact-sphere-navigation {
-  top: 8px;
+  top: 16px;
   gap: 3px;
 }
 .compact-sphere-navigation .navigation-slider input[type="range"] {

@@ -5,7 +5,7 @@ Chronoscope uses CesiumJS WebGL2 for its geographic views. The installed app is
 
 ## Current Next performance handoff — 2026-10-28
 
-For current development use `chronoscope-app/chronoscope-next/main`. Renderer
+For current development use `TimeScope/timescope-dev/main`. Renderer
 resource reuse, track styling caches and adaptive playback markers are committed
 through `45ef153`; native Mac trail/stem profiling and refresh-scoped position
 sharing are committed through `12d9052`. Read the

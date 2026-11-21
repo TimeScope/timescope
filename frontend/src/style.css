@@ -480,6 +480,18 @@ summary {
   inset: 0;
   display: block;
 }
+#spectate-status:not([hidden]) {
+  position: absolute;
+  z-index: 4;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 65%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background: var(--panel);
+}
 .scene-labels {
   position: absolute;
   inset: 0;

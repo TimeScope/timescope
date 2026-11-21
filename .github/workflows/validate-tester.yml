@@ -31,7 +31,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   validate:
-    if: github.repository == 'chronoscope-app/chronoscope-public' && github.ref == 'refs/heads/main'
+    if: github.repository == 'TimeScope/timescope' && github.ref == 'refs/heads/main'
     runs-on: ${{ inputs.platform == 'windows-x86_64' && 'windows-2025' || 'macos-26' }}
     timeout-minutes: 15
     defaults:

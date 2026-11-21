@@ -76,7 +76,7 @@ def extract(archive,destination):
 def reuse(run_id,directory):
     if not run_id.isdecimal(): raise ValueError('A numeric verification run ID is required')
     repo=os.environ.get('GITHUB_REPOSITORY','')
-    if repo!='chronoscope-app/chronoscope-public': raise ValueError('Public workflow required')
+    if repo!='TimeScope/timescope': raise ValueError('Public workflow required')
     base=f'repos/{repo}/actions/runs/{run_id}'
     run=json.loads(command(['gh','api',base]))
     current=identity()

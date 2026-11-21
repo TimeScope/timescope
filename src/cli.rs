@@ -190,6 +190,29 @@ enum ViewCommand {
     Zoom { factor: f64 },
     /// Restore a north-up bearing around the current target.
     North,
+    /// Enable or disable free-flight controls in the attached 3D Globe.
+    Flight {
+        #[arg(value_parser = ["on", "off"])]
+        mode: String,
+    },
+    /// Move and/or look once in Globe flight, with no momentum.
+    FlightStep {
+        /// Forward distance in metres. Negative moves backward.
+        #[arg(long, default_value_t = 0.0, allow_negative_numbers = true)]
+        forward: f64,
+        /// Rightward distance in metres. Negative moves left.
+        #[arg(long, default_value_t = 0.0, allow_negative_numbers = true)]
+        right: f64,
+        /// Rise in metres. Negative descends.
+        #[arg(long, default_value_t = 0.0, allow_negative_numbers = true)]
+        up: f64,
+        /// Turn right in degrees. Negative turns left.
+        #[arg(long, default_value_t = 0.0, allow_negative_numbers = true)]
+        yaw: f64,
+        /// Look up in degrees. Negative looks down.
+        #[arg(long, default_value_t = 0.0, allow_negative_numbers = true)]
+        pitch: f64,
+    },
     /// Save the whole app (default) or map as PNG, without base64 on stdout.
     Capture {
         #[arg(short, long)]
@@ -455,6 +478,20 @@ fn run() -> Result<(), String> {
                 invoke("view_navigate", json!({"action":"zoom","factor":factor}))?
             }
             ViewCommand::North => invoke("view_navigate", json!({"action":"north_up"}))?,
+            ViewCommand::Flight { mode } => invoke(
+                "view_navigate",
+                json!({"action":"flight_mode","enabled":mode=="on"}),
+            )?,
+            ViewCommand::FlightStep {
+                forward,
+                right,
+                up,
+                yaw,
+                pitch,
+            } => invoke(
+                "view_navigate",
+                json!({"action":"flight_step","forward_m":forward,"right_m":right,"up_m":up,"yaw_degrees":yaw,"pitch_degrees":pitch}),
+            )?,
             ViewCommand::Capture {
                 output,
                 overwrite,

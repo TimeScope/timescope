@@ -24,14 +24,14 @@ class GuardTests(unittest.TestCase):
         prepare.assert_called_once_with(command, Path.cwd(), os.environ)
 
     @staticmethod
-    def hosted_environment(repository='chronoscope-app/chronoscope-public'):
+    def hosted_environment(repository='TimeScope/timescope'):
         return {'GITHUB_ACTIONS': 'true', 'RUNNER_ENVIRONMENT': 'github-hosted',
                 'GITHUB_REPOSITORY': repository, 'GITHUB_EVENT_NAME': 'workflow_dispatch',
                 'GITHUB_REF': 'refs/heads/main',
                 'GITHUB_WORKFLOW_REF': f'{repository}/.github/workflows/build.yml@refs/heads/main'}
 
     def test_hosted_policy_requires_every_trusted_context_field(self):
-        for repository in ['chronoscope-app/chronoscope-public', 'chronoscope-app/chronoscope-next']:
+        for repository in ['TimeScope/timescope', 'TimeScope/timescope-dev']:
             environment = self.hosted_environment(repository)
             self.assertTrue(guarded_run.trusted_hosted(environment))
             for key in environment:
@@ -45,7 +45,7 @@ class GuardTests(unittest.TestCase):
                         self.assertFalse(guarded_run.trusted_hosted(altered))
         for variables in [{'CI': 'true'}, {'GITHUB_ACTIONS': 'true'},
                           {**self.hosted_environment(), 'RUNNER_ENVIRONMENT': 'self-hosted'},
-                          self.hosted_environment('other-owner/chronoscope-public')]:
+                          self.hosted_environment('other-owner/timescope')]:
             self.assertFalse(guarded_run.trusted_hosted(variables))
 
     def test_platform_launch_policy_and_explicit_environment_precedence(self):

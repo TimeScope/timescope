@@ -2,7 +2,7 @@ Chronoscope tester source access
 
 Exact application and dependency source archives accompany each published
 executable at its matching release on:
-https://github.com/chronoscope-app/chronoscope-public/releases
+https://github.com/TimeScope/timescope/releases
 
 Choose the release for the downloaded app's version and platform. The latest
 source on main may differ from a published executable; use that executable's

@@ -31,6 +31,42 @@ fn event(id: u64, clock: &str) -> Event {
 }
 
 #[test]
+fn calendar_aggregates_keep_subsecond_events_in_their_utc_period() {
+    let dir = tempfile::tempdir().unwrap();
+    let engine = Engine::new(
+        Project::new(Dataset {
+            events: vec![
+                event(1, "1969-12-31T23:59:59.9999Z"),
+                event(2, "1970-01-01T00:00:00Z"),
+                event(3, "2026-01-31T23:59:59.9999Z"),
+                event(4, "2026-02-01T00:00:00Z"),
+            ],
+            ..Default::default()
+        }),
+        dir.path().into(),
+    )
+    .unwrap();
+    for (group, length) in [("hour", 13), ("day", 10), ("month", 7)] {
+        let result = checked(&engine, "aggregate", json!({"group_by":group}));
+        let groups = result["groups"].as_array().unwrap();
+        let starts = [
+            "1969-12-31T23",
+            "1970-01-01T00",
+            "2026-01-31T23",
+            "2026-02-01T00",
+        ];
+        assert_eq!(groups.len(), starts.len());
+        for (row, start) in groups.iter().zip(starts) {
+            assert!(
+                row["key"].as_str().unwrap().starts_with(&start[..length]),
+                "{row}"
+            );
+            assert_eq!(row["count"], 1);
+        }
+    }
+}
+
+#[test]
 fn formats_offsets_and_negative_epochs_preserve_fractions() {
     let expected = parse("2026-10-13T08:15:59.123456Z");
     for text in [

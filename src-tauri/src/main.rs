@@ -29,11 +29,64 @@ async fn dispatch(
         })?
 }
 #[tauri::command]
-fn desktop_close(app: tauri::AppHandle, engine: State<'_, Arc<Engine>>) -> Result<(), String> {
+fn desktop_close(
+    app: tauri::AppHandle,
+    engine: State<'_, Arc<Engine>>,
+    close: State<'_, CloseState>,
+) -> Result<(), String> {
     engine.invoke("autosave_unsaved", serde_json::json!({}))?;
     engine.invoke("recovery_clear", serde_json::json!({}))?;
+    close.approved.store(true, Ordering::Release);
     app.exit(0);
     Ok(())
+}
+#[derive(Default)]
+struct CloseState {
+    approved: AtomicBool,
+    listener: Mutex<CloseListener>,
+}
+#[derive(Default)]
+struct CloseListener {
+    ready: bool,
+    pending: bool,
+}
+impl CloseState {
+    fn request(&self) -> bool {
+        let mut listener = self.listener.lock().unwrap_or_else(|e| e.into_inner());
+        if !listener.ready {
+            listener.pending = true;
+        }
+        listener.ready
+    }
+}
+fn request_app_close(app: &tauri::AppHandle) -> bool {
+    let close = app.state::<CloseState>();
+    let Some(main) = app.get_webview_window("main") else {
+        return false;
+    };
+    if close.approved.load(Ordering::Acquire) {
+        return false;
+    }
+    if close.request() {
+        let _ = main.unminimize();
+        let _ = main.set_focus();
+        let _ = main.emit("workspace-close-request", ());
+    }
+    true
+}
+#[tauri::command]
+fn desktop_close_ready(window: tauri::WebviewWindow, close: State<'_, CloseState>) {
+    if window.label() != "main" {
+        return;
+    }
+    let pending = {
+        let mut listener = close.listener.lock().unwrap_or_else(|e| e.into_inner());
+        listener.ready = true;
+        std::mem::take(&mut listener.pending)
+    };
+    if pending {
+        let _ = window.emit("workspace-close-request", ());
+    }
 }
 struct AgentState {
     running: Arc<Mutex<Option<chronoscope::agent::RunningAgent>>>,
@@ -130,11 +183,13 @@ fn main() {
         .manage(engine.clone())
         .manage(icon_appearance::IconAppearance::new(icon_theme))
         .manage(AgentState { running, stop })
+        .manage(CloseState::default())
         .invoke_handler(tauri::generate_handler![
             dispatch,
             agent_access,
             agent_status,
             desktop_close,
+            desktop_close_ready,
             si_window::si_window,
             table_window::table_window,
             si_window::si_open_link,
@@ -164,19 +219,12 @@ fn main() {
                 icon_appearance::sync(window.app_handle(), *theme);
             }
             if let tauri::WindowEvent::CloseRequested { api, .. } = event {
-                if window.state::<Arc<Engine>>().workspace_dirty() {
+                let close = window.state::<CloseState>();
+                if !close.approved.load(Ordering::Acquire) {
                     api.prevent_close();
-                    let _ = window.emit("workspace-close-request", ());
-                } else if window.app_handle().get_webview_window("si-chat").is_some()
-                    || window
-                        .app_handle()
-                        .get_webview_window("attribute-tables")
-                        .is_some()
-                {
-                    // A detached chat is not a second workspace. Keep main alive
-                    // until the app-level exit check accepts closing both windows.
-                    api.prevent_close();
-                    window.app_handle().exit(0);
+                    if close.request() {
+                        let _ = window.emit("workspace-close-request", ());
+                    }
                 }
             }
             if matches!(event, tauri::WindowEvent::Destroyed) {
@@ -205,6 +253,9 @@ fn main() {
             }
             #[cfg(target_os = "macos")]
             {
+                let close_handle = app.handle().clone();
+                chronoscope_dock_icon::install_quit_guard(move || request_app_close(&close_handle))
+                    .map_err(std::io::Error::other)?;
                 let intent_engine = engine.clone();
                 chronoscope_apple_intents::install(Arc::new(move |input| {
                     let result = (|| -> Result<Value, String> {
@@ -288,13 +339,8 @@ fn main() {
                 };
             }
             if let tauri::RunEvent::ExitRequested { api, .. } = event {
-                if app.state::<Arc<Engine>>().workspace_dirty() {
+                if request_app_close(app) {
                     api.prevent_exit();
-                    if let Some(main) = app.get_webview_window("main") {
-                        let _ = main.unminimize();
-                        let _ = main.set_focus();
-                    }
-                    let _ = app.emit("workspace-close-request", ());
                 }
             }
         });

@@ -12,7 +12,7 @@ const module = await build({
   format: "esm",
   platform: "browser",
 });
-const { ReleaseUpdates, newestRelease, releasesApi, releasesPage } =
+const { ReleaseUpdates, newestRelease } =
   await import(
     "data:text/javascript;base64," +
       Buffer.from(module.outputFiles[0].text).toString("base64")
@@ -86,7 +86,10 @@ test("API requests omit credentials and open only a constructed Chronoscope rele
   const result = await f.updates.check(true);
   assert.equal(result.release.version, "0.16.12");
   const [url, o] = f.requests[0];
-  assert.equal(url, releasesApi);
+  assert.equal(
+    url,
+    "https://api.github.com/repos/TimeScope/timescope/releases?per_page=20",
+  );
   assert.equal(o.credentials, "omit");
   assert.equal(o.redirect, "error");
   assert.equal(o.cache, "no-cache");
@@ -98,7 +101,9 @@ test("API requests omit credentials and open only a constructed Chronoscope rele
   assert.equal(f.notices.at(-1).length, 1);
   assert.equal(f.opened.length, 0);
   await f.notices.at(-1)[0].actions[0].run();
-  assert.deepEqual(f.opened, [releasesPage + "/tag/v0.16.12"]);
+  assert.deepEqual(f.opened, [
+    "https://github.com/TimeScope/timescope/releases/tag/v0.16.12",
+  ]);
 });
 test("equal, older and build-metadata-only releases never advertise a downgrade", async () => {
   for (const tag of [

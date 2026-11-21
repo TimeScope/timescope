@@ -5,7 +5,45 @@
   overflow: auto;
   display: flex;
   flex-direction: column;
-  background: var(--bg);
+  --bg: #051121;
+  --text: #f3f5fa;
+  --muted: #c8d0dc;
+  --line: #788493;
+  --accent: #edc47f;
+  --accent-ink: #211902;
+  --raised: #182434;
+  --hover: #283647;
+  --panel: var(--bg);
+  --art: url("./assets/meridian-dial.jpg");
+  color: var(--text);
+  background:
+    linear-gradient(
+        90deg,
+        var(--bg) 0%,
+        color-mix(in srgb, var(--bg) 90%, transparent) 35%,
+        transparent 65%
+      )
+      center / cover,
+    var(--art) center right / cover no-repeat var(--bg);
+}
+.welcome[data-background="polar-observatory"] {
+  --art: url("./assets/polar-observatory.jpg");
+  --bg: #efece8;
+  --text: #302e3b;
+  --muted: #55505d;
+  --line: #8d8690;
+  --accent: #554969;
+  --accent-ink: #fff;
+  --raised: #f8f5f2;
+  --hover: #dfdbe1;
+}
+.welcome[data-background="orbital-clock"] {
+  --art: url("./assets/orbital-clock.jpg");
+  --bg: #180e17;
+  --muted: #e0cbd2;
+  --accent: #f1b89f;
+  --raised: #30222d;
+  --hover: #473241;
 }
 .welcome[hidden] {
   display: none;
@@ -15,9 +53,8 @@
 }
 .welcome-content {
   flex: 1;
-  width: 100%;
-  max-width: 1020px;
-  margin: auto;
+  width: min(58%, 800px);
+  margin-right: auto;
   padding: clamp(28px, 5vw, 64px);
 }
 .welcome h1 {
@@ -127,7 +164,13 @@
   .welcome-file > small {
     display: none;
   }
+  .welcome {
+    background:
+      linear-gradient(to top, var(--bg) 68%, transparent 90%) center / cover,
+      var(--art) right top / auto 36% no-repeat var(--bg);
+  }
   .welcome-content {
-    padding: 28px 22px;
+    width: 100%;
+    padding: clamp(110px, 20vh, 175px) 22px 28px;
   }
 }

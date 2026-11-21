@@ -55,7 +55,17 @@ export function createAgentView(host: ViewHost) {
       // Commit a zero-duration mode transition before Cesium computes camera transforms.
       view.requestRender();
       view.viewer.render();
-      if (args.action === "fit") {
+      if (args.action === "flight_mode") {
+        view.setGlobeFlight(args.enabled);
+      } else if (args.action === "flight_step") {
+        view.stepGlobeFlight(
+          args.forward_m,
+          args.right_m,
+          args.up_m,
+          args.yaw_degrees,
+          args.pitch_degrees,
+        );
+      } else if (args.action === "fit") {
         if (args.whole_globe && host.mode() !== "globe")
           throw Error("Whole-globe fit requires Globe mode");
         view.fit(args.whole_globe === true);
@@ -68,6 +78,7 @@ export function createAgentView(host: ViewHost) {
           throw Error(
             view.gis.errors.get(layer.id) || "GIS layer is still loading",
           );
+        if (view.flightActive) view.setGlobeFlight(false);
         await host.fitGisLayer(layer.id);
       } else if (args.action === "look_at") {
         view.lookAtGeographic(

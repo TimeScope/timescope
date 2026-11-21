@@ -1,8 +1,8 @@
 # Owner review before publication
 
-This checklist covers the new standalone `chronoscope-app/chronoscope-public` source snapshot only. Keep the original development repository private. Earlier history/tags/releases are excluded, not migrated. Only the owner-authorized new repository may be published; organization-profile and binary releases remain separate decisions.
+This checklist covers the new standalone `TimeScope/timescope` source snapshot only. Keep the original development repository private. Earlier history/tags/releases are excluded, not migrated. Only the owner-authorized new repository may be published; organization-profile and binary releases remain separate decisions.
 
-This records the initial source-publication checklist. The owner subsequently authorized [0.15.2 experimental preview downloads](https://github.com/chronoscope-app/chronoscope-public/releases/tag/v0.15.2); signing, notarization and broad native acceptance remain limited. Current evidence and limitations: [publication status](PUBLICATION-STATUS.md). Future executable releases have their own [release checklist](RELEASE-CHECKLIST.md).
+This records the initial source-publication checklist. The owner subsequently authorized [0.15.2 experimental preview downloads](https://github.com/TimeScope/timescope/releases/tag/v0.15.2); signing, notarization and broad native acceptance remain limited. Current evidence and limitations: [publication status](PUBLICATION-STATUS.md). Future executable releases have their own [release checklist](RELEASE-CHECKLIST.md).
 
 ## Before changing visibility
 

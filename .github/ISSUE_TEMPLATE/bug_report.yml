@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        For vulnerabilities or suspected disclosure, follow [SECURITY.md](https://github.com/chronoscope-app/chronoscope-public/blob/main/SECURITY.md).
+        For vulnerabilities or suspected disclosure, follow [SECURITY.md](https://github.com/TimeScope/timescope/blob/main/SECURITY.md).
         Do not post real location histories, private chats, API keys, certificates or unreviewed logs. Prefer a tiny synthetic example.
   - type: input
     id: version

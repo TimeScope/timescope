@@ -49,6 +49,19 @@ try {
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(url + "/#token=" + token);
   await page.waitForFunction(() => window.__chronoscope?.snapshot?.count > 0);
+  const cameraSaveQueued = await page.evaluate(() => {
+    const { view } = window.__chronoscope;
+    const previous = view.onSceneChange;
+    let queued = false;
+    view.onSceneChange = () => { queued = true; };
+    try {
+      view.settleNavigation();
+      return queued;
+    } finally {
+      view.onSceneChange = previous;
+    }
+  });
+  assert(cameraSaveQueued, "Quit can flush a pose before camera geometry settles");
   await page.click('[data-tab="inspect"]');
   await page.waitForSelector("#edit-note");
   const refresh = () =>

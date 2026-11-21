@@ -27,7 +27,7 @@ permissions:
   actions: read
 jobs:
   build:
-    if: github.repository == 'chronoscope-app/chronoscope-public' && github.ref == 'refs/heads/main'
+    if: github.repository == 'TimeScope/timescope' && github.ref == 'refs/heads/main'
     timeout-minutes: 90
     runs-on: ${{ inputs.platform == 'windows-x86_64' && 'windows-2025' || inputs.platform == 'macos-arm64' && 'macos-26' || 'ubuntu-24.04' }}
     env:

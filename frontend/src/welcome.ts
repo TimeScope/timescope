@@ -12,6 +12,23 @@ interface Host {
 }
 const key = "chronoscope-recent-workspaces-v1";
 
+const backgrounds = ["meridian-dial", "polar-observatory", "orbital-clock"];
+function launchBackground() {
+  const storageKey = "chronoscope-welcome-background-v1";
+  try {
+    const current = sessionStorage.getItem(storageKey);
+    if (current && backgrounds.includes(current)) return current;
+    const last = localStorage.getItem(storageKey) ?? "";
+    const next =
+      backgrounds[(backgrounds.indexOf(last) + 1) % backgrounds.length];
+    sessionStorage.setItem(storageKey, next);
+    localStorage.setItem(storageKey, next);
+    return next;
+  } catch {
+    return backgrounds[0];
+  }
+}
+
 /** The start surface is only shown for an empty, unsaved workspace. */
 export class Welcome {
   readonly element = document.createElement("section");
@@ -42,6 +59,7 @@ export class Welcome {
     }
     this.element.id = "welcome";
     this.element.className = "welcome";
+    this.element.dataset.background = launchBackground();
     this.element.hidden = true;
     this.element.setAttribute("aria-labelledby", "welcome-title");
     workspace.after(this.element);

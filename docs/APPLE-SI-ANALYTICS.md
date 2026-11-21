@@ -32,7 +32,7 @@ The attached native desktop additionally supports `assist_ui` with the fixed act
 
 `cargo test --test focused_ai` covers provider isolation, blank inputs, bounded/validated output, additive/atomic apply, stale revisions, workspace conflicts, Undo and prompt cancellation. `npm --prefix frontend run test:focused-ai` uses the real Rust engine and a loopback model fixture to exercise actual controls, processing indicators, review, cancellation, evidence and stale-preview protection. Native MCP checks separately exercise the actual Apple model and WebView. Fixture success does not establish a hosted model's reasoning quality.
 
-Historical `docs/validation/apple-*` reports refer to earlier integrations. Develop and validate in `chronoscope-app/chronoscope-next`; promote to `chronoscope-app/chronoscope-public` only after explicit user authorization.
+Historical `docs/validation/apple-*` reports refer to earlier integrations. Develop and validate in `TimeScope/timescope-dev`; promote to `TimeScope/timescope` only after explicit user authorization.
 
 For a real on-device check, launch a local debug build with a disposable `CHRONOSCOPE_DATA_DIR`, enable that profile's agent connection, then run:
 

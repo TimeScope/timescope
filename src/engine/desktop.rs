@@ -74,6 +74,15 @@ impl Engine {
                 ],
                 "zoom" => &["action", "factor"],
                 "north_up" => &["action"],
+                "flight_mode" => &["action", "enabled"],
+                "flight_step" => &[
+                    "action",
+                    "forward_m",
+                    "right_m",
+                    "up_m",
+                    "yaw_degrees",
+                    "pitch_degrees",
+                ],
                 _ => unreachable!(),
             };
             if args
@@ -88,6 +97,7 @@ impl Engine {
                 "fit_layer" => &["layer_id"],
                 "look_at" => &["center", "distance_m"],
                 "zoom" => &["factor"],
+                "flight_mode" => &["enabled"],
                 _ => &[],
             };
             if required.iter().any(|key| args.get(*key).is_none()) {

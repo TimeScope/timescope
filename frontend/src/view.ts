@@ -68,6 +68,8 @@ import { timeAxisTicks, timeElevationFraction } from "./time-axis";
 import { groundWindow, spaceTimePadding } from "./space-time-frame";
 import { flatLineGeometry, flatLineVertexShader } from "./flat-lines";
 import { ResidentPlayback } from "./resident-playback";
+import { SpectateTrack, type TrackPoint } from "./spectate-track";
+import { PlaybackClock } from "./playback-speed";
 import {
   geodesicPositions,
   projectedFrustumBounds,
@@ -131,7 +133,14 @@ export class SpaceTimeView {
   mode = "space-time";
   private viewStates: Record<string, ViewNavigationState> = {};
   theme = "dark";
-  timeHeight = 2.8;
+  private timeHeightValue = 2.8;
+  get timeHeight() { return this.timeHeightValue; }
+  set timeHeight(value: number) {
+    if (this.timeHeightValue === value) return;
+    this.timeHeightValue = value;
+    if (this.spectate && this.mode === "space-time" && !this.physicalAltitude)
+      this.placeSpectateCamera();
+  }
   playbackFade = true;
   playbackFadeAmount = 50;
   private fadeDepartureMs = 800;
@@ -522,6 +531,33 @@ export class SpaceTimeView {
   onContextPick: (id: string) => void = () => {};
   onRadiusQuery: (latitude: number, longitude: number, anchor: { x: number; y: number }) => void = () => {};
   private inputSuspended = false;
+  flightActive = false;
+  private spectate?: {
+    entity: string;
+    track: SpectateTrack;
+    clock: PlaybackClock;
+    elapsed: number;
+    start: number;
+    duration: number;
+    offset: number;
+    direction: 1 | -1;
+    height: number;
+    yaw: number;
+    pitch: number;
+  };
+  get spectatingEntity() {
+    return this.spectate?.entity;
+  }
+  // Free look can point away from Earth even at overview altitude. Resume
+  // overview framing when ordinary navigation takes over.
+  private flightPose = false;
+  private flightKeys = new Set<string>();
+  private flightFrame = 0;
+  private flightLookPoint?: Cartesian2;
+  private flightPointerLocked = false;
+  private flightSpaceTap = 0;
+  private flightTapTimer?: ReturnType<typeof setTimeout>;
+  onFlightChange = () => {};
   private drag?: {
     x: number;
     y: number;
@@ -817,6 +853,9 @@ export class SpaceTimeView {
       () =>
         this.playback ||
         !!this.drag ||
+        (this.spectate !== undefined && this.spectate.offset !==
+          (this.spectate.direction === 1 ? this.spectate.duration : 0)) ||
+        this.flightKeys.size > 0 ||
         this.renderQueued ||
         this.scene.mode === SceneMode.MORPHING ||
         !this.scene.globe.tilesLoaded ||
@@ -864,10 +903,12 @@ export class SpaceTimeView {
     });
     const stabilizeCamera = cameraStabilizer(this.camera);
     scene.preUpdate.addEventListener(() => {
+      const now = performance.now();
+      this.updateGlobeFlight(now);
+      this.updateSpectate(now);
       stabilizeCamera(scene.mode);
       // Cesium updates at the active cadence even when request-render mode
       // skips a draw. Slow/sparse pointer events are not slow rendering.
-      const now = performance.now();
       if (this.playback || this.drag) {
         if (this.resourceActiveLast) {
           this.resourceActiveTotal += now - this.resourceActiveLast;
@@ -959,6 +1000,7 @@ export class SpaceTimeView {
     if (this.disposed) return;
     if (this.recoveryPromise) return this.recoveryPromise;
     if (manual) this.automaticRenderRecovery = false;
+    this.setGlobeFlight(false);
     this.recovering = true;
     this.backend("WebGL2 · refreshing map renderer");
     this.recoveryPromise = Promise.resolve()
@@ -1208,7 +1250,10 @@ export class SpaceTimeView {
   setGlobeTimeScale(scale: number) {
     if (this.globeTimeScale === scale) return;
     this.globeTimeScale = scale;
-    if (this.mode === "globe" && this.globeTime) this.rebuild(true);
+    if (this.mode === "globe" && this.globeTime) {
+      if (this.spectate) this.placeSpectateCamera();
+      this.rebuild(true);
+    }
   }
   setGlobeTime(enabled: boolean, scale = this.globeTimeScale) {
     if (this.globeTime === enabled && this.globeTimeScale === scale) return;
@@ -1216,6 +1261,10 @@ export class SpaceTimeView {
     this.globeTime = enabled;
     if (enabled) this.globeAltitude = false;
     this.globeTimeScale = scale;
+    if (this.spectate && this.mode === "globe") {
+      if (wasAltitude !== this.physicalAltitude) this.setGlobeFlight(false);
+      else this.placeSpectateCamera();
+    }
     if (this.mode === "globe" || wasAltitude !== this.physicalAltitude)
       this.rebuild(true);
   }
@@ -1228,6 +1277,7 @@ export class SpaceTimeView {
       if (enabled) this.globeTime = false;
     } else this.timeAltitude = enabled;
     if (this.mode === mode) {
+      if (this.spectate) this.setGlobeFlight(false);
       if (enabled) void this.displayLayer.set(null, this.display);
       this.rebuild(true);
     }
@@ -1240,6 +1290,7 @@ export class SpaceTimeView {
     if (this.mode === mode) return;
     if (remember) this.rememberView();
     this.cancelNavigation();
+    this.flightPose = false;
     this.cancelPendingPick();
     this.mode = mode;
     this.scene.screenSpaceCameraController.enableRotate = mode !== "map";
@@ -3023,7 +3074,8 @@ export class SpaceTimeView {
           Cartesian3.subtract(target, this.camera.positionWC, new Cartesian3()),
         );
       }
-      if(keepGlobeInView(this.camera,this.globeFramingRadius()))this.requestRender();
+      if (!this.flightPose && keepGlobeInView(this.camera, this.globeFramingRadius()))
+        this.requestRender();
     } else {
       const height = this.camera.positionWC.x;
       const floor = Math.max(2, this.centerGroundHeight() + 2);
@@ -3114,6 +3166,8 @@ export class SpaceTimeView {
     tilt: number,
     pivot?: { target: Cartesian3; range: number },
   ) {
+    this.setGlobeFlight(false);
+    this.flightPose = false;
     if (this.mode === "map") {
       const center = Cartographic.fromCartesian(this.centerGround());
       this.lookAtGeographic(
@@ -3183,6 +3237,7 @@ export class SpaceTimeView {
   }
   /** Move displayed geography in screen directions: +x right, +y down. */
   panPixels(x: number, y: number) {
+    this.flightPose = false;
     if (this.mode === "globe") {
       const angle = Math.min(
         0.2,
@@ -3215,6 +3270,7 @@ export class SpaceTimeView {
     this.onSceneChange();
   }
   private changeAltitude(direction: number) {
+    this.flightPose = false;
     if (this.mode === "map") return;
     const amount =
       Math.max(10, Math.abs(this.camera.positionCartographic.height) * 0.08) *
@@ -3233,6 +3289,262 @@ export class SpaceTimeView {
     this.requestRender();
     this.onSceneChange();
   }
+  setGlobeFlight(enabled: boolean, interactive = false) {
+    if (
+      enabled &&
+      (this.mode !== "globe" || !this.viewer || this.recovering || this.disposed)
+    )
+      throw Error("INVALID_ARGUMENT: flight requires the 3D Globe");
+    this.setFlightInput(enabled, interactive);
+  }
+  private setFlightInput(enabled: boolean, interactive = false) {
+    this.clearFlightTap();
+    if (enabled === this.flightActive) return;
+    if (enabled) {
+      this.cancelNavigation();
+      this.hideTooltip();
+      this.viewer.canvas.style.cursor = "";
+    } else {
+      this.stopFlightInput();
+      this.spectate = undefined;
+    }
+    this.flightActive = enabled;
+    this.inputSuspended = false;
+    this.scene.screenSpaceCameraController.enableInputs = !enabled;
+    this.onFlightChange();
+    if (enabled && interactive) this.focusFlight(true);
+  }
+  private focusFlight(lock = false) {
+    const canvas = this.viewer.canvas;
+    canvas.focus({ preventScroll: true });
+    if (!lock || document.pointerLockElement === canvas) return;
+    // The canvas also accepts free mouse look on hosts without pointer lock.
+    try {
+      void Promise.resolve(canvas.requestPointerLock?.()).catch(() => {});
+    } catch {}
+  }
+  startSpectating(
+    entity: string,
+    points: readonly TrackPoint[],
+    window: { start: number; end: number; speed: number; increment: number },
+  ) {
+    if (this.mode === "map" || !this.viewer || this.recovering || this.disposed)
+      throw Error("Spectate requires Globe or Time view");
+    this.setGlobeFlight(false);
+    this.setFlightInput(true);
+    this.spectate = {
+      entity,
+      track: new SpectateTrack(points),
+      clock: new PlaybackClock(window.speed, performance.now(), window.increment),
+      elapsed: 0,
+      start: window.start,
+      duration: window.end - window.start,
+      offset: 0,
+      direction: 1,
+      height: 120,
+      yaw: 0,
+      pitch: -25,
+    };
+    this.placeSpectateCamera();
+    this.focusFlight();
+    this.onFlightChange();
+  }
+  updateSpectateRate(speed?: number, increment?: number) {
+    const clock = this.spectate?.clock;
+    if (speed !== undefined) clock?.setSpeed(speed);
+    if (increment !== undefined) clock?.setIncrement(increment);
+  }
+  private updateSpectate(now: number) {
+    const state = this.spectate;
+    if (!state) return;
+    const elapsed = state.clock.seconds(now);
+    const offset = CesiumMath.clamp(
+      state.offset + state.direction * (elapsed - state.elapsed),
+      0,
+      state.duration,
+    );
+    state.elapsed = elapsed;
+    if (offset === state.offset) return;
+    state.offset = offset;
+    this.placeSpectateCamera();
+  }
+  private placeSpectateCamera(up = 0) {
+    const state = this.spectate!;
+    const projected = this.mode === "space-time";
+    const { a, b, time, fraction, lat, lon, heading } = state.track.sample(
+      state.start + state.offset,
+      projected ? (point) => this.spectatePointHeight(point) : undefined,
+    );
+    const ground = this.groundHeight(lat, lon) + 2;
+    const floor = projected ? Math.max(ground, 2, this.centerGroundHeight() + 2) : ground;
+    let height = ground;
+    if (this.physicalAltitude) {
+      height = CesiumMath.lerp(this.spectatePointHeight(a), this.spectatePointHeight(b), fraction);
+    } else if (projected) {
+      height = CesiumMath.lerp(
+        this.groundHeight(a.lat, a.lon), this.groundHeight(b.lat, b.lon), fraction,
+      ) + 2 + timeElevationFraction(time, this.lo, this.hi) * this.timeHeightMeters;
+    } else if (this.globeTime)
+      height += timeElevationFraction(time, this.lo, this.hi) * this.timeHeightMeters;
+    const altitude = CesiumMath.clamp(
+      CesiumMath.clamp(height + state.height, floor, 8e7) + up,
+      floor,
+      8e7,
+    );
+    if (up) state.height = altitude - height;
+    this.flightPose = true;
+    this.camera.setView({
+      destination: Cartesian3.fromDegrees(lon, lat, altitude),
+      orientation: {
+        heading: CesiumMath.toRadians(heading + state.yaw + (state.direction === -1 ? 180 : 0)),
+        pitch: CesiumMath.toRadians(state.pitch),
+        roll: 0,
+      },
+    });
+    this.requestRender();
+    this.settleNavigation();
+  }
+  private spectatePointHeight(point: TrackPoint) {
+    if (this.physicalAltitude) return this.resources.altitudeHeight(point)!;
+    return this.groundHeight(point.lat, point.lon) + 2 +
+      timeElevationFraction(point.time, this.lo, this.hi) * this.timeHeightMeters;
+  }
+  private clearFlightTap() {
+    clearTimeout(this.flightTapTimer);
+    this.flightTapTimer = undefined;
+    this.flightSpaceTap = 0;
+  }
+  private stopFlightInput() {
+    this.flightPointerLocked = false;
+    this.flightKeys.clear();
+    this.flightFrame = 0;
+    this.flightLookPoint = undefined;
+    if (document.pointerLockElement === this.viewer?.canvas)
+      document.exitPointerLock();
+  }
+  globeFlightKey(event: KeyboardEvent, togglePlayback: () => void) {
+    if (
+      (this.mode !== "globe" && !this.spectate) ||
+      this.recovering ||
+      event.target !== this.viewer?.canvas ||
+      event.metaKey ||
+      event.altKey ||
+      (event.ctrlKey && !this.flightActive)
+    )
+      return false;
+    const key = event.code;
+    const horizontal = ["KeyW", "KeyA", "KeyS", "KeyD"].includes(key);
+    const sprint = key === "ControlLeft" || key === "ControlRight";
+    if (this.spectate && (horizontal || sprint)) {
+      event.preventDefault();
+      if (!event.repeat && (key === "KeyW" || key === "KeyS")) {
+        this.updateSpectate(performance.now());
+        this.spectate.direction = key === "KeyW" ? 1 : -1;
+        this.placeSpectateCamera();
+      }
+      return true;
+    }
+    if (key === "Space" && !event.repeat && !this.spectate) {
+      const now = performance.now();
+      if (this.flightSpaceTap && now - this.flightSpaceTap <= 275) {
+        this.setGlobeFlight(!this.flightActive, true);
+        event.preventDefault();
+        return true;
+      }
+      this.flightSpaceTap = now;
+      if (!this.flightActive)
+        this.flightTapTimer = setTimeout(() => {
+          this.clearFlightTap();
+          if (document.activeElement === this.viewer.canvas) togglePlayback();
+        }, 275);
+    }
+    if (key !== "Space" && !(
+      this.flightActive && (horizontal || sprint || key === "ShiftLeft" || key === "ShiftRight")
+    ))
+      return false;
+    event.preventDefault();
+    if (this.flightActive && !event.repeat) {
+      if (!this.flightKeys.size) this.flightFrame = performance.now();
+      this.flightKeys.add(key);
+      this.requestRender();
+    }
+    return true;
+  }
+  private updateGlobeFlight(now: number) {
+    if (!this.flightKeys.size) return;
+    const seconds = Math.min(0.05, Math.max(0, (now - this.flightFrame) / 1000));
+    this.flightFrame = now;
+    const held = (key: string) => Number(this.flightKeys.has(key));
+    const forward = held("KeyW") - held("KeyS"),
+      right = held("KeyD") - held("KeyA"),
+      up = held("Space") - Number(held("ShiftLeft") || held("ShiftRight"));
+    if (!seconds || !(forward || right || up)) return;
+    const position = this.camera.positionCartographic;
+    const clearance =
+      position.height -
+      this.groundHeight(
+        CesiumMath.toDegrees(position.latitude),
+        CesiumMath.toDegrees(position.longitude),
+      );
+    const sprint = forward > 0 && (held("ControlLeft") || held("ControlRight"));
+    const distance =
+      (CesiumMath.clamp(clearance * 0.35, 4, 5e6) * seconds * (sprint ? 1.5 : 1)) /
+      Math.max(1, Math.hypot(forward, right, up));
+    this.stepGlobeFlight(forward * distance, right * distance, up * distance);
+  }
+  /** Shared by held input and bounded MCP/CLI moves. Yaw and pitch are relative degrees. */
+  stepGlobeFlight(forward = 0, right = 0, up = 0, yaw = 0, pitch = 0) {
+    if (!this.flightActive)
+      throw Error("INVALID_ARGUMENT: enable Globe flight before stepping");
+    if (!(forward || right || up || yaw || pitch)) return;
+    if (this.spectate) {
+      if (forward || right)
+        throw Error("INVALID_ARGUMENT: horizontal flight is locked to the spectated track");
+      this.spectate.yaw = (this.spectate.yaw + yaw) % 360;
+      this.spectate.pitch = CesiumMath.clamp(this.spectate.pitch + pitch, -89.99, 89.99);
+      this.placeSpectateCamera(up);
+      return;
+    }
+    const camera = this.camera;
+    const position = camera.positionCartographic;
+    const enu = Transforms.eastNorthUpToFixedFrame(camera.positionWC);
+    const local = Matrix4.inverseTransformation(enu, new Matrix4());
+    const direction = Matrix4.multiplyByPointAsVector(local, camera.directionWC, new Cartesian3());
+    const horizontal = Math.hypot(direction.x, direction.y);
+    // At nadir or zenith the direction has no horizontal bearing.
+    const rightAxis = Matrix4.multiplyByPointAsVector(local, camera.rightWC, new Cartesian3());
+    const heading = horizontal > 1e-8
+      ? Math.atan2(direction.x, direction.y)
+      : Math.atan2(-rightAxis.y, rightAxis.x);
+    const elevation = Math.atan2(direction.z, horizontal);
+    let destination: Cartesian3 | undefined;
+    if (forward || right || up) {
+      const dx = forward * Math.sin(heading) + right * Math.cos(heading);
+      const dy = forward * Math.cos(heading) - right * Math.sin(heading);
+      const next = Cartographic.fromCartesian(
+        Matrix4.multiplyByPoint(enu, new Cartesian3(dx, dy, 0), new Cartesian3()),
+      );
+      destination = Cartesian3.fromRadians(next.longitude, next.latitude, position.height + up);
+    }
+    this.flightPose = true;
+    camera.setView({
+      destination,
+      orientation: {
+        heading: heading + CesiumMath.toRadians(yaw),
+        pitch: pitch
+          ? CesiumMath.clamp(
+              elevation + CesiumMath.toRadians(pitch),
+              -Math.PI / 2 + 1e-6,
+              Math.PI / 2 - 1e-6,
+            )
+          : elevation,
+        roll: 0,
+      },
+    });
+    this.constrainCamera();
+    this.requestRender();
+    this.settleNavigation();
+  }
   /** Map keyboard shortcuts never consume keys belonging to another UI surface. */
   navigationKey(event: KeyboardEvent) {
     const target = event.target;
@@ -3247,6 +3559,7 @@ export class SpaceTimeView {
         ))
     )
       return false;
+    if (this.flightActive) return false;
     const key = event.key.toLowerCase(),
       step = event.altKey ? 0.25 : 1;
     if (["arrowleft", "arrowright", "arrowup", "arrowdown"].includes(key)) {
@@ -3279,7 +3592,9 @@ export class SpaceTimeView {
   cancelNavigation() {
     this.cancelPendingPick();
     this.camera?.cancelFlight();
-    if (!this.drag) return false;
+    const flying = this.flightActive;
+    this.setGlobeFlight(false);
+    if (!this.drag) return flying;
     const drag = this.drag;
     this.drag = undefined;
     this.box.style.display = "none";
@@ -3310,6 +3625,8 @@ export class SpaceTimeView {
     );
   }
   private zoomAt(factor: number, pixel: Cartesian2) {
+    this.setGlobeFlight(false);
+    this.flightPose = false;
     if (!finite(factor) || factor <= 0) return;
     const anchor = this.groundAt(pixel);
     const frustum = this.camera.frustum as {
@@ -3494,6 +3811,8 @@ export class SpaceTimeView {
       : this.visibleBounds();
   }
   fit(wholeGlobe = false) {
+    this.setGlobeFlight(false);
+    this.flightPose = false;
     if (!this.viewer || this.disposed) return;
     if (
       this.mode === "globe" &&
@@ -3789,6 +4108,8 @@ export class SpaceTimeView {
     heading: number,
     tilt: number,
   ) {
+    this.setGlobeFlight(false);
+    this.flightPose = false;
     if (this.mode === "map" && tilt !== 0)
       throw Error("Map stays flat; tilt must be zero");
     this.camera.lookAt(
@@ -3991,6 +4312,8 @@ export class SpaceTimeView {
       orbitHandles: this.handles.show ? this.handles.length : 0,
       axisGrabHandle: this.axisHandle.show ? this.axisHandle.length : 0,
       timeAxisAnchor: this.timeAxisAnchor,
+      flightActive: this.flightActive,
+      spectatingEntity: this.spectatingEntity ?? null,
       requestRenderMode: this.scene.requestRenderMode,
       performance: {
         updateRateLimitHz: this.viewer.targetFrameRate ?? null,
@@ -4044,13 +4367,15 @@ export class SpaceTimeView {
     this.requestRender();
   }
   private settleNavigation() {
+    // Queue persistence immediately so Save or Quit can flush the latest pose
+    // even before the renderer is idle. Geometry still waits for navigation.
+    this.onSceneChange();
     clearTimeout(this.idleTimer);
     this.idleTimer = setTimeout(() => {
       if (this.disposed || this.drag) return;
       this.rebuildTrails();
       this.updateAxes();
       this.onViewportChange();
-      this.onSceneChange();
     }, 160);
   }
   /** The four on-top navigation handles need no scene-wide GPU pick. */
@@ -4134,10 +4459,39 @@ export class SpaceTimeView {
     const canvas = this.viewer.canvas,
       signal = this.abort.signal;
     canvas.tabIndex = 0;
+    canvas.addEventListener("keyup", (event) => {
+      this.flightKeys.delete(event.code);
+      if (!this.flightKeys.size) this.flightFrame = 0;
+    }, { signal });
+    canvas.addEventListener("blur", () => {
+      this.clearFlightTap();
+      this.stopFlightInput();
+    }, { signal });
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) return;
+      this.clearFlightTap();
+      this.stopFlightInput();
+    }, { signal });
+    document.addEventListener("pointerlockchange", () => {
+      this.flightLookPoint = undefined;
+      const locked = document.pointerLockElement === canvas;
+      if (!locked && this.flightPointerLocked) this.setGlobeFlight(false);
+      this.flightPointerLocked = locked;
+      if (locked && !this.flightActive) document.exitPointerLock();
+    }, { signal });
     canvas.setAttribute(
       "aria-label",
       "Map view. Arrow keys pan; plus and minus zoom; N faces north and recenters a Globe overview; U looks down; R fits events.",
     );
+    canvas.addEventListener("mousemove", (event) => {
+      if (!this.flightActive || document.activeElement !== canvas) return;
+      const locked = document.pointerLockElement === canvas;
+      const last = this.flightLookPoint;
+      this.flightLookPoint = new Cartesian2(event.clientX, event.clientY);
+      const dx = locked ? event.movementX : last ? event.clientX - last.x : 0;
+      const dy = locked ? event.movementY : last ? event.clientY - last.y : 0;
+      this.stepGlobeFlight(0, 0, 0, dx * 0.15, -dy * 0.15);
+    }, { signal });
     // click.detail follows the platform's double-click recognition. Cesium
     // suppresses compatibility mousedown events, so sequence picks on click,
     // after pointerup schedules feedback and before dblclick cancels it.
@@ -4208,6 +4562,7 @@ export class SpaceTimeView {
       "dblclick",
       (event) => {
         if (
+          this.flightActive ||
           event.button !== 0 ||
           event.shiftKey ||
           event.ctrlKey ||
@@ -4230,6 +4585,11 @@ export class SpaceTimeView {
       (e) => {
         this.hideTooltip();
         if (e.button > 2 || this.recovering) return;
+        if (this.flightActive) {
+          this.focusFlight(this.spectate !== undefined && e.button === 0);
+          e.preventDefault();
+          return;
+        }
         const sameClick =
           e.button === 0 &&
           !e.shiftKey &&
@@ -4300,6 +4660,7 @@ export class SpaceTimeView {
     canvas.addEventListener(
       "pointermove",
       (e) => {
+        if (this.flightActive) return;
         const r = canvas.getBoundingClientRect(),
           drag = this.drag;
         if (drag && drag.pointer !== e.pointerId) return;
@@ -4309,6 +4670,7 @@ export class SpaceTimeView {
           Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > 5
         ) {
           drag.moved = true;
+          if (!drag.box && !drag.axisGrab) this.flightPose = false;
           this.cancelPendingPick();
         }
         if (drag?.axisGrab) {
@@ -4547,13 +4909,15 @@ export class SpaceTimeView {
       this.drag = undefined;
       this.inputSuspended = false;
       this.box.style.display = "none";
-      this.scene.screenSpaceCameraController.enableInputs = true;
+      this.scene.screenSpaceCameraController.enableInputs = !this.flightActive;
     };
     canvas.addEventListener("pointercancel", resetPointer, { signal });
     window.addEventListener(
       "blur",
       () => {
         resetPointer();
+        this.clearFlightTap();
+        this.stopFlightInput();
         this.cancelPendingPick();
       },
       { signal },
@@ -4561,6 +4925,7 @@ export class SpaceTimeView {
     canvas.addEventListener(
       "pointerleave",
       () => {
+        this.flightLookPoint = undefined;
         this.hideTooltip();
       },
       { signal },
@@ -4679,6 +5044,7 @@ export class SpaceTimeView {
     this.hideTooltip();
     this.cancelPendingPick();
     if (this.disposed) return;
+    this.setGlobeFlight(false);
     this.disposed = true;
     clearTimeout(this.idleTimer);
     clearTimeout(this.resourceTimer);

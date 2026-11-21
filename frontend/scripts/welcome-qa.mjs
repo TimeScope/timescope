@@ -52,7 +52,10 @@ try {
     },
   });
   browser = await chromium.launch();
-  page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+  const context = await browser.newContext({
+    viewport: { width: 1440, height: 1000 },
+  });
+  page = await context.newPage();
   page.setDefaultTimeout(20000);
   console.log("Local browser connected");
   page.on("pageerror", (e) => report.errors.push(e.message));
@@ -65,6 +68,41 @@ try {
     () => window.__chronoscope?.snapshot && !window.__chronoscope.busy,
   );
   await page.locator("#welcome").waitFor({ state: "visible" });
+  const background = (tab) =>
+    tab.locator("#welcome").getAttribute("data-background");
+  assert.equal(await background(page), "meridian-dial");
+  for (const expected of [
+    "polar-observatory",
+    "orbital-clock",
+    "meridian-dial",
+  ]) {
+    const launch = await context.newPage();
+    try {
+      await launch.goto(url + "/#token=" + token);
+      const welcome = launch.locator("#welcome");
+      await welcome.waitFor({ state: "visible" });
+      assert.equal(await background(launch), expected);
+      await welcome.evaluate(async (element) => {
+        const url =
+          getComputedStyle(element).backgroundImage.match(
+            /url\("([^"]+)"\)/,
+          )?.[1];
+        if (!url)
+          throw Error("Welcome artwork missing from computed background");
+        const artwork = new Image();
+        artwork.src = url;
+        await artwork.decode();
+      });
+    } finally {
+      await launch.close();
+    }
+  }
+  await page.reload();
+  await page.locator("#welcome").waitFor({ state: "visible" });
+  assert.equal(await background(page), "meridian-dial");
+  report.checks.push(
+    "New launches cycle through three bundled backgrounds; reloading preserves the current design",
+  );
   assert.equal(await page.locator(".workspace").getAttribute("inert"), "");
   assert.equal(await page.locator("[data-recent]").count(), 0);
   await page.locator("#welcome-help").click();

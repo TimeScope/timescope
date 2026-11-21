@@ -12,6 +12,7 @@ const icons = {
   zoom: "M16 16l5 5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0M6 10h8m-4-4v8",
   tilt: "M3 19h18M5 16l5-11 9 11zM10 5v11",
   time: "M14 8a6 6 0 1 1-12 0 6 6 0 0 1 12 0M8 4v4l3 2M15 21h7M15 16h7M15 11h7m-3 8V6m-3 3 3-3 3 3",
+  fly: "M12 3 3 19l9-4 9 4-9-16zM12 15v-5",
   terrain: "m2 20 7-16 6 12 3-6 4 10zM6 11l3 2 3-3",
 };
 const tool = (id: string, label: string, name: keyof typeof icons) =>
@@ -21,6 +22,7 @@ const tool = (id: string, label: string, name: keyof typeof icons) =>
 export function navigationTools() {
   return `<div class="navigation-toolbar" id="navigation-tools" role="group" aria-label="View tools">
     <div class="navigation-core">${tool("navigate", "Drag to move", "hand")}${tool("box-select", "Select events", "select")}${tool("sync-views", "Sync views · copy bounds and orientation to the other views", "sync")}
+    <button type="button" id="globe-flight" class="navigation-tool" aria-label="Globe flight" aria-pressed="false" title="Fly · WASD move, mouse look, Space rise, Shift descend, Esc exit" hidden>${glyph(icons.fly)}</button>
     <span class="navigation-divider"></span>
     ${tool("fit", "Fit visible events · F", "fit")}
     <button type="button" id="fit-terrain" class="navigation-tool" aria-label="Fit terrain" title="Fit terrain" hidden>${glyph(icons.terrain)}</button>
@@ -94,7 +96,7 @@ export class NavigationSphere {
     this.timeGroup = host.querySelector("#navigation-time-group")!;
     this.timeButton = host.querySelector("#time-elevation")!;
     this.sphere.addEventListener("pointerdown", (event) => {
-      if (event.button !== 0) return;
+      if (event.button !== 0 || this.sphere.disabled) return;
       event.preventDefault();
       this.view.cancelNavigation();
       this.sphere.focus({ preventScroll: true });
@@ -108,7 +110,7 @@ export class NavigationSphere {
     });
     this.sphere.addEventListener("pointermove", (event) => {
       const drag = this.dragging;
-      if (!drag || event.pointerId !== drag.id) return;
+      if (!drag || event.pointerId !== drag.id || this.sphere.disabled) return;
       const dx = event.clientX - drag.x,
         dy = event.clientY - drag.y;
       drag.x = event.clientX;
@@ -195,7 +197,7 @@ export class NavigationSphere {
       "wheel",
       (event) => {
         // Sliders own arrow keys and pointer drags; wheel navigation is on the compass only.
-        if (!this.sphere.contains(event.target as Node)) return;
+        if (this.sphere.disabled || !this.sphere.contains(event.target as Node)) return;
         event.preventDefault();
         event.stopPropagation();
         const delta =
@@ -254,7 +256,8 @@ export class NavigationSphere {
     }
     const bearing = this.view.bearing(),
       tilt = this.view.tilt(),
-      flat = this.view.mode === "map";
+      flat = this.view.mode === "map",
+      spectating = this.view.spectatingEntity !== undefined;
     this.host.querySelector(".sphere-heading")!.textContent =
       `${String(Math.round(bearing) % 360).padStart(3, "0")}°`;
     this.sphere.setAttribute(
@@ -277,10 +280,11 @@ export class NavigationSphere {
       "aria-valuetext",
       `${Math.round(tilt)} degrees from top-down`,
     );
-    this.tilt.disabled = flat;
+    this.sphere.disabled = this.zoom.disabled = spectating;
+    this.tilt.disabled = flat || spectating;
     this.host.querySelector<HTMLElement>("#navigation-tilt-group")!.hidden =
       flat;
-    this.host.querySelector<HTMLButtonElement>("#fit")!.disabled = this.fitting;
+    this.host.querySelector<HTMLButtonElement>("#fit")!.disabled = this.fitting || spectating;
     this.host
       .querySelector(".compass-rotation")!
       .setAttribute("transform", `rotate(${-bearing} 50 50)`);

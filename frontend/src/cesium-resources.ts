@@ -493,14 +493,14 @@ export class LocalDtedTerrainProvider implements TerrainProvider {
 
 export class CesiumResources {
   private altitudeGeoid?: Int16Array;
-  async prepareAltitude(points: readonly Point[]) {
+  async prepareAltitude(points: readonly Pick<Point, "altitude">[]) {
     if (
       !this.altitudeGeoid &&
       points.some((p) => p.altitude?.reference === "egm96")
     )
       this.altitudeGeoid = await loadGeoid();
   }
-  altitudeHeight(point: Point): number | null {
+  altitudeHeight(point: Pick<Point, "lat" | "lon" | "altitude">): number | null {
     const altitude = point.altitude;
     if (!altitude || altitude.reference === "unspecified") return null;
     if (altitude.reference === "egm96")

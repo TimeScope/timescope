@@ -126,6 +126,7 @@ struct History {
     seq: i64,
     store_id: String,
     replacement: Option<crate::store::DataStore>,
+    replacement_source: Option<PathBuf>,
 }
 /// One short-lived canvas pick rollback, never serialized or exposed as IDs.
 struct PickRestore {
@@ -804,17 +805,24 @@ impl Engine {
             ))
         .then(crate::operation::track_file_commit);
         let lifecycle_path = args["path"].as_str().map(str::to_owned);
+        let previous_source = if mutation && seq.is_none() {
+            self.workspace_source()?
+        } else {
+            None
+        };
         let new_document = matches!(command, "demo" | "demo_open" | "aggregate_apply")
             || command == "import_commit" && !args["append"].as_bool().unwrap_or(false);
         let result = self.invoke_raw(command, args).and_then(|v| {
-            if !file_commit.as_ref().is_some_and(|guard| guard.committed()) {
+            // Open checks cancellation before publishing the store and its
+            // terrain together. After that point the new document is live.
+            if command != "open" && !file_commit.as_ref().is_some_and(|guard| guard.committed()) {
                 crate::operation::check()?;
             }
             Ok(v)
         });
         let mut s = self.state.lock().map_err(|_| "Workspace unavailable")?;
         let result = result.and_then(|value| {
-            if mutation {
+            if mutation && command != "open" {
                 validate_context_budget(&s.project)?;
             }
             if let Some(seq) = seq {
@@ -855,6 +863,7 @@ impl Engine {
                             seq,
                             store_id: s.store.identity(),
                             replacement: None,
+                            replacement_source: None,
                         };
                         if undoable(command) {
                             s.undo.push(history);
@@ -883,6 +892,7 @@ impl Engine {
                         seq: 0,
                         store_id: old.identity(),
                         replacement: Some(old),
+                        replacement_source: previous_source,
                     };
                     s.undo.push(history);
                     forget_redo(&mut s);
@@ -895,7 +905,9 @@ impl Engine {
                     self.revision_counter
                         .store(s.revision, std::sync::atomic::Ordering::Release);
                     let selected = s.project.selected.clone();
-                    s.store.selection_changed(&selected)?;
+                    if command != "open" {
+                        s.store.selection_changed(&selected)?;
+                    }
                 }
                 if command != "preferences" {
                     if let Some(v) = value.as_object_mut() {
@@ -945,7 +957,9 @@ impl Engine {
             if let Ok(value) = &mut result {
                 let external = file_commit.as_ref().is_some_and(|guard| guard.committed());
                 if command != "preferences"
-                    && (external || identity.effects().dirty && value["needs_review"] != true)
+                    && (external
+                        || command == "open"
+                        || identity.effects().dirty && value["needs_review"] != true)
                 {
                     value["commit_receipt"] = json!({"operation_id":format!("{store_id}:{current}"),"kind":if external {"external_file"}else{"workspace"},"store_id":store_id,"revision_before":revision.to_string(),"revision_after":current.to_string(),"committed":true,"cancel_requested":crate::operation::cancelled()});
                 }
@@ -2203,7 +2217,16 @@ impl Engine {
                 let undo = command == "undo";
                 let mut history =
                     if undo { s.undo.pop() } else { s.redo.pop() }.ok_or("History is empty")?;
-                if let Some(store) = history.replacement.take() {
+                if history.replacement.is_some() {
+                    if let Err(error) = self.swap_history_source(&mut history.replacement_source) {
+                        if undo {
+                            s.undo.push(history);
+                        } else {
+                            s.redo.push(history);
+                        }
+                        return Err(error);
+                    }
+                    let store = history.replacement.take().unwrap();
                     history.replacement = Some(std::mem::replace(&mut s.store, store));
                     self.document_epoch
                         .fetch_add(1, std::sync::atomic::Ordering::AcqRel);

@@ -99,7 +99,7 @@ Chronoscope is experimental. Source versions and downloadable builds can differ;
 
 ## 0.16.9 — experimental preview, 2026-10-29
 
-[Windows x64 and Apple Silicon macOS downloads](https://github.com/chronoscope-app/chronoscope-public/releases/tag/v0.16.9) passed exact-package native hosted checks. Windows source is `19b4587994bb08083d4693e10e0df2d2f0bfc3f4`; macOS source is `c5c532749397edbfc8b023fd1171fa0ac2a46d14`. Application code, assets and dependency locks are byte-identical; the later commit repairs only the notice validator and its tests. Exact source archives, dependency sources, notices, checksums and validation receipts accompany the downloads. This preview also includes the 0.16.7 fade, light-mode visibility and idle CPU fixes below. [Validation](docs/validation/release-0.16.9-publication/README.md).
+[Windows x64 and Apple Silicon macOS downloads](https://github.com/TimeScope/timescope/releases/tag/v0.16.9) passed exact-package native hosted checks. Windows source is `19b4587994bb08083d4693e10e0df2d2f0bfc3f4`; macOS source is `c5c532749397edbfc8b023fd1171fa0ac2a46d14`. Application code, assets and dependency locks are byte-identical; the later commit repairs only the notice validator and its tests. Exact source archives, dependency sources, notices, checksums and validation receipts accompany the downloads. This preview also includes the 0.16.7 fade, light-mode visibility and idle CPU fixes below. [Validation](docs/validation/release-0.16.9-publication/README.md).
 
 - Replace the London–Zurich flight sample with 175 original Philippine flights across six airports and seven consecutive UTC days (March 1–7, 2026). Keep 11,018 reported-altitude observations, original timestamps, route colors, a one-day playback view, two refreshed previews and reproducible CC BY 4.0 source credit.
 
@@ -107,7 +107,7 @@ Chronoscope is experimental. Source versions and downloadable builds can differ;
 
 ## 0.16.7 — source preview, 2026-10-29
 
-Source update for Public/main. Published desktop downloads remain at [0.16.4](https://github.com/chronoscope-app/chronoscope-public/releases/tag/v0.16.4). The local Mac build passed headless checks; fresh native fade captures remain unverified because live MCP requests timed out in the locked session, including with an older control build. [Validation details](docs/validation/fade-light-mac-2026-10-29/README.md).
+Source update for Public/main. Published desktop downloads remain at [0.16.4](https://github.com/TimeScope/timescope/releases/tag/v0.16.4). The local Mac build passed headless checks; fresh native fade captures remain unverified because live MCP requests timed out in the locked session, including with an older control build. [Validation details](docs/validation/fade-light-mac-2026-10-29/README.md).
 
 ### Fixed
 
@@ -120,7 +120,7 @@ Source update for Public/main. Published desktop downloads remain at [0.16.4](ht
 
 ## 0.16.4 — experimental preview, 2026-10-29
 
-[Windows x64 and Apple Silicon macOS downloads](https://github.com/chronoscope-app/chronoscope-public/releases/tag/v0.16.4) use per-platform source commits: Windows `b5146aa48db73b60bc9ef7353758cd90782d70f3` and macOS `498b888a93bc95d5491dec1915a4c624354cd1c3`. Application code, assets and dependency locks are byte-identical; the later commit repairs Mac validation cleanup. Both exact packages passed narrow native hosted validation. Windows is unsigned; macOS is ad hoc signed and not notarized. Matching source companions, notices, checksums and validation receipts accompany the downloads.
+[Windows x64 and Apple Silicon macOS downloads](https://github.com/TimeScope/timescope/releases/tag/v0.16.4) use per-platform source commits: Windows `b5146aa48db73b60bc9ef7353758cd90782d70f3` and macOS `498b888a93bc95d5491dec1915a4c624354cd1c3`. Application code, assets and dependency locks are byte-identical; the later commit repairs Mac validation cleanup. Both exact packages passed narrow native hosted validation. Windows is unsigned; macOS is ad hoc signed and not notarized. Matching source companions, notices, checksums and validation receipts accompany the downloads.
 
 ### Added
 
@@ -179,7 +179,7 @@ Source update for Public/main. Published desktop downloads remain at [0.16.4](ht
 
 ## 0.15.2 — experimental preview, 2026-10-23
 
-[Windows x64 and Apple Silicon macOS downloads](https://github.com/chronoscope-app/chronoscope-public/releases/tag/v0.15.2) use `ece70335d254c2b09437975c82434ca969f30739`. Both exact packages passed narrow native hosted validation; Windows is unsigned and macOS is ad hoc signed, not notarized. Source archives, notices, checksums and receipts accompany the downloads. See [installation status](docs/INSTALLATION.md) for limits.
+[Windows x64 and Apple Silicon macOS downloads](https://github.com/TimeScope/timescope/releases/tag/v0.15.2) use `ece70335d254c2b09437975c82434ca969f30739`. Both exact packages passed narrow native hosted validation; Windows is unsigned and macOS is ad hoc signed, not notarized. Source archives, notices, checksums and receipts accompany the downloads. See [installation status](docs/INSTALLATION.md) for limits.
 
 - Refresh data and imagery continuously during 2D panning, with bounded viewport queries instead of waiting for mouse release.
 - Add focused AI explanations and reviewed, additive tag suggestions.

@@ -65,6 +65,7 @@
       "maps-preferences-qa.mjs",
       "map-occlusion-qa.mjs",
       "flight-pan-qa.mjs",
+      "spectate-qa.mjs",
       "navigation-qa.mjs",
       "navigation-table-cleanup-qa.mjs",
       "navigation-preferences-qa.mjs",
@@ -197,6 +198,7 @@
     "navigation": {
       "browser": [
         "flight-pan-qa.mjs",
+        "spectate-qa.mjs",
         "navigation-qa.mjs",
         "navigation-table-cleanup-qa.mjs",
         "navigation-preferences-qa.mjs",

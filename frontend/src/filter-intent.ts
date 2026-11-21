@@ -10,6 +10,7 @@ export class FilterIntent<T extends object> {
   private draining = false;
   private progressive = false;
   private failure: unknown;
+  private refreshPending = false;
   constructor(
     private read: () => Promise<{ filter: T; revision: number }>,
     private write: (filter: T, revision: number) => Promise<unknown>,
@@ -27,12 +28,7 @@ export class FilterIntent<T extends object> {
   enqueue(delta: Partial<T>, delay = 0, progressive = false): Promise<void> {
     this.progressive ||= progressive;
     this.pending = { ...this.pending, ...delta };
-    this.failure = undefined;
-    if (!this.work)
-      this.work = new Promise<void>((resolve, reject) => {
-        this.resolve = resolve;
-        this.reject = reject;
-      });
+    this.prepare();
     clearTimeout(this.timer);
     if (delay) this.timer = setTimeout(() => this.start(), delay);
     else this.start();
@@ -46,8 +42,17 @@ export class FilterIntent<T extends object> {
   }
   flush(): Promise<void> {
     clearTimeout(this.timer);
+    if (this.pending || this.refreshPending) this.prepare();
     this.start();
     return this.idle();
+  }
+  private prepare() {
+    if (this.work) return;
+    this.failure = undefined;
+    this.work = new Promise<void>((resolve, reject) => {
+      this.resolve = resolve;
+      this.reject = reject;
+    });
   }
   private start() {
     if (this.draining || !this.work) return;
@@ -56,7 +61,12 @@ export class FilterIntent<T extends object> {
   }
   private async drain() {
     try {
-      while (this.pending) {
+      while (this.pending || this.refreshPending) {
+        if (!this.pending) {
+          await this.applied();
+          this.refreshPending = false;
+          continue;
+        }
         const delta = this.pending;
         this.pending = null;
         this.applying = delta;
@@ -76,9 +86,13 @@ export class FilterIntent<T extends object> {
           throw e;
         }
         this.applying = null;
+        this.refreshPending = true;
         // Scrubbing must publish intermediate frames even while newer input arrives.
         // The next write still coalesces all pending deltas into one latest intent.
-        if (!this.pending || this.progressive) await this.applied();
+        if (this.pending && this.progressive) {
+          await this.applied();
+          this.refreshPending = false;
+        }
       }
       this.resolve?.();
     } catch (e) {

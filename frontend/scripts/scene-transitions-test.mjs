@@ -544,9 +544,15 @@ test("actual workspace Save settles a prior restore and queued Map before captur
   const start = main.indexOf("const workspace = new WorkspaceController({");
   const end = main.indexOf("const input =", start);
   assert(start > 0 && end > start);
+  const call = ui.context.call;
   Object.assign(ui.context, {
     WorkspaceController,
-    projectPath: "study.chronoscope",
+    projectPath: "stale.chronoscope",
+    call(command, args) {
+      if (command === "workspace_status") return Promise.resolve({ source: "study.chronoscope" });
+      if (command === "save") assert.equal(args.path, "study.chronoscope");
+      return call(command, args);
+    },
     editor: { idle: async () => {} },
     filterIntent: { flush: async () => {} },
     viewsPanel: { idle: async () => {} },
@@ -1143,6 +1149,7 @@ test("actual restore callback graph keeps chart/display/camera notifications out
   });
   Object.assign(ui.context, {
     call: async () => null,
+    spectateRequest: 0,
     terrainLoadGeneration: 0,
     defaultChart: {},
     defaultDisplay: {},
@@ -1178,6 +1185,7 @@ test("actual restore callback graph keeps chart/display/camera notifications out
   );
   assert.equal(chartsPanel.config.title, "Restored chart");
   assert.equal(ui.context.mode, "map");
+  assert.equal(ui.context.spectateRequest, 1);
   assert.equal(drains, 0);
   assert.deepEqual(callbacks, []);
 });

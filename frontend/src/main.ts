@@ -63,6 +63,7 @@ import { PatternsPanel } from "./patterns-panel";
 import { ViewsPanel } from "./views-panel";
 import "./style.css";
 import { guide, shortcutGroups } from "./help";
+import type { TrackPoint } from "./spectate-track";
 import { installTooltips } from "./tooltips";
 import { call, chooseFile, native } from "./bridge";
 import { SpaceTimeView } from "./view";
@@ -148,6 +149,7 @@ let displayOptions: DisplayOptions = { ...defaultDisplay };
 let customEntityColors: Record<string, string> = {};
 let displayPreserveFrame = false;
 let layerMenu: HTMLElement | null = null;
+let spectateRequest = 0;
 let findings: any[] = [];
 let findingsRevision = -1;
 let resolveGuard: ((proceed: boolean) => void) | null = null;
@@ -485,7 +487,13 @@ view.onGisPick = (id, feature) => {
   })().catch(gisTable.onError);
 };
 const navigationHost = document.createElement("div");
-$("#scene").append(navigationHost);
+const spectateStatus = document.createElement("button");
+spectateStatus.id = "spectate-status";
+spectateStatus.type = "button";
+spectateStatus.hidden = true;
+spectateStatus.title = "Stop spectating · Esc";
+spectateStatus.onclick = () => view.setGlobeFlight(false);
+$("#scene").append(navigationHost, spectateStatus);
 const navigation = new NavigationSphere(navigationHost, view, () => {
   return fitEvents().catch((error) => toast(String(error), true));
 });
@@ -654,7 +662,7 @@ const workspace = new WorkspaceController({
   },
   status: () => call("workspace_status"),
   autosave: () => call("autosave_unsaved"),
-  source: () => projectPath,
+  source: async () => (await call("workspace_status")).source,
   identity: () => snapshot.workspace_id,
   chooseSavePath: () =>
     chooseFile({
@@ -850,6 +858,11 @@ async function runRefresh(render = true, resources = true,canonical=false) {
   const s = model.snapshot as Snapshot;
   if (generation !== serial) return;
   const stamp=JSON.stringify([model.stamp?.store_id,model.stamp?.data_revision]);
+  if (
+    view.spectatingEntity !== undefined &&
+    (snapshot.workspace_id !== s.workspace_id || currentDataIdentity !== stamp)
+  )
+    view.setGlobeFlight(false);
   if (view.smoothPlaybackActive && !canonical && (residentIdentity !== playbackIdentity(s) || residentDataIdentity!==stamp || s.selection_limited || (residentPurpose==="navigation" && (mode==="space-time" || (mode==="globe" && view.globeTime && !timeScrubbing && !view.playback)) && residentTimeFilter!==JSON.stringify([s.filter.start,s.filter.end])) || (view.smoothHeatmapActive && s.selected_count>0))) {
     return runRefresh(true, resources,true);
   }
@@ -1345,6 +1358,125 @@ function showLayerMenu(layer: HTMLElement, x: number, y: number) {
   });
   layerMenu.querySelector<HTMLButtonElement>("button:not(:disabled)")?.focus();
 }
+async function spectateEntity(entity: string) {
+  const request = ++spectateRequest;
+  const workspace = snapshot.workspace_id;
+  const data = currentDataIdentity;
+  const current = () =>
+    request === spectateRequest &&
+    snapshot.workspace_id === workspace &&
+    currentDataIdentity === data;
+  const initialModeGeneration = viewModeGeneration;
+  const points: TrackPoint[] = [];
+  let cursor: string | undefined;
+  do {
+    const page: EngineContracts["query"]["result"] = await call("query", {
+      filter: {
+        located_only: true,
+        predicates: [{ field: "entity", op: "Equals", value: entity }],
+      },
+      fields: ["entity", "time", "lat", "lon", "altitude"],
+      sort_by: "time",
+      limit: 1000,
+      cursor,
+    });
+    if (!current() || initialModeGeneration !== viewModeGeneration ||
+        (page.workspace_id && page.workspace_id !== workspace)) return;
+    for (const row of page.events) {
+      if (
+        row.entity !== entity ||
+        typeof row.lat !== "number" ||
+        typeof row.lon !== "number"
+      ) continue;
+      points.push({
+        lat: row.lat, lon: row.lon, time: row.time, altitude: row.altitude ?? undefined,
+      });
+    }
+    cursor = page.next_cursor ?? undefined;
+  } while (cursor);
+  if (points[0]?.time === points.at(-1)?.time) {
+    toast("Spectate needs at least two located events at different times.");
+    return;
+  }
+  if (playTimer !== undefined || playbackPreparing) await togglePlayback();
+  await filterIntent.flush();
+  await view.resources.prepareAltitude(points);
+  if (!current() || initialModeGeneration !== viewModeGeneration) return;
+  const useAltitude = mode === "space-time" ? view.timeAltitude : view.globeAltitude;
+  const eligible = useAltitude
+    ? points.filter((point) => view.resources.altitudeHeight(point) !== null)
+    : points;
+  const track = eligible.filter((point, i) => point.time !== eligible[i - 1]?.time);
+  if (track.length < 2) {
+    toast("Spectate in Altitude mode needs two events with usable heights at different times.");
+    return;
+  }
+  const start = Math.max(track[0].time, snapshot.filter.start ?? -Infinity);
+  const end = Math.min(track.at(-1)!.time, snapshot.filter.end ?? Infinity);
+  if (start >= end) {
+    toast("This entity has no track to follow in the selected time window.");
+    return;
+  }
+  if (mode === "map") $('button[data-view="globe"]').click();
+  const spectateModeGeneration = viewModeGeneration;
+  await viewModeWork;
+  if (
+    current() && spectateModeGeneration === viewModeGeneration &&
+    view.mode !== "map" && view.physicalAltitude === useAltitude
+  )
+    view.startSpectating(entity, track, {
+      start, end, speed: playbackSpeed.value, increment: playbackIncrement.value,
+    });
+}
+function openEntityMenu(row: HTMLElement, x: number, y: number) {
+  const trigger = row.querySelector<HTMLButtonElement>("[data-select-entity]")!;
+  const entity = trigger.dataset.selectEntity!;
+  const active = view.spectatingEntity === entity;
+  closeLayerMenu();
+  const menu = document.createElement("div");
+  menu.className = "layer-context-menu";
+  menu.setAttribute("role", "menu");
+  menu.setAttribute("aria-label", entity || "Unnamed entity");
+  const button = document.createElement("button");
+  button.setAttribute("role", "menuitem");
+  button.textContent = active ? "Stop spectating" : "Spectate";
+  menu.append(button);
+  layerMenu = menu;
+  document.body.append(menu);
+  menu.style.left = `${Math.max(8, Math.min(innerWidth - menu.offsetWidth - 8, x))}px`;
+  menu.style.top = `${Math.max(8, Math.min(innerHeight - menu.offsetHeight - 8, y))}px`;
+  button.addEventListener("click", () => {
+    closeLayerMenu();
+    if (active) {
+      view.setGlobeFlight(false);
+      trigger.focus();
+    } else {
+      void spectateEntity(entity).catch((error) => toast(String(error), true));
+    }
+  });
+  menu.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" && event.key !== "Tab") return;
+    event.stopPropagation();
+    if (event.key === "Escape") event.preventDefault();
+    closeLayerMenu();
+    trigger.focus();
+  });
+  button.focus();
+}
+$("#entities").addEventListener("contextmenu", (event) => {
+  const row = (event.target as Element).closest<HTMLElement>(".entity");
+  if (!row || facetField("entity") !== "entity") return;
+  event.preventDefault();
+  openEntityMenu(row, event.clientX, event.clientY);
+});
+$("#entities").addEventListener("keydown", (event) => {
+  if (event.key !== "ContextMenu" && !(event.shiftKey && event.key === "F10")) return;
+  const row = (event.target as Element).closest<HTMLElement>(".entity");
+  if (!row || facetField("entity") !== "entity") return;
+  event.preventDefault();
+  const rect = row.getBoundingClientRect();
+  openEntityMenu(row, rect.left, rect.bottom);
+});
 async function openAttributes(source: string | null) {
   await tables.openAttributes(source);
   await tableWindows.focus();
@@ -3147,6 +3279,7 @@ function updateNavigationControls() {
     mode === "map"
       ? "Drag to pan the flat map; scroll to zoom. Time filtering remains in the timeline."
       : "Drag to move; middle-drag rotates horizontally and tilts vertically; right-drag rotates horizontally and zooms vertically about a fixed focus; wheel zooms. Shift-click adds selection.";
+  $("#globe-flight").hidden = mode !== "globe";
   const spaceTime = mode === "space-time";
   const altitude = view.physicalAltitude;
   const time = spaceTime ? view.timeHeight > 0 : view.globeTime;
@@ -3435,10 +3568,12 @@ function restoreCommand<T>(
   });
 }
 async function applyRestoredScene(scene: SceneState) {
+  spectateRequest++;
   globeElevationGeneration++;
   displayPreserveFrame = false;
   restoringScene = true;
   try {
+    if (view.flightActive) view.setGlobeFlight(false);
     cancelViewportRefresh();
     await cancelMap();
     terrainLoadGeneration++;
@@ -3720,6 +3855,7 @@ on("#save", () => saveWorkspace());
 on("#export", () => workspaceFiles.exportEvents());
 on("#toggle-table", showTablesMenu);
 on("#navigate", () => {
+  view.setGlobeFlight(false);
   view.boxMode = false;
   $("#navigate").classList.add("active");
   $("#navigate").setAttribute("aria-pressed", "true");
@@ -3727,12 +3863,26 @@ on("#navigate", () => {
   $("#box-select").setAttribute("aria-pressed", "false");
 });
 on("#box-select", () => {
+  view.setGlobeFlight(false);
   view.boxMode = true;
   $("#box-select").classList.add("active");
   $("#box-select").setAttribute("aria-pressed", "true");
   $("#navigate").classList.remove("active");
   $("#navigate").setAttribute("aria-pressed", "false");
 });
+view.onFlightChange = () => {
+  const button = $("#globe-flight");
+  const entity = view.spectatingEntity;
+  const spectating = entity !== undefined;
+  button.classList.toggle("active", view.flightActive);
+  button.setAttribute("aria-pressed", String(view.flightActive));
+  spectateStatus.hidden = !spectating;
+  spectateStatus.textContent = spectating ? `Spectating ${entity || "unnamed entity"}` : "";
+  spectateStatus.setAttribute("aria-label", `Stop spectating ${entity || "unnamed entity"}`);
+  ($("#fit-terrain") as HTMLButtonElement).disabled = spectating;
+  navigation.update();
+};
+on("#globe-flight", () => view.setGlobeFlight(!view.flightActive, true));
 function setWorkspaceExpanded(expanded: boolean) {
   // Migrate the removed whole-workspace expansion to the existing pane rails.
   document.body.classList.remove("fullscreen");
@@ -3922,11 +4072,13 @@ async function setSmoothGraphicsForTesting(enabled: boolean) {
 }
 const playbackSpeed = new PlaybackSpeed($("#play"), (speed) => {
   playbackClock?.setSpeed(speed);
+  view.updateSpectateRate(speed);
 });
 const playbackIncrement = new PlaybackIncrement(
   $("#playback-speed").parentElement!,
   (increment) => {
     playbackClock?.setIncrement(increment);
+    view.updateSpectateRate(undefined, increment);
   },
 );
 timeRail.mountPlayback();
@@ -4255,9 +4407,11 @@ window.addEventListener("keydown", (e) => {
   }
   if (key === "escape") {
     e.preventDefault();
+    spectateRequest++;
     if (dialogs.node) closeModal();
     else if (notifications.isOpen) notifications.close();
     else if (layerMenu) closeLayerMenu();
+    else if (view.flightActive) view.setGlobeFlight(false);
     else if (view.cancelNavigation()) {
       if (view.boxMode) $("#navigate").click();
     } else if (view.boxMode) $("#navigate").click();
@@ -4265,6 +4419,13 @@ window.addEventListener("keydown", (e) => {
     return;
   }
   if (dialogs.node || busy || notifications.isOpen || layerMenu) return;
+  if (
+    view.globeFlightKey(e, () => {
+      if (!dialogs.node && !busy && !notifications.isOpen && !layerMenu)
+        $("#play").click();
+    })
+  )
+    return;
   if (cmd) {
     if (key === "o" || key === "i") run(openFile);
     else if (key === "s") run(() => saveWorkspace(e.shiftKey));
@@ -4381,6 +4542,21 @@ async function sceneIdle() {
   }
 }
 async function initialize() {
+  if (native) {
+    const { listen } = await import("@tauri-apps/api/event");
+    const { invoke } = await import("@tauri-apps/api/core");
+    await listen("workspace-close-request", async () => {
+      try {
+        await ready.catch(() => {});
+        const close = () => invoke("desktop_close");
+        if (snapshot) await workspace.close(close);
+        else await close();
+      } catch (error) {
+        toast(String(error), true);
+      }
+    });
+    await invoke("desktop_close_ready");
+  }
   await view.ready;
   projectPath = (await call("workspace_status")).source;
   [preferences, mapPresets] = await Promise.all([
@@ -4406,16 +4582,6 @@ async function initialize() {
     await listen<string>("app-menu", (e) => {
       if (e.payload === "help-guide") showHelp();
       else if (e.payload === "help-shortcuts") showHelp(true);
-    });
-    await listen("workspace-close-request", async () => {
-      try {
-        await workspace.close(async () => {
-          const { invoke } = await import("@tauri-apps/api/core");
-          await invoke("desktop_close");
-        });
-      } catch (error) {
-        toast(String(error), true);
-      }
     });
     let syncTimer: ReturnType<typeof setTimeout>;
     let sceneSyncGeneration = 0, sceneSyncPending = false;

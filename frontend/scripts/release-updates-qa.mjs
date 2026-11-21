@@ -1,8 +1,15 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import path from "node:path";
+import { inc } from "semver";
 import { withLocalApp } from "./local-browser.mjs";
 
 await withLocalApp("release-updates", async ({ page, out, pass }) => {
+  const { version: currentVersion } = JSON.parse(
+    readFileSync(new URL("../package.json", import.meta.url), "utf8"),
+  );
+  const newVersion = inc(currentVersion, "patch");
+  assert(newVersion);
   const release = (tag, extra = {}) => ({
     tag_name: tag,
     draft: false,
@@ -24,7 +31,7 @@ await withLocalApp("release-updates", async ({ page, out, pass }) => {
     gets++;
     assert.equal(
       route.request().url(),
-      "https://api.github.com/repos/chronoscope-app/chronoscope-public/releases?per_page=20",
+      "https://api.github.com/repos/TimeScope/timescope/releases?per_page=20",
     );
     assert(!route.request().headers().authorization);
     if (mode === "delay")
@@ -39,7 +46,7 @@ await withLocalApp("release-updates", async ({ page, out, pass }) => {
         mode === "old"
           ? [release("v0.16.9")]
           : [
-              release("v0.16.13", { html_url: "https://evil.invalid" }),
+              release(`v${newVersion}`, { html_url: "https://evil.invalid" }),
               release("v99.0.0", { draft: true }),
               release("tester-20261022"),
             ],
@@ -58,12 +65,13 @@ await withLocalApp("release-updates", async ({ page, out, pass }) => {
   await page
     .getByRole("heading", { name: "Update available", exact: true })
     .waitFor();
-  assert.match(await page.locator('.modal [role="status"]').innerText(), /0\.16\.13/);
-  assert.match(await page.locator('.modal [role="status"]').innerText(), /0\.16\.12/);
+  const status = await page.locator('.modal [role="status"]').innerText();
+  assert(status.includes(newVersion));
+  assert(status.includes(currentVersion));
   await page.locator("#updates-release").click();
   assert.equal(
     await page.evaluate(() => window.__openedReleases[0][0]),
-    "https://github.com/chronoscope-app/chronoscope-public/releases/tag/v0.16.13",
+    `https://github.com/TimeScope/timescope/releases/tag/v${newVersion}`,
   );
   await page.screenshot({ path: path.join(out, "update-available.png") });
   pass(
@@ -73,13 +81,13 @@ await withLocalApp("release-updates", async ({ page, out, pass }) => {
   await page.locator("#notifications").click();
   await page
     .getByRole("heading", {
-      name: "Chronoscope 0.16.13 is available",
+      name: `Chronoscope ${newVersion} is available`,
       exact: true,
     })
     .waitFor();
   assert.equal(
     await page
-      .locator('.notification-card[data-notification-id="release:0.16.13"]')
+      .locator(`.notification-card[data-notification-id="release:${newVersion}"]`)
       .count(),
     1,
   );

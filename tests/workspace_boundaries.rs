@@ -156,6 +156,86 @@ fn stale_workspace_tokens_fail_even_after_undo_restores_the_same_store() {
 }
 
 #[test]
+fn replacement_undo_and_redo_restore_the_matching_save_destination() {
+    let dir = tempfile::tempdir().unwrap();
+    let a = dir.path().join("a.json");
+    let b = dir.path().join("b.json");
+    write_project(&a, &Project::new(chronoscope::demo::dataset()));
+    write_project(&b, &Project::empty());
+    let engine = Engine::from_path(&a, dir.path().join("profile"), None).unwrap();
+    let source = || engine.invoke("workspace_status", json!({})).unwrap()["source"].clone();
+    engine.invoke("open", json!({"path":b})).unwrap();
+    let original_b = std::fs::read(&b).unwrap();
+    assert_eq!(source(), json!(b));
+    engine.invoke("undo", json!({})).unwrap();
+    assert_eq!(source(), json!(a.canonicalize().unwrap()));
+    engine.invoke("save", json!({"path":source()})).unwrap();
+    assert_eq!(std::fs::read(&b).unwrap(), original_b);
+    engine.invoke("redo", json!({})).unwrap();
+    assert_eq!(source(), json!(b));
+    assert_eq!(engine.invoke("snapshot", json!({})).unwrap()["count"], 0);
+}
+
+#[test]
+fn open_cancellation_respects_the_workspace_commit_point() {
+    use std::sync::atomic::{AtomicBool, Ordering};
+    let dir = tempfile::tempdir().unwrap();
+    let engine = Engine::new(
+        Project::new(chronoscope::demo::dataset()),
+        dir.path().join("profile"),
+    )
+    .unwrap();
+    engine
+        .invoke(
+            "terrain_load",
+            json!({"path":fixture("terrain/synthetic-n43.dt0")}),
+        )
+        .unwrap();
+    engine
+        .invoke(
+            "import_preview",
+            json!({"path":fixture("import/small-study.csv")}),
+        )
+        .unwrap();
+    let pending = || engine.invoke("diagnostics", json!({})).unwrap()["pending_imports"].clone();
+    let terrain = || engine.invoke("terrain_info", json!({})).unwrap();
+    let original_terrain = terrain();
+    let file = dir.path().join("replacement.json");
+    write_project(&file, &Project::empty());
+    let open_at = |phase| {
+        let cancelled = Arc::new(AtomicBool::new(false));
+        let flag = cancelled.clone();
+        chronoscope::operation::with_context(
+            chronoscope::operation::Context {
+                cancelled,
+                scope: None,
+                progress: Some(Arc::new(move |_, _, message| {
+                    if message == phase {
+                        flag.store(true, Ordering::Relaxed);
+                    }
+                })),
+            },
+            || engine.invoke("open", json!({"path":file})),
+        )
+    };
+    let revision = engine.invoke("revision", json!({})).unwrap();
+    assert!(open_at("Committing workspace")
+        .unwrap_err()
+        .starts_with("CANCELLED:"));
+    assert_eq!(engine.invoke("revision", json!({})).unwrap(), revision);
+    assert_eq!(pending(), 1);
+    assert_eq!(terrain(), original_terrain);
+    let result = open_at("Workspace opened").unwrap();
+    assert_eq!(result["commit_receipt"]["cancel_requested"], true);
+    assert_eq!(pending(), 0);
+    assert!(terrain().is_null());
+    assert_eq!(
+        engine.invoke("workspace_status", json!({})).unwrap()["source"],
+        json!(file)
+    );
+}
+
+#[test]
 fn terrain_commit_is_successful_when_cancellation_arrives_after_preferences_are_durable() {
     use std::sync::atomic::{AtomicBool, Ordering};
     let dir = tempfile::tempdir().unwrap();

@@ -2,9 +2,63 @@
 """Public attached MCP checks for playback, scenarios, notifications and UI discovery."""
 import argparse
 import json
+import math
+import subprocess
 import time
 from pathlib import Path
 from native_mcp import NativeMcp
+
+
+def check_globe_flight(client, cli, profile):
+    target = 'view_navigate'
+    status = lambda: client.call('view_status')
+    pose = lambda result: result['scene']['cesium_camera']
+    position = lambda result: pose(result)['position']
+
+    def command(action, **args):
+        return client.call(target, {'action': action, **args})
+
+    def rejected(action, **args):
+        try:
+            command(action, **args)
+        except RuntimeError as error:
+            assert 'INVALID_ARGUMENT' in str(error), error
+        else:
+            raise AssertionError(f'Unexpected success for {action} {args}')
+
+    client.call('view_set', {'mode': 'map'})
+    rejected('flight_mode', enabled=True)
+    client.call('view_set', {'mode': 'globe'})
+    rejected('flight_step', forward_m=1)
+    start = command('look_at', center=[0, 0, 0], distance_m=1000)
+    enabled = command('flight_mode', enabled=True)
+    assert enabled['diagnostics']['flightActive']
+    assert math.dist(position(start), position(enabled)) < 0.001
+    look = command('flight_step', pitch_degrees=90)
+    assert math.dist(position(look), position(start)) < 0.001
+    assert pose(look)['direction'][2] > 0.99, look
+    moved = command('flight_step', forward_m=50, right_m=30, up_m=20)
+    x, y, z = position(moved)
+    assert abs(x - 6379157) < 0.1 and abs(y - 30) < 0.1 and abs(z - 50) < 0.1, position(moved)
+    time.sleep(0.35)
+    assert math.dist(position(status()), position(moved)) < 0.001
+
+    cli_result = subprocess.run(
+        [str(cli), '--data-dir', str(profile), '--attach', 'view', 'flight-step',
+         '--right', '-30', '--yaw', '90'],
+        check=True, capture_output=True, text=True, timeout=20,
+    )
+    turned = json.loads(cli_result.stdout)
+    assert abs(position(turned)[1]) < 0.1
+    assert pose(turned)['direction'][1] > 0.99
+    landed = command('flight_step', up_m=-10000)
+    assert abs(math.hypot(*position(landed)) - 6378139) < 0.1, position(landed)
+    disabled = command('flight_mode', enabled=False)
+    assert not disabled['diagnostics']['flightActive']
+    assert pose(disabled) == pose(landed)
+    command('flight_mode', enabled=True)
+    client.call('view_set', {'mode': 'map'})
+    assert not status()['diagnostics']['flightActive']
 
 
 def main():
@@ -93,6 +147,8 @@ def main():
         assert terminal(run['id'])['state']=='cancelled'
         client.call('view_scenario',{'action':'remove','name':name})
         passed('Native cancellation releases profile listeners and preserves completed actions')
+        check_globe_flight(client, args.cli.resolve(), args.data_dir.resolve())
+        passed('Native Globe flight moves, looks and stops through MCP and CLI, with terrain clearance and mode cleanup')
         report['passed']=True
     finally:
         client.close();(out/'report.json').write_text(json.dumps(report,indent=2)+'\n')

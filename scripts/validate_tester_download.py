@@ -26,7 +26,7 @@ from package_notices import verify_notices
 from package_tester import architecture
 from windows_release import installer_inventory, download_inventory
 
-REPO = 'chronoscope-app/chronoscope-public'
+REPO = 'TimeScope/timescope'
 ROOT = Path(__file__).resolve().parent.parent
 # The measured offline Balanced pack alone is 84.7 MiB; retain a bounded cap.
 MAX_ARCHIVE = 256 * 1024 * 1024

@@ -94,8 +94,25 @@ for (let burst = 0; burst < 30; burst++) {
   assert.equal(c.protects("start"), false);
   await assert.rejects(c.idle(), /fixture error/);
   fail = false;
+  await c.flush();
+  assert.equal(state.filter.start, 40);
   await c.enqueue({ start: 60 });
   assert.equal(state.filter.start, 60);
+}
+{
+  let writes = 0;
+  let refreshes = 0;
+  const c = new FilterIntent(
+    async () => ({ filter: { start: 0 }, revision: 1 }),
+    async () => { writes++; },
+    async () => {
+      if (++refreshes === 1) throw Error("display refresh failed");
+    },
+  );
+  await assert.rejects(c.enqueue({ start: 40 }), /display refresh failed/);
+  await c.flush();
+  assert.equal(writes, 1);
+  assert.equal(refreshes, 2);
 }
 {
   let state = { filter: { start: 0, search: "" }, revision: 1 };

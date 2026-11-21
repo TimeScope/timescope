@@ -1,6 +1,11 @@
 //! Keep AppKit FFI outside the desktop executable, which forbids unsafe code.
 #![deny(unsafe_op_in_unsafe_fn)]
 
+#[cfg(target_os = "macos")]
+mod quit;
+#[cfg(target_os = "macos")]
+pub use quit::install_quit_guard;
+
 /// Change only this running application's Dock icon, on AppKit's main thread.
 #[cfg(target_os = "macos")]
 pub fn set_image(png: &[u8]) -> Result<(), &'static str> {

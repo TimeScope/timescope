@@ -109,6 +109,27 @@ fn lease(dir: &Path, record: &Record) -> Result<fs::File, String> {
     Ok(file)
 }
 impl Engine {
+    pub(super) fn workspace_source(&self) -> Result<Option<PathBuf>, String> {
+        let status = self
+            .lifecycle
+            .status
+            .lock()
+            .map_err(|_| "Lifecycle unavailable")?;
+        Ok(status.source.clone())
+    }
+    pub(super) fn swap_history_source(&self, source: &mut Option<PathBuf>) -> Result<(), String> {
+        let mut status = self
+            .lifecycle
+            .status
+            .lock()
+            .map_err(|_| "Lifecycle unavailable")?;
+        std::mem::swap(&mut status.source, source);
+        status.checkpoint = None;
+        status.autosave_path = None;
+        status.autosave_revision = None;
+        status.document += 1;
+        Ok(())
+    }
     pub fn workspace_dirty(&self) -> bool {
         self.lifecycle
             .status
@@ -124,7 +145,7 @@ impl Engine {
         new_document: bool,
     ) -> Result<(), String> {
         if matches!(command, "save" | "open") {
-            self.recovery_clear()?;
+            let cleared = self.recovery_clear();
             let mut status = self
                 .lifecycle
                 .status
@@ -132,7 +153,10 @@ impl Engine {
                 .map_err(|_| "Lifecycle unavailable")?;
             status.source = path.map(PathBuf::from);
             status.revision = revision;
-            return Ok(());
+            if let Err(error) = &cleared {
+                status.error = Some(error.clone());
+            }
+            return cleared;
         }
         if !crate::command::Command::parse(command).is_some_and(|c| c.effects().dirty) {
             return Ok(());

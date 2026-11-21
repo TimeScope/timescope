@@ -140,7 +140,7 @@ impl Engine {
 
     pub(super) fn load_workspace(&self, path: &Path) -> Result<Value, String> {
         crate::input_limits::ensure_workspace(path)?;
-        let (store, mut project) = if crate::store::DataStore::is_database(path) {
+        let (mut store, mut project) = if crate::store::DataStore::is_database(path) {
             let root = crate::operation::intersect_scopes(
                 crate::operation::scope(),
                 self.terrain_scope.clone(),
@@ -159,9 +159,12 @@ impl Engine {
         };
         let loaded = self.loaded_preferences(&project)?;
         project.dataset.events.clear();
-        crate::operation::check()?;
+        validate_context_budget(&project)?;
+        store.selection_changed(&project.selected)?;
+        crate::operation::progress(0, Some(1), "Committing workspace");
         let mut state = self.state.lock().map_err(|_| "Workspace unavailable")?;
         let mut live_terrain = self.terrain.lock().map_err(|_| "Terrain unavailable")?;
+        crate::operation::check()?;
         let old = std::mem::replace(&mut state.store, store);
         state.previous_store = Some(old);
         state.project = project;
@@ -170,7 +173,12 @@ impl Engine {
         }
         *live_terrain = loaded.terrain;
         state.pending.clear();
-        Ok(json!({"ok":true,"scene":state.project.scene,"missing_resources":loaded.missing}))
+        let result =
+            json!({"ok":true,"scene":state.project.scene,"missing_resources":loaded.missing});
+        drop(live_terrain);
+        drop(state);
+        crate::operation::progress(1, Some(1), "Workspace opened");
+        Ok(result)
     }
 
     pub fn from_path(path: &Path, data_dir: PathBuf, root: Option<&Path>) -> Result<Self, String> {

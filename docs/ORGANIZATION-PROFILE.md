@@ -1,6 +1,6 @@
 # Prepared organization profile
 
-The organization is `chronoscope-app`; the canonical source repository is [chronoscope-public](https://github.com/chronoscope-app/chronoscope-public); the application remains Chronoscope. Publish only the owner-authorized clean snapshot, not the private development repository.
+The organization is `TimeScope`; the canonical source repository is [TimeScope/timescope](https://github.com/TimeScope/timescope); the application remains Chronoscope. Publish only the owner-authorized clean snapshot, not the private development repository.
 
 Suggested short description:
 
@@ -19,13 +19,13 @@ Explore timestamped data through linked maps, tracks, charts and tables. Follow 
 
 Chronoscope is an experimental desktop application. Open your own data or start with documented real-world demos, then save a portable workspace.
 
-- [Explore the project](https://github.com/chronoscope-app/chronoscope-public)
-- [Installation and platform status](https://github.com/chronoscope-app/chronoscope-public/blob/main/docs/INSTALLATION.md)
-- [User guide](https://github.com/chronoscope-app/chronoscope-public/blob/main/docs/USER-GUIDE.md)
-- [Privacy and connections](https://github.com/chronoscope-app/chronoscope-public/blob/main/PRIVACY.md)
-- [Contribute](https://github.com/chronoscope-app/chronoscope-public/blob/main/CONTRIBUTING.md)
+- [Explore the project](https://github.com/TimeScope/timescope)
+- [Installation and platform status](https://github.com/TimeScope/timescope/blob/main/docs/INSTALLATION.md)
+- [User guide](https://github.com/TimeScope/timescope/blob/main/docs/USER-GUIDE.md)
+- [Privacy and connections](https://github.com/TimeScope/timescope/blob/main/PRIVACY.md)
+- [Contribute](https://github.com/TimeScope/timescope/blob/main/CONTRIBUTING.md)
 
-Experimental [Windows x64 and Apple Silicon macOS previews](https://github.com/chronoscope-app/chronoscope-public/releases/tag/v0.15.2) are available. Read the platform limitations: Windows is unsigned; macOS is ad hoc signed and not notarized. Independent application code is MIT-licensed; datasets, maps, media and dependencies retain their own terms and credits.
+Experimental [Windows x64 and Apple Silicon macOS previews](https://github.com/TimeScope/timescope/releases/tag/v0.15.2) are available. Read the platform limitations: Windows is unsigned; macOS is ad hoc signed and not notarized. Independent application code is MIT-licensed; datasets, maps, media and dependencies retain their own terms and credits.
 ```
 
 Before enabling the introduction, confirm that every link is accessible to a signed-out visitor and that the platform/release statements are still current.
