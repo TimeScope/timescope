@@ -24,10 +24,21 @@ await withLocalApp("spectate", async ({ page, api, out, pass }) => {
   const navigate = (args) => page.evaluate((args) =>
     window.__chronoscope.liveViewRequest("view_navigate", args), args);
   await assert.rejects(navigate({ action: "spectate", entity: "Single" }), /at least two located events/);
+  const compass = page.locator(".navigation-compass");
+  const compassStyle = () => compass.evaluate((element) => {
+    const style = getComputedStyle(element);
+    return [style.backgroundColor, style.opacity, style.backdropFilter];
+  });
+  const idleCompass = await compassStyle();
   const attached = await navigate({ action: "spectate", entity: "Survey" });
   assert.equal(attached.mode, "globe");
   assert.equal(attached.diagnostics.spectatingEntity, "Survey");
   assert.equal(attached.diagnostics.spectatingDirection, "forward");
+  assert(await compass.isDisabled());
+  assert.match(await compass.getAttribute("aria-label"), /Heading .* unavailable while spectating/);
+  assert.equal(idleCompass[1], "1");
+  assert.deepEqual(await compassStyle(), idleCompass);
+  assert.equal(idleCompass[2], "none");
   assert.equal((await navigate({ action: "spectate_direction", direction: "reverse" }))
     .diagnostics.spectatingDirection, "reverse");
   const stopped = await navigate({ action: "spectate_stop" });

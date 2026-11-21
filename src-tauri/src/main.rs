@@ -90,7 +90,14 @@ fn desktop_close_ready(window: tauri::WebviewWindow, close: State<'_, CloseState
 }
 struct AgentState {
     running: Arc<Mutex<Option<chronoscope::agent::RunningAgent>>>,
+    ready: Arc<AtomicBool>,
     stop: Arc<AtomicBool>,
+}
+#[tauri::command]
+fn desktop_agent_ready(window: tauri::WebviewWindow, state: State<'_, AgentState>) {
+    if window.label() == "main" {
+        state.ready.store(true, Ordering::Release);
+    }
 }
 #[tauri::command]
 fn agent_access(
@@ -108,7 +115,9 @@ fn agent_access(
         .running
         .lock()
         .map_err(|_| "Agent state unavailable")?;
-    chronoscope::agent::access::reconcile(engine.inner(), &mut current, &settings)?;
+    if state.ready.load(Ordering::Acquire) && !state.stop.load(Ordering::Acquire) {
+        chronoscope::agent::access::reconcile(engine.inner(), &mut current, &settings)?;
+    }
     Ok(chronoscope::agent::access::live_status(
         current.as_ref(),
         &std::env::current_exe().map_err(|e| e.to_string())?,
@@ -147,6 +156,7 @@ fn main() {
         return;
     }
     let running = Arc::new(Mutex::new(None));
+    let ready = Arc::new(AtomicBool::new(false));
     let stop = Arc::new(AtomicBool::new(false));
     let engine = Arc::new(
         Engine::new(
@@ -166,11 +176,13 @@ fn main() {
             _ => None,
         });
     let poll_running = running.clone();
+    let poll_ready = ready.clone();
     let poll_stop = stop.clone();
     std::thread::spawn(move || {
         while !poll_stop.load(Ordering::Relaxed) {
             if let Ok(mut current) = poll_running.lock() {
-                if !poll_stop.load(Ordering::Relaxed) {
+                // Publish the connection only when the main WebView can handle requests.
+                if poll_ready.load(Ordering::Acquire) && !poll_stop.load(Ordering::Acquire) {
                     let _ = chronoscope::agent::access::refresh(&poll_engine, &mut current);
                 }
             }
@@ -182,7 +194,11 @@ fn main() {
         .plugin(tauri_plugin_opener::init())
         .manage(engine.clone())
         .manage(icon_appearance::IconAppearance::new(icon_theme))
-        .manage(AgentState { running, stop })
+        .manage(AgentState {
+            running,
+            ready,
+            stop,
+        })
         .manage(CloseState::default())
         .invoke_handler(tauri::generate_handler![
             dispatch,
@@ -190,6 +206,7 @@ fn main() {
             agent_status,
             desktop_close,
             desktop_close_ready,
+            desktop_agent_ready,
             si_window::si_window,
             table_window::table_window,
             si_window::si_open_link,

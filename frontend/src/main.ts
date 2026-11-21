@@ -4928,6 +4928,10 @@ async function initialize() {
       console.error("Automatic document save:", error);
     }
   }, 30000);
+  if (native) {
+    const { invoke } = await import("@tauri-apps/api/core");
+    await invoke("desktop_agent_ready");
+  }
 }
 const ready = initialize();
 void ready.then(() => { if (native) releaseUpdates.start(); }).catch(() => {});

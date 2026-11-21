@@ -262,9 +262,11 @@ export class NavigationSphere {
       `${String(Math.round(bearing) % 360).padStart(3, "0")}°`;
     this.sphere.setAttribute(
       "aria-label",
-      flat
-        ? "Drag compass to pan the 2D map; arrow keys pan"
-        : `Drag compass to orbit; heading ${Math.round(bearing) % 360} degrees, tilt ${Math.round(tilt)} degrees; arrow keys rotate and tilt`,
+      spectating
+        ? `Heading ${Math.round(bearing) % 360} degrees; manual orbit unavailable while spectating`
+        : flat
+          ? "Drag compass to pan the 2D map; arrow keys pan"
+          : `Drag compass to orbit; heading ${Math.round(bearing) % 360} degrees, tilt ${Math.round(tilt)} degrees; arrow keys rotate and tilt`,
     );
     this.sphere.dataset.tooltip = flat
       ? "Drag to pan · arrows move viewpoint · Home restores north"

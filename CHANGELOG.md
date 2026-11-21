@@ -4,9 +4,14 @@ TimeScope is experimental. Source versions and downloadable builds can differ; [
 
 ## Unreleased
 
-- Rename the app to TimeScope. The CLI command is now `timescope` and new portable workspaces use `.timescope`. The previous CLI command and existing `.chronoscope` workspace files are supported.
+## 0.16.17 — experimental Mac preview candidate, 2026-11-21
 
-## 0.16.16 — experimental source preview, 2026-11-04
+- Rename the app to TimeScope. The CLI command is now `timescope` and new portable workspaces use `.timescope`. The previous CLI command and existing `.chronoscope` workspace files are supported.
+- Add Globe flight and track spectating in Globe and Time. Follow an entity, change direction, or stop through the attached CLI or MCP.
+- Keep the compass and direction labels readable while spectating. Manual orbit remains disabled until spectating stops.
+- Wait for the desktop view to initialize before accepting attached CLI and MCP connections. Complete pending camera saves before acknowledging navigation.
+
+## 0.16.16 — experimental preview, 2026-11-04
 
 - Update the Excel reader to Calamine 0.38.0, fixing malformed compound-file inputs that could panic or allocate without bound (RUSTSEC-2026-0436).
 - Re-enable Charts with a single row of eight chart-type icons and tooltips, visible X/Y field selectors, fixed statistical axes, and relevant settings under Chart options. Retain linked Event selection and saved charts.
