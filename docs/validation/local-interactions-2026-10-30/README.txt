@@ -42,6 +42,6 @@ Binary SHA256: f049839417b41d524480eff1d37e1c55ff24699cc588c0100cc7e957388e053e
 This work remains local; no Next/Public push or hosted workflow was run.
 
 Archived harness scripts in harness/ were run from the workspace root alongside
-chronoscope-next and chronoscope-interactions-local. Their portable tool and
+private development repository and chronoscope-interactions-local. Their portable tool and
 sibling fixture paths describe this Windows setup. Application code is at
 83ed3e5; subsequent commits contain only verification scripts and these results.

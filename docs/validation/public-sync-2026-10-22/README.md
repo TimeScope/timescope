@@ -1,6 +1,6 @@
 # Complete validated source promotion — 2026-10-22
 
-Owner-authorized promotion of **all validated updates** from `chronoscope-next` main `ee83f5c` onto `chronoscope-public` main `3e83a58`. The remaining feature gap was bounded Shapefile and vector GeoPackage ingestion. Public now includes its native reference layers, timestamped Events conversion, source attributes/provenance, portable source packaging, reader bounds, malformed-input tests, pinned dependencies, license notices, fixtures, documentation and browser evidence. The AI features promoted earlier remain included.
+Owner-authorized promotion of **all validated updates** from the private development repository main `ee83f5c` onto `timescope` main `3e83a58`. The remaining feature gap was bounded Shapefile and vector GeoPackage ingestion. Public now includes its native reference layers, timestamped Events conversion, source attributes/provenance, portable source packaging, reader bounds, malformed-input tests, pinned dependencies, license notices, fixtures, documentation and browser evidence. The AI features promoted earlier remain included.
 
 An exhaustive tracked-file comparison verifies parity with next. Only public's newer tester packaging script/tests, ad hoc Mac signing configuration and promotion records remain different. These public-specific files are preserved byte for byte. No validated application update is omitted. Both workflows remain manual-only and unchanged; public's independent Git history is retained.
 

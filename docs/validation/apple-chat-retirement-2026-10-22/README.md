@@ -1,6 +1,6 @@
 # Apple SI Chat retirement — 2026-10-22
 
-Developed in `chronoscope-app/chronoscope-next` from main `148cdb9`. No public-repository change or GitHub-hosted runner was used.
+Developed in the private development repository from main `148cdb9`. No public-repository change or GitHub-hosted runner was used.
 
 SI Chat now accepts connected OpenAI-compatible model services only. The settings UI, input/output schemas and capability discovery agree. Legacy Apple chat preferences open as unconfigured; rejected Apple configuration does not replace an existing service. The broad native chat/tool bridge and its obsolete inference suites were removed. The Apple availability diagnostic and separate App Intents remain.
 

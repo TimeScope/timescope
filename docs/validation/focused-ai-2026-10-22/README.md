@@ -1,6 +1,6 @@
 # Focused AI assistance — 2026-10-22
 
-Developed and validated locally in `chronoscope-app/chronoscope-next` from main `148cdb9`. No GitHub-hosted runner was used. Public promotion remains explicitly gated by the user.
+Developed and validated locally in the private development repository from main `148cdb9`. No GitHub-hosted runner was used. Public promotion remains explicitly gated by the user.
 
 **Explain result** is available on current Patterns findings and saved Results. The model receives one bounded, completed result with engine-computed values, scope, preparation and caveats. For small models, the inference input omits revision/storage bookkeeping and labels common quantiles directly; the original engine evidence remains available in the dialog. AI prose does not replace the calculation.
 

@@ -8,7 +8,7 @@ full local check of `8bfe37b`. The original report remains at
 It recorded five browser failures and two hardware benchmarks that rejected
 SwiftShader. These original failures are not overwritten by this follow-up.
 
-Work is developed and integrated in `chronoscope-app/chronoscope-next/main`.
+Work is developed and integrated in the private development repository's `main` branch.
 No Public promotion or hosted workflow is part of this repair task. The pending
 `codex/retire-apple-si-chat` branch was checked: its completed feature is already
 integrated by squash commit `ee83f5c`.

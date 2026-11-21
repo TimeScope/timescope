@@ -1,6 +1,6 @@
 # Navigation, preferences and playback controls
 
-Implemented against `chronoscope-app/chronoscope-next/main` at `a1b9c89`.
+Implemented against the private development repository's `main` branch at `a1b9c89`.
 Next's saved per-view cameras, Sync views, agent playback controls, guided
 workflows and workspace/draft fixes are retained. Pending Next branches were
 checked; the old retire-Apple branch's focused AI work is already integrated

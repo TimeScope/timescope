@@ -1,6 +1,6 @@
 # Next 0.16.7: light markers and continuous playback fade
 
-Application source: `d01b0bc` on `chronoscope-next/main`. Tauri remains pinned to
+Application source: `d01b0bc` on the private development repository's `main` branch. Tauri remains pinned to
 2.12.5. All verification is local; no hosted workflow or Public promotion ran.
 
 Ordinary light-mode point glyphs, outgoing markers, WKT points and unselected
@@ -75,7 +75,7 @@ Consequently, fresh native near/far captures and native playback assertions are
 **not verified** in this session. The control result suggests a locked-session
 restriction, but does not prove the mechanism or certify native correctness.
 The [headless browser report](browser-fade-report.json) and
-[slider screenshot — archived fade-slider-light.png](https://github.com/chronoscope-app/chronoscope-public/releases/download/repository-data-v1/validation-media-v1.zip) are separate frontend evidence.
+[slider screenshot — archived fade-slider-light.png](https://github.com/TimeScope/timescope/releases/download/repository-data-v1/validation-media-v1.zip) are separate frontend evidence.
 
 ## Reproduction
 

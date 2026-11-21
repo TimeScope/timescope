@@ -1,6 +1,6 @@
 # Public AI feature promotion — 2026-10-22
 
-Owner-authorized promotion of the focused AI update from `chronoscope-next` commit `ee83f5c` onto the existing `chronoscope-public` main `3c1a876`. This promotion includes Explain result, reviewed tag suggestions, generic AI progress/cancellation, typed MCP UI actions and Apple SI Chat retirement. Connected-model SI Chat remains available.
+Owner-authorized promotion of the focused AI update from the private development repository commit `ee83f5c` onto the existing `timescope` main `3c1a876`. This promotion includes Explain result, reviewed tag suggestions, generic AI progress/cancellation, typed MCP UI actions and Apple SI Chat retirement. Connected-model SI Chat remains available.
 
 The public repository has independent history and newer packaging fixes. The promotion applies only the AI change on top of public history. It preserves packaging scripts, Mac configuration, dependency manifests and both manual-only workflows byte for byte. The capabilities conflict retains public's actual GIS format list; the suite inventory excludes the unpublished development-only vector suite. No unrelated vector imports or private development ancestry are promoted.
 

@@ -1,6 +1,6 @@
 # Radeon performance investigation — 24 October 2026
 
-Measurements were collected from working changes based on `97c7e4392d13727ad30f66d605b345b8042d2627` in `chronoscope-app/chronoscope-next`, before publication. No GitHub runners were used. Both workflows remain manual-only. See the [idle-render mechanism and upstream handoff](../../CESIUM-IDLE-RENDER.md) for the Cesium investigation and standalone reproduction.
+Measurements were collected from working changes based on `97c7e4392d13727ad30f66d605b345b8042d2627` in the private development repository, before publication. No GitHub runners were used. Both workflows remain manual-only. See the [idle-render mechanism and upstream handoff](../../CESIUM-IDLE-RENDER.md) for the Cesium investigation and standalone reproduction.
 
 ## Machine and measurement scope
 

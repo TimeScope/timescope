@@ -1,6 +1,6 @@
 # Next source promotion — 24 October 2026
 
-Owner-authorized promotion of `chronoscope-next/main` at `59a0e0b3516ab51e595d133fd50619804b506535` onto the existing `chronoscope-public/main` at `bcb8e8fb4f9beef7c07dfc75bde4d0b5d1ff32ba`.
+Owner-authorized promotion of the private development repository's `main` branch at `59a0e0b3516ab51e595d133fd50619804b506535` onto the existing `timescope/main` at `bcb8e8fb4f9beef7c07dfc75bde4d0b5d1ff32ba`.
 
 Public's base tree was exactly the Next baseline tree at `97c7e4392d13727ad30f66d605b345b8042d2627`. Applying the two new Next commits' file changes produced the identical Next tree `397160697f72db25aa454bc73101501c21cfe543`. The final public tree adds only this README and its structured receipt. Every tracked Next file remains identical; public's independent commit history is retained, without importing private Next commit ancestry.
 

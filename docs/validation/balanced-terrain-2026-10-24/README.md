@@ -1,7 +1,7 @@
 # Balanced terrain — real pack validation
 
 The real GMTED2010 pack is built on `feat/bundled-balanced-terrain` in
-chronoscope-next. Raw inputs, Python/SDK/compiler caches and native packages stay
+private development repository. Raw inputs, Python/SDK/compiler caches and native packages stay
 outside Git. No Public promotion, merge, release or hosted workflow was performed.
 The original [handoff](../../handoffs/2026-10-24-balanced-terrain-clawcomp.md)
 records the earlier synthetic-only checks and blocked cloud download.
@@ -117,7 +117,7 @@ not a debug source-tree fallback.
 
 The final AppImage launches under an isolated Xvfb/software-GL profile. Its
 [attached GUI report](native/gui-report.json) confirms active EGM96 terrain and
-zero renderer errors; [native app capture — archived appimage-globe.png](https://github.com/chronoscope-app/chronoscope-public/releases/download/repository-data-v1/validation-media-v1.zip) shows the
+zero renderer errors; [native app capture — archived appimage-globe.png](https://github.com/TimeScope/timescope/releases/download/repository-data-v1/validation-media-v1.zip) shows the
 actual bundled GUI. The first-post Antarctic CLI sample is 2,801 m. The Linux
 SDK was assembled locally from downloaded development packages and installed
 runtime files, without sudo or system package changes. `package_linux.py` stages
