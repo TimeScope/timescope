@@ -476,10 +476,27 @@ try {
     };
     v.onViewportChange = () => {};
     v.onSceneChange = () => {};
-    // Lifetime checks should not depend on software GPU frame cost. Fade rAF
-    // callbacks still run; screenshot() explicitly renders real WebGL frames.
+    // Keep real render frames, but drive the fade clock independently of
+    // software GPU frame cost. Both packet rebuilds and rAF use this clock.
     v.viewer.useDefaultRenderLoop = false;
-    const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+    const nowDescriptor = Object.getOwnPropertyDescriptor(performance, "now");
+    const requestFrame = window.requestAnimationFrame;
+    let fadeTime = performance.now();
+    const setFadeClock = () =>
+      Object.defineProperty(performance, "now", {
+        configurable: true,
+        value: () => fadeTime,
+      });
+    const restoreClock = () => {
+      if (nowDescriptor) {
+        Object.defineProperty(performance, "now", nowDescriptor);
+      } else {
+        delete performance.now;
+      }
+    };
+    setFadeClock();
+    window.requestAnimationFrame = (callback) =>
+      requestFrame.call(window, () => callback(fadeTime));
     try {
       v.setPlayback(false);
       v.setDisplayOptions({
@@ -516,18 +533,16 @@ try {
         [epoch, epoch + 800],
       );
       const born = v.outgoing.find((x) => x.id === "persist-1").started;
-      // Follow the renderer's declared lifetime; Next's departure fade is now
-      // shorter than the legacy fixture's two fixed 450 ms waits.
       const departure = v.diagnostics().fadeDurationsMs.departure;
       const step = departure * 0.15;
-      await wait(step);
+      fadeTime += step;
       await v.setData(
         points.slice(3),
         ["Afterimages"],
         [-86, 24, -83, 28],
         [epoch, epoch + 800],
       );
-      await wait(step);
+      fadeTime += step;
       await v.setData(
         points.slice(4),
         ["Afterimages"],
@@ -556,8 +571,13 @@ try {
       const noPickIds = v.outgoing.every((x) => x.glyph.id === undefined);
       const currentOnly =
         v.pointById.size === 8 && !v.glyphById.has("persist-1");
+      // Preserve screenshot's real readiness timeout without advancing fades.
+      restoreClock();
       const image = await v.screenshot();
-      await wait(departure + 100);
+      setFadeClock();
+      fadeTime += departure + 1;
+      await new Promise(requestAnimationFrame);
+      await new Promise(requestAnimationFrame);
       const oldestExpired =
         !v.outgoing.some((x) => x.id === "persist-1") &&
         v.fadingTriangles.length === 0;
@@ -594,6 +614,8 @@ try {
       };
     } finally {
       v.setPlayback(false);
+      window.requestAnimationFrame = requestFrame;
+      restoreClock();
       v.setDisplayOptions(saved.options);
       await v.setData(
         saved.points,
