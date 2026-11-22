@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Validate real GUI packages and stage bounded, hashed tester downloads."""
 import argparse
+import sys
 import hashlib
 import json
 import os
@@ -10,6 +11,7 @@ import struct
 import subprocess
 import tarfile
 import tempfile
+import package_linux_deb as deb
 from package_notices import verify_notices
 from windows_release import installer_inventory, frontend_inventory, download_inventory
 ROOT = Path(__file__).resolve().parent.parent
@@ -134,6 +136,8 @@ def mac_archive_inventory(package, app_name):
     return inventory
 
 def stage(target, output, max_bytes):
+    if target == deb.TARGET:
+        deb.ubuntu_guard()
     output = output.resolve()
     if output.is_relative_to(ROOT):
         raise ValueError('Output must be outside checkout')
@@ -231,6 +235,27 @@ def stage(target, output, max_bytes):
             (root / 'INSTALL.txt').write_text('Linux x64: chmod +x TimeScope_*.AppImage then run it. FUSE-free option: --appimage-extract-and-run. See native source/replacement record for covered shared libraries.\n')
         shutil.copytree(ROOT / 'frontend/dist/third-party', root / 'third-party')
         (root / 'SOURCE-ACCESS.txt').write_text('Exact application source and dependency sources with retained licenses/NOTICE and SHA256 manifests accompany these downloads on the same release: chronoscope-source.zip and chronoscope-dependency-sources.tar.xz. MPL covered source is included. Application source includes patched GLib and frontend Knockout modification. Root MIT does not replace upstream/data/media licenses. See third-party/docs/DISTRIBUTION.md. Linux additionally requires its native source archive and replacement instructions.\n')
+        if target == deb.TARGET:
+            install = root / 'INSTALL.txt'
+            install.write_text('Ubuntu 24.04 LTS amd64 only. Extract this ZIP, then run sudo apt install ./'
+                               + deb.package_name(ROOT) +
+                               ' from the TimeScope directory. Launch TimeScope from the app menu or run chronoscope-desktop. Ubuntu provides GTK/WebKit and related libraries.\n')
+            source_access = root / 'SOURCE-ACCESS.txt'
+            source_access.write_text(source_access.read_text().replace(
+                'Linux additionally requires its native source archive and replacement instructions.',
+                'This Ubuntu package uses shared libraries supplied by Ubuntu APT, not an embedded runtime.'))
+            package_deb = root / deb.package_name(ROOT)
+            work = Path(temporary) / 'deb-work'
+            work.mkdir()
+            deb.build(package_deb, work, ROOT, gui, source_access)
+            binary, evidence['deb'] = deb.inspect(package_deb, work, ROOT, source_access)
+            if evidence['deb']['gui_sha256'] != evidence['gui_sha256']:
+                raise ValueError('Debian package GUI differs from built GUI')
+            subprocess.run(['apt-get', '-s', 'install', str(package_deb)], check=True, timeout=60)
+            subprocess.run([sys.executable, ROOT / 'scripts/test_desktop_cli.py', '--binary', binary],
+                           check=True, timeout=180)
+            evidence['automated_tests'].extend(['exact Debian package inventory and APT dependency simulation',
+                                                'extracted Debian GUI CLI/agent/MCP smoke'])
         if target == 'windows-x86_64':
             with (root / 'SOURCE-ACCESS.txt').open('a') as instructions:
                 instructions.write('Windows installer source, including NSIS/LZMA, plugins, graphics and the Tauri template, is supplied in chronoscope-windows-installer-sources.tar.xz with original licenses and pinned provenance.\n')
@@ -265,7 +290,7 @@ def stage(target, output, max_bytes):
 
 if __name__ == '__main__':
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--target', required=True, choices=['windows-x86_64', 'macos-arm64', 'linux-x86_64'])
+    p.add_argument('--target', required=True, choices=['windows-x86_64', 'macos-arm64', 'linux-x86_64', deb.TARGET])
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--max-bytes', type=int, default=256 * 1024 * 1024)
     a = p.parse_args()

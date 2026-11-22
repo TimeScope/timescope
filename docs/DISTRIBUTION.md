@@ -188,7 +188,52 @@ Covered MPL source is thus delivered alongside the executable rather than
 relying on a generic upstream homepage. Apache alternatives are selected where
 available; mandatory AND and data/media notices remain applicable.
 
-Linux is not releasable until the exact extracted AppImage's native component
+The Linux AppImage is not releasable until its exact extracted native component
 source/replacement gate above passes, including distro revisions and helpers.
 Registry sources alone do not satisfy that gate. No Linux executable is cleared
 merely because a build or hash check succeeds.
+
+### Ubuntu 24.04 amd64 system-library alternative
+
+For a reviewed Ubuntu-only fallback, choose `linux-ubuntu24.04-x86_64-deb`
+in the same manual `build.yml` workflow. Supply the exact reviewed main SHA
+and leave `verify_only` off to produce a package. The normal build/contract
+checks still run. Tauri builds the custom-protocol GUI with `--no-bundle`;
+the Debian packager uses that ELF, desktop metadata/icon, verified notices
+and the pinned Balanced terrain pack. It derives versioned runtime requirements
+from the ELF with `dpkg-shlibdeps` and explicitly depends on Ubuntu's GTK,
+WebKitGTK and GL/EGL/GLES packages. It neither invokes AppImage tools nor
+includes an AppImage runtime, AppRun, WebKit helpers or shared libraries.
+The existing `linux-x86_64` AppImage choice is unchanged.
+
+The output is `chronoscope-linux-ubuntu24.04-x86_64-deb.zip` containing one
+`timescope_<version>_amd64.deb` under `TimeScope/`. On Ubuntu 24.04 amd64,
+extract the ZIP and from that directory run `sudo apt install ./timescope_<version>_amd64.deb`
+(substitute the actual filename). Start TimeScope from the desktop menu or
+run `chronoscope-desktop`. Other distributions and architectures are not
+covered by this build.
+
+Use the manual `validate-tester.yml` workflow with the same target and the
+exact run ID, build SHA, independent ZIP SHA-256 and reviewed validation SHA.
+It inspects the actual inner package, verifies its file inventory, system
+dependency metadata and ELF linkage, simulates APT resolution, and runs
+the extracted executable's CLI and D-Bus/Xvfb GUI startup/attached MCP
+checks without installing the package. It does not prove an interactive
+desktop, a clean install, rendering, or physical-GPU support.
+
+**Source gate for this format:** still ship the exact clean
+`chronoscope-source.zip` and locked `chronoscope-dependency-sources.tar.xz`
+alongside the binary with notices, including patched GLib and transformed
+Knockout and the sources for any MPL-covered files actually included. Verify
+both archives and anonymous recipient access. The system WebKitGTK,
+JavaScriptCoreGTK, GTK, GLib C library, libsoup and transitive runtime packages
+are obtained separately from Ubuntu, not redistributed by this download;
+do not carry the AppImage native-source archive over mechanically. Record
+the exact tested package/hash, actual ELF/linker inventory and tested Ubuntu
+package versions. Review statically linked Rust/C/native code, embedded web
+and data assets, retain all applicable notices and provide exact source and
+a relinking/replacement mechanism if any shipped component requires one.
+Verify the system-library linkage remains replaceable and honor applicable
+reverse-engineering permissions. Any vendored library or native helper added
+later must be inventoried and cleared separately. A hosted receipt does not
+grant publication clearance.

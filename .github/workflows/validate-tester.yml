@@ -14,7 +14,7 @@ on:
         description: Validate one existing package, never rebuild
         required: true
         type: choice
-        options: [windows-x86_64, macos-arm64]
+        options: [windows-x86_64, macos-arm64, linux-ubuntu24.04-x86_64-deb]
       expected_package_sha256:
         description: Independently reviewed nested download SHA256 (64 lowercase hex)
         required: true
@@ -32,7 +32,7 @@ concurrency:
 jobs:
   validate:
     if: github.repository == 'TimeScope/timescope' && github.ref == 'refs/heads/main'
-    runs-on: ${{ inputs.platform == 'windows-x86_64' && 'windows-2025' || 'macos-26' }}
+    runs-on: ${{ inputs.platform == 'windows-x86_64' && 'windows-2025' || inputs.platform == 'macos-arm64' && 'macos-26' || 'ubuntu-24.04' }}
     timeout-minutes: 15
     defaults:
       run:
@@ -49,7 +49,7 @@ jobs:
           [[ "$REVIEWED_SHA" =~ ^[0-9a-f]{40}$ && "$GITHUB_SHA" == "$REVIEWED_SHA" ]]
           [[ "$BUILD_SHA" =~ ^[0-9a-f]{40}$ && "$BUILD_RUN_ID" =~ ^[1-9][0-9]{0,19}$ ]]
           [[ "$PACKAGE_SHA256" =~ ^[0-9a-f]{64}$ ]]
-          [[ "$PLATFORM" == windows-x86_64 || "$PLATFORM" == macos-arm64 ]]
+          [[ "$PLATFORM" == windows-x86_64 || "$PLATFORM" == macos-arm64 || "$PLATFORM" == linux-ubuntu24.04-x86_64-deb ]]
           [[ "$RUNNER_ENVIRONMENT" == github-hosted ]]
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         env:
@@ -74,6 +74,9 @@ jobs:
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: '3.13'
+      - name: Ubuntu system runtime for extracted-package smoke
+        if: inputs.platform == 'linux-ubuntu24.04-x86_64-deb'
+        run: sudo apt-get update && sudo apt-get install -y libwebkit2gtk-4.1-0 libgtk-3-0t64 libgl1 libegl1 libgles2 libgl1-mesa-dri xvfb xauth dbus-x11 binutils
       - name: Validate final artifact; JSON receipt in logs only
         env:
           GH_TOKEN: ${{ github.token }}
@@ -84,8 +87,12 @@ jobs:
           REVIEWED_SHA: ${{ inputs.reviewed_validation_sha }}
           PYTHONDONTWRITEBYTECODE: '1'
         run: |
-          python -B validator/scripts/validate_tester_download.py \
+          launch=()
+          if [[ "$PLATFORM" == linux-ubuntu24.04-x86_64-deb ]]; then
+            launch=(dbus-run-session -- xvfb-run -a -s "-screen 0 1920x1080x24")
+          fi
+          "${launch[@]}" python -B validator/scripts/validate_tester_download.py \
             --build-run-id "$BUILD_RUN_ID" --build-sha "$BUILD_SHA" \
             --platform "$PLATFORM" --expected-package-sha256 "$PACKAGE_SHA256" \
             --reviewed-validation-sha "$REVIEWED_SHA" --source-root "$GITHUB_WORKSPACE/built-source"
-# Deliberately no upload, cache, release, dispatch, installation or repository writes.
+# Deliberately no upload, cache, release, dispatch, package-under-test installation or repository writes.

@@ -9,6 +9,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -221,6 +222,24 @@ def native_identity():
             'sdk_import_sha256': digest((kits / 'Lib' / versions[-1] / 'um/x64/kernel32.lib').read_bytes())}
 
 
+
+def webview2_versions():
+    import winreg
+
+    key = r'SOFTWARE\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}'
+    versions = set()
+    for hive, view in ((winreg.HKEY_LOCAL_MACHINE, winreg.KEY_WOW64_32KEY),
+                       (winreg.HKEY_CURRENT_USER, 0)):
+        try:
+            with winreg.OpenKey(hive, key, access=winreg.KEY_READ | view) as client:
+                version = winreg.QueryValueEx(client, 'pv')[0]
+                if isinstance(version, str) and re.fullmatch(r'\d+(\.\d+){3}', version) and version != '0.0.0.0':
+                    versions.add(version)
+        except FileNotFoundError:
+            pass
+    return sorted(versions)
+
+
 def preflight(cache, native=False, root=ROOT):
     from windows_build_probe import probe_symlinks, release_profile
     info = metadata(root)
@@ -259,21 +278,7 @@ def preflight(cache, native=False, root=ROOT):
         result['symlinks'] = probe_symlinks(cache)
         if not result['symlinks']['passed']:
             raise ValueError('File and directory symlink privileges missing')
-        import winreg
-        runtimes = []
-        for hive in (winreg.HKEY_LOCAL_MACHINE, winreg.HKEY_CURRENT_USER):
-            for prefix in ('SOFTWARE/Microsoft/EdgeUpdate/Clients', 'SOFTWARE/WOW6432Node/Microsoft/EdgeUpdate/Clients'):
-                try:
-                    with winreg.OpenKey(hive, prefix.replace('/', '\\')) as clients:
-                        for index in range(winreg.QueryInfoKey(clients)[0]):
-                            with winreg.OpenKey(clients, winreg.EnumKey(clients, index)) as client:
-                                try:
-                                    if 'WebView2' in winreg.QueryValueEx(client, 'name')[0]:
-                                        runtimes.append(winreg.QueryValueEx(client, 'pv')[0])
-                                except OSError:
-                                    pass
-                except OSError:
-                    pass
+        runtimes = webview2_versions()
         if not runtimes:
             raise ValueError('User-installed WebView2 runtime prerequisite missing')
         result['webview2_runtime'] = runtimes

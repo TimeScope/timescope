@@ -168,7 +168,7 @@ class ValidatorTests(unittest.TestCase):
             base = Path(temporary)
             process = Mock()
             process.poll.return_value = None
-            receipt = {}
+            receipt = {'target': 'macos-arm64'}
             with patch.object(validator, 'hosted_guard'), \
                  patch.object(validator, 'command', return_value='{"connected":true}'), \
                  patch.object(validator, 'mcp_smoke') as smoke, \

@@ -22,6 +22,7 @@ import tempfile
 import time
 import zipfile
 
+import package_linux_deb as deb
 from package_notices import verify_notices
 from package_tester import architecture
 from windows_release import installer_inventory, download_inventory
@@ -59,7 +60,11 @@ def command(args, *, timeout=40, env=None, stdin=None):
 
 
 def hosted_guard(target):
-    expected_os, expected_arch = ('Windows', 'X64') if target == 'windows-x86_64' else ('macOS', 'ARM64')
+    system, expected_os, expected_arch = {
+        'windows-x86_64': ('Windows', 'Windows', 'X64'),
+        'macos-arm64': ('Darwin', 'macOS', 'ARM64'),
+        deb.TARGET: ('Linux', 'Linux', 'X64'),
+    }[target]
     require(os.environ.get('GITHUB_ACTIONS') == 'true' and
             os.environ.get('RUNNER_ENVIRONMENT') == 'github-hosted' and
             os.environ.get('GITHUB_REPOSITORY') == REPO and
@@ -68,7 +73,9 @@ def hosted_guard(target):
             os.environ.get('RUNNER_OS') == expected_os and
             os.environ.get('RUNNER_ARCH') == expected_arch,
             'Execution refused: exact manual GitHub-hosted runner required')
-    require(platform.system() == ('Windows' if expected_os == 'Windows' else 'Darwin'), 'Host OS mismatch')
+    require(platform.system() == system, 'Host OS mismatch')
+    if target == deb.TARGET:
+        deb.ubuntu_guard()
     actual = platform.machine().lower()
     require(actual in (('amd64', 'x86_64') if expected_arch == 'X64' else ('arm64', 'aarch64')), 'Host architecture mismatch')
     require(bool(os.environ.get('RUNNER_TEMP')), 'Missing hosted temporary directory')
@@ -230,7 +237,6 @@ def native_inventory(root, windows=False):
 
 
 def mcp_smoke(binary, profile, env):
-    hosted_guard('windows-x86_64' if os.name == 'nt' else 'macos-arm64')
     requests = [
         {'jsonrpc': '2.0', 'id': 1, 'method': 'initialize', 'params': {'protocolVersion': '2024-11-05', 'capabilities': {}, 'clientInfo': {'name': 'final-package-check', 'version': '1'}}},
         {'jsonrpc': '2.0', 'method': 'notifications/initialized'},
@@ -386,7 +392,7 @@ def windows_gui(installed, root, evidence):
 
 
 def gui_launch(binary, temporary, env, receipt):
-    hosted_guard('windows-x86_64' if os.name == 'nt' else 'macos-arm64')
+    hosted_guard(receipt['target'])
     profile = temporary / 'isolated GUI profile'
     gui_env = dict(env, CHRONOSCOPE_DATA_DIR=str(profile.resolve()))
     result = {'attempted': False, 'isolated_profile': True, 'real_device': False,
@@ -450,7 +456,7 @@ def validate(args, receipt):
     with tempfile.TemporaryDirectory(prefix='final-package-', dir=os.environ['RUNNER_TEMP']) as temp:
         temporary = Path(temp)
         download = fetch_artifact(args, temporary, token_env, receipt)
-        suffix = '.zip' if args.platform == 'windows-x86_64' else '.tar.xz'
+        suffix = '.tar.xz' if args.platform == 'macos-arm64' else '.zip'
         package_name = f'chronoscope-{args.platform}{suffix}'
         require({p.name for p in download.iterdir()} == {package_name, f'VALIDATION-{args.platform}.json', f'SHA256SUMS-{args.platform}.txt'}, 'Unexpected artifact payload')
         package = download / package_name
@@ -530,6 +536,24 @@ def validate(args, receipt):
                 'inventory_sha256': hashlib.sha256(json.dumps(embedded, sort_keys=True).encode()).hexdigest(),
                 'scope': 'Build-time inventory of all embedded web files; tied to tested GUI bytes, not runtime extraction'}
             receipt['native_payloads'] = {'download': native_inventory(root, True), 'NSIS_extracted': native_inventory(installed, True)}
+        elif args.platform == deb.TARGET:
+            deb_name = deb.package_name(args.source_root)
+            require({p.name for p in root.iterdir()} ==
+                    {deb_name, 'INSTALL.txt', 'SOURCE-ACCESS.txt', 'third-party'},
+                    'Unexpected Ubuntu download payload')
+            binary, deb_evidence = deb.inspect(root / deb_name, temporary, args.source_root,
+                                               root / 'SOURCE-ACCESS.txt')
+            require(deb_evidence == evidence.get('deb') and deb_evidence['gui_sha256'] == evidence['gui_sha256'],
+                    'Exact Debian payload differs from build evidence')
+            command(['apt-get', '-s', 'install', root / deb_name], timeout=60, env=clean_env)
+            runtime_packages = command(['dpkg-query', '-W', '-f=${binary:Package}\t${Version}\n',
+                                        *deb.SYSTEM_DEPENDS, 'libjavascriptcoregtk-4.1-0',
+                                        'libsoup-3.0-0', 'libglib2.0-0t64', 'libc6'], env=clean_env)
+            receipt['deb'] = dict(deb_evidence, apt_dependency_simulation=True, installed=False,
+                                  tested_system_packages=dict(line.split('\t', 1)
+                                                              for line in runtime_packages.splitlines()))
+            receipt['notices'].append(notices(temporary / 'extracted' / deb.RESOURCES / 'third-party',
+                                               args.source_root))
         else:
             apps = list(root.glob('*.app'))
             require(len(apps) == 1, 'Expected one bundled macOS app')
@@ -550,7 +574,7 @@ def validate(args, receipt):
                 require(any(f'/{framework}.framework/' in name for name in weak), f'{framework} is not weak linked')
             receipt['macos'] = {'codesign_verified': True, 'appintents_metadata_present': True, 'weak_dylibs': weak}
             receipt['native_payloads'] = native_inventory(root)
-        expected = 'x86_64' if args.platform == 'windows-x86_64' else 'arm64'
+        expected = 'arm64' if args.platform == 'macos-arm64' else 'x86_64'
         require(architecture(binary) == expected and evidence['architecture'] == expected, 'GUI architecture mismatch')
         receipt['executable'] = {'sha256': digest(binary), 'architecture': architecture(binary),
                                  'path': binary.relative_to(temporary).as_posix()}
@@ -576,7 +600,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--build-run-id', required=True)
     parser.add_argument('--build-sha', required=True)
-    parser.add_argument('--platform', choices=['windows-x86_64', 'macos-arm64'], required=True)
+    parser.add_argument('--platform', choices=['windows-x86_64', 'macos-arm64', deb.TARGET], required=True)
     parser.add_argument('--expected-package-sha256', required=True)
     parser.add_argument('--reviewed-validation-sha', required=True)
     parser.add_argument('--source-root', type=Path, required=True)

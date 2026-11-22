@@ -6,7 +6,7 @@ on:
         description: Build one platform at a time within the shared free storage allowance
         required: true
         type: choice
-        options: [windows-x86_64, macos-arm64, linux-x86_64]
+        options: [windows-x86_64, macos-arm64, linux-x86_64, linux-ubuntu24.04-x86_64-deb]
       verify_only:
         description: Run all source checks and retain verified frontend without building a GUI package
         type: boolean
@@ -62,6 +62,24 @@ jobs:
       - name: Set temporary build directories
         run: |
           printf '%s\n' "CHRONOSCOPE_VERIFICATION_DIR=$RUNNER_TEMP/source-verification" "npm_config_cache=$RUNNER_TEMP/npm-cache" >> "$GITHUB_ENV"
+      - name: Ensure Microsoft WebView2 Evergreen is installed on the runner
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $runtime = python -c "import sys; sys.path.insert(0, 'scripts'); from windows_release import webview2_versions; print(', '.join(webview2_versions()))"
+          if ($LASTEXITCODE -ne 0) { throw 'WebView2 registry probe failed' }
+          if ($runtime) {
+            Write-Host "Registered WebView2: $runtime"
+          } else {
+            $installer = Join-Path $env:RUNNER_TEMP 'MicrosoftEdgeWebview2Setup.exe'
+            Invoke-WebRequest -Uri 'https://go.microsoft.com/fwlink/p/?LinkId=2124703' -OutFile $installer
+            $signature = Get-AuthenticodeSignature $installer
+            if ($signature.Status -ne 'Valid' -or $signature.SignerCertificate.Subject -notmatch 'CN=Microsoft Corporation(?:,|$)') {
+              throw 'Invalid Microsoft WebView2 installer signature'
+            }
+            $process = Start-Process -FilePath $installer -ArgumentList '/silent', '/install' -Wait -PassThru
+            if ($process.ExitCode -ne 0) { throw "WebView2 setup exited with $($process.ExitCode)" }
+          }
       - name: Windows native and installer prerequisites before compilation
         id: windows-prerequisites
         if: runner.os == 'Windows'
@@ -84,8 +102,11 @@ jobs:
         continue-on-error: true
         run: python scripts/ci_cache.py restore --directory "$RUNNER_TEMP/dependency-cache"
       - name: Linux runner build dependencies
-        if: runner.os == 'Linux'
+        if: inputs.platform == 'linux-x86_64'
         run: sudo apt-get update && sudo apt-get install -y libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev patchelf xvfb libfuse2t64 squashfs-tools
+      - name: Ubuntu Debian package dependencies
+        if: inputs.platform == 'linux-ubuntu24.04-x86_64-deb'
+        run: sudo apt-get update && sudo apt-get install -y libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev libgl1 libegl1 libgles2 dpkg-dev binutils
       - name: Record compiler and hosted image
         run: |
           rustc -Vv
@@ -176,13 +197,23 @@ jobs:
           compression-level: 6
           include-hidden-files: true
       - name: Build actual GUI distribution
-        if: ${{ !inputs.verify_only }}
+        if: ${{ !inputs.verify_only && inputs.platform != 'linux-ubuntu24.04-x86_64-deb' }}
         run: >-
           python scripts/build_portable.py -- npm --prefix frontend run tauri -- build
           --config '{"build":{"beforeBuildCommand":"python scripts/ci_verification.py verify-frontend"}}'
           -- --locked
+      - name: Restore verified Debian terrain input when reusing frontend
+        if: ${{ !inputs.verify_only && inputs.platform == 'linux-ubuntu24.04-x86_64-deb' && inputs.verification_run_id != '' }}
+        run: python -B scripts/fetch_data_assets.py
+      - name: Build GUI executable for Ubuntu Debian package
+        if: ${{ !inputs.verify_only && inputs.platform == 'linux-ubuntu24.04-x86_64-deb' }}
+        run: >-
+          python scripts/build_portable.py -- npm --prefix frontend run tauri -- build
+          --no-bundle
+          --config '{"build":{"beforeBuildCommand":"python scripts/ci_verification.py verify-frontend"}}'
+          -- --locked
       - name: Finish Linux portable WebKit runtime
-        if: runner.os == 'Linux' && !inputs.verify_only
+        if: inputs.platform == 'linux-x86_64' && !inputs.verify_only
         run: python scripts/package_linux.py
       - name: Browser workflow smoke on hosted Linux
         if: runner.os == 'Linux' && !inputs.verify_only
@@ -200,7 +231,7 @@ jobs:
           PLATFORM: ${{ inputs.platform }}
         run: python scripts/package_tester.py --target "$PLATFORM" --output "$RUNNER_TEMP/tester-output" --max-bytes 268435456
       - name: Inventory the exact packaged Linux AppImage
-        if: runner.os == 'Linux' && !inputs.verify_only
+        if: inputs.platform == 'linux-x86_64' && !inputs.verify_only
         run: |
           package="$RUNNER_TEMP/tester-output/chronoscope-linux-x86_64.zip"
           unzip -q "$package" 'TimeScope/*.AppImage' -d "$RUNNER_TEMP/exact-appimage"
