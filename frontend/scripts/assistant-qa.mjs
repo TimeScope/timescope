@@ -569,6 +569,10 @@ try {
   assert.equal(connectedService.connected, true);
   assert.equal(connectedService.key_saved, false);
   await page.getByRole("button", { name: "Close without saving preferences" }).click();
+  // Reopen the pane after changing the service so it synchronizes the new
+  // conversation before accepting a draft tied to its session.
+  await page.click("#si-close");
+  await page.locator("#si-chat").waitFor({ state: "hidden" });
   // Keep the actual bearer-token exchange under test with a session-only key.
   await api("si_configure", {
     url: serviceUrl,
@@ -576,6 +580,7 @@ try {
     api_key: "qa-only-key",
     remember_key: false,
   });
+  await page.click(':is(#inspector-chat, [data-pane-section="si"]):visible');
   await page.waitForFunction(
     () =>
       !document.querySelector("#si-send").disabled &&
@@ -608,10 +613,18 @@ try {
     "#si-prompt",
     "Select the first time-only report and switch to 2D map.",
   );
-  await page.click("#si-send");
-  await page.waitForFunction(
-    () => document.querySelector("#si-progress").textContent === "Ready",
-  );
+  try {
+    await page.click("#si-send");
+    await page.waitForFunction(
+      () => document.querySelector("#si-progress").textContent === "Ready",
+    );
+  } catch (error) {
+    const progress = await page.locator("#si-progress").textContent();
+    throw new Error(
+      `Initial assistant request failed; progress=${progress}; fixture requests=${siRequests}`,
+      { cause: error },
+    );
+  }
   assert.match(
     await page.textContent("#si-messages"),
     /coordinates remain unknown/,
