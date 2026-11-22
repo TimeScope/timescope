@@ -1426,12 +1426,24 @@ try {
   assert.equal(await page.locator("#import").count(), 0);
   assert.equal(await page.locator("#open").count(), 1);
   const fileRoutes = [];
-  const recordFileRoute = (request) => {
+  function fileRoute(request) {
     if (!request.url().endsWith("/api/invoke")) return;
     const payload = request.postDataJSON();
-    if (["open", "import_preview"].includes(payload?.command))
-      fileRoutes.push({ command: payload.command, path: payload.args.path });
+    if (payload?.command !== "job_start") return;
+    const { command, arguments: args } = payload.args;
+    if (["open", "import_preview"].includes(command))
+      return { command, path: args.path };
+  }
+  const recordFileRoute = (request) => {
+    const route = fileRoute(request);
+    if (route) fileRoutes.push(route);
   };
+  function waitForFileJob(command, path) {
+    return page.waitForResponse((response) => {
+      const route = fileRoute(response.request());
+      return route?.command === command && route.path === path;
+    });
+  }
   page.on("request", recordFileRoute);
   const workspacePaths = [
     path.join(dir, "Unified Open.CHRONOSCOPE"),
@@ -1442,17 +1454,15 @@ try {
       path: file,
       scene: await page.evaluate(() => window.__chronoscope.captureScene()),
     });
-    const opened = page.waitForResponse(
-      (r) =>
-        r.url().endsWith("/api/invoke") &&
-        r.request().postDataJSON()?.command === "open" &&
-        r.request().postDataJSON()?.args.path === file,
-    );
+    await idle();
+    const opened = waitForFileJob("open", file);
     page.once("dialog", (dialog) => dialog.accept(file));
     if (index === 0) await page.click("#open");
     else await page.keyboard.press("Control+o");
     assert((await opened).ok());
+    await page.locator("#input-job-dialog").waitFor({ state: "detached" });
     await idle();
+    assert.equal((await api("workspace_status")).source, file);
     assert.equal((await api("snapshot")).count, 5);
     assert.equal(await page.locator("#commit-import").count(), 0);
     assert.deepEqual(fileRoutes.at(-1), { command: "open", path: file });
@@ -1463,12 +1473,7 @@ try {
   assert.equal(fileRoutes.length, 2, "Cancelled picker does not dispatch");
 
   const source = path.join(root, "tests/fixtures/import/small-study.xlsx");
-  const previewed = page.waitForResponse(
-    (r) =>
-      r.url().endsWith("/api/invoke") &&
-      r.request().postDataJSON()?.command === "import_preview" &&
-      r.request().postDataJSON()?.args.path === source,
-  );
+  const previewed = waitForFileJob("import_preview", source);
   page.once("dialog", (dialog) => dialog.accept(source));
   await page.keyboard.press("Control+i");
   assert((await previewed).ok());
@@ -1507,15 +1512,10 @@ try {
 
   const unsupported = path.join(dir, "unsupported.data");
   fs.writeFileSync(unsupported, "not a supported input");
-  const rejectedSource = page.waitForResponse(
-    (r) =>
-      r.url().endsWith("/api/invoke") &&
-      r.request().postDataJSON()?.command === "import_preview" &&
-      r.request().postDataJSON()?.args.path === unsupported,
-  );
+  const rejectedSource = waitForFileJob("import_preview", unsupported);
   page.once("dialog", (dialog) => dialog.accept(unsupported));
   await page.click("#open");
-  assert.equal((await rejectedSource).ok(), false);
+  assert((await rejectedSource).ok(), "The job is accepted before parsing");
   await page.waitForSelector("#import-dialog [role=alert]");
   await page.keyboard.press("Escape");
   await page.locator("#import-dialog").waitFor({ state: "detached" });
