@@ -548,10 +548,34 @@ try {
     0,
   );
   assert.equal(await page.locator("#si-url").count(), 1);
-  await page.fill("#si-url", `http://127.0.0.1:${mock.address().port}/v1`);
-  await page.fill("#si-model", "local-test-fixture");
-  await page.fill("#si-key", "qa-only-key");
+  const serviceUrl = `http://127.0.0.1:${mock.address().port}/v1`;
+  const serviceModel = "local-test-fixture";
+  await page.fill("#si-url", serviceUrl);
+  await page.fill("#si-model", serviceModel);
+  // Exercise keyless setup without depending on the runner's credential vault.
+  const connectionResponse = page.waitForResponse((response) => {
+    const request = response.request();
+    return (
+      new URL(response.url()).pathname === "/api/invoke" &&
+      request.method() === "POST" &&
+      request.postDataJSON()?.command === "si_configure"
+    );
+  });
   await page.click("#si-connect");
+  const response = await connectionResponse;
+  assert.ok(response.ok(), `AI service setup failed: ${await response.text()}`);
+  await page.locator("#si-disconnect:enabled").waitFor({ state: "visible" });
+  const connectedService = await api("si_status");
+  assert.equal(connectedService.connected, true);
+  assert.equal(connectedService.key_saved, false);
+  await page.getByRole("button", { name: "Close without saving preferences" }).click();
+  // Keep the actual bearer-token exchange under test with a session-only key.
+  await api("si_configure", {
+    url: serviceUrl,
+    model: serviceModel,
+    api_key: "qa-only-key",
+    remember_key: false,
+  });
   await page.waitForFunction(
     () =>
       !document.querySelector("#si-send").disabled &&
