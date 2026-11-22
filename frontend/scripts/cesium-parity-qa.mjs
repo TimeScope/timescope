@@ -489,6 +489,9 @@ try {
     v.viewer.useDefaultRenderLoop = false;
     const nowDescriptor = Object.getOwnPropertyDescriptor(performance, "now");
     const requestFrame = window.requestAnimationFrame;
+    // A governor tier change intentionally clears fades. Keep the tier fixed
+    // while testing playback transitions, including during the screenshot.
+    v.resourceGovernor.update = () => false;
     let fadeTime = performance.now();
     const setFadeClock = () =>
       Object.defineProperty(performance, "now", {
@@ -593,13 +596,24 @@ try {
       const clearedOnPause =
         v.outgoing.length === 0 && v.diagnostics().fadingStemSegments === 0;
       v.setPlayback(true);
+      const resumed = {
+        playback: v.playback,
+        afterimageBudget: v.resourceLimits.afterimages,
+        visibleDepartures: points.slice(4, 6).map(
+          (point) => v.glyphById.get(point.id)?.show ?? false,
+        ),
+      };
       await v.setData(
         points.slice(6),
         ["Afterimages"],
         [-86, 24, -83, 28],
         [epoch, epoch + 800],
       );
-      const createdAgain = v.outgoing.length === 2;
+      const resumedIds = v.outgoing.map(({ id }) => id).sort();
+      const createdAgain =
+        resumedIds.length === 2 &&
+        resumedIds[0] === "persist-4" &&
+        resumedIds[1] === "persist-5";
       v.setDisplayOptions({
         ...v.display,
         show_trails: false,
@@ -608,7 +622,7 @@ try {
       const clearedOnHide =
         v.outgoing.length === 0 && v.diagnostics().fadingStemSegments === 0;
       return {
-        timing,
+        timing: { ...timing, resumed, resumedIds },
         retained,
         triangleRetained,
         stemsRetained,
@@ -622,6 +636,7 @@ try {
       };
     } finally {
       v.setPlayback(false);
+      delete v.resourceGovernor.update;
       window.requestAnimationFrame = requestFrame;
       restoreClock();
       v.setDisplayOptions(saved.options);
