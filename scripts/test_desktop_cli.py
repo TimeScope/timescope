@@ -8,13 +8,15 @@ import subprocess
 import tempfile
 p = argparse.ArgumentParser(description=__doc__)
 p.add_argument('--binary', type=Path, required=True)
+p.add_argument('--launcher', type=Path, help='Launch the bundled executable through its packaged wrapper')
 a = p.parse_args()
 binary = a.binary.resolve()
+launcher = a.launcher.resolve() if a.launcher else binary
 env = os.environ.copy()
 env.pop('DISPLAY', None)
 env.pop('WAYLAND_DISPLAY', None)
 def run(args, stdin=None):
-    result = subprocess.run([str(binary), *args], input=stdin, capture_output=True, text=True, env=env, timeout=30)
+    result = subprocess.run([str(launcher), *args], input=stdin, capture_output=True, text=True, env=env, timeout=30)
     if result.returncode:
         raise RuntimeError(f'Desktop CLI failed ({result.returncode}): {result.stderr[-2000:]}')
     return result.stdout

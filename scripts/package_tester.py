@@ -190,7 +190,7 @@ def stage(target, output, max_bytes):
             shutil.copy2(packages[0], root / packages[0].name)
             inspect = shutil.which('llvm-objdump') or str(Path('C:/Program Files/LLVM/bin/llvm-objdump.exe'))
             evidence['linkage'] = subprocess.check_output([inspect, '-p', str(installed[0])], text=True)
-            (root / 'INSTALL.txt').write_text('Experimental builds for testing; you may encounter bugs.\n\nWindows x64: use the included current-user installer. The installed TimeScope executable also supports CLI/MCP commands. Unsigned; Windows may display a publisher warning. Microsoft Edge WebView2 Evergreen Runtime must already be installed (not redistributed). Get it at https://developer.microsoft.com/microsoft-edge/webview2/ .\n')
+            (root / 'INSTALL.txt').write_text('Windows x64: use the included current-user installer. The installed TimeScope executable also supports CLI/MCP commands. Unsigned; Windows may display a publisher warning. Microsoft Edge WebView2 Evergreen Runtime must already be installed (not redistributed). Get it at https://developer.microsoft.com/microsoft-edge/webview2/ .\n')
         elif target == 'macos-arm64':
             apps = list((release / 'bundle/macos').glob('*.app'))
             if len(apps) != 1:
@@ -221,16 +221,16 @@ def stage(target, output, max_bytes):
             if mac_app_inventory(packaged_app) != sealed_inventory:
                 raise ValueError('Sealed Mac app changed during validation')
             evidence['automated_tests'].extend(['copied app codesign --verify --deep --strict', 'copied app frontend notices', 'copied app App Intents metadata present', 'packaged desktop CLI/agent/MCP smoke'])
-            (root / 'INSTALL.txt').write_text('Experimental builds for testing; you may encounter bugs.\n\nApple Silicon macOS: extract and drag TimeScope.app to Applications. Ad-hoc signed, not notarized. macOS may block first launch: after reviewing source/checksum, use System Settings > Privacy & Security > Open Anyway if offered. Not for Intel Macs.\n')
+            (root / 'INSTALL.txt').write_text('Apple Silicon macOS: extract and drag TimeScope.app to Applications. Ad-hoc signed, not notarized. macOS may block first launch: after reviewing source/checksum, use System Settings > Privacy & Security > Open Anyway if offered. Not for Intel Macs.\n')
         elif target == 'linux-x86_64':
             packages = list((release / 'bundle/appimage').glob('*.AppImage'))
             if len(packages) != 1:
                 raise ValueError('Actual GUI AppImage required')
             shutil.copy2(packages[0], root / packages[0].name)
             evidence['linkage'] = subprocess.check_output(['ldd', str(gui)], text=True)
-            (root / 'INSTALL.txt').write_text('Experimental builds for testing; you may encounter bugs.\n\nLinux x64: chmod +x TimeScope_*.AppImage then run it. FUSE-free option: --appimage-extract-and-run. See native source/replacement record for covered shared libraries.\n')
+            (root / 'INSTALL.txt').write_text('Linux x64: chmod +x TimeScope_*.AppImage then run it. FUSE-free option: --appimage-extract-and-run. See native source/replacement record for covered shared libraries.\n')
         shutil.copytree(ROOT / 'frontend/dist/third-party', root / 'third-party')
-        (root / 'SOURCE-ACCESS.txt').write_text('Exact application source and dependency sources with retained licenses/NOTICE and SHA256 manifests accompany these downloads on the same prerelease: chronoscope-source.zip and chronoscope-dependency-sources.tar.xz. MPL covered source is included. Application source includes patched GLib and frontend Knockout modification. Root MIT does not replace upstream/data/media licenses. See third-party/docs/DISTRIBUTION.md. Linux additionally requires its native source archive and replacement instructions.\n')
+        (root / 'SOURCE-ACCESS.txt').write_text('Exact application source and dependency sources with retained licenses/NOTICE and SHA256 manifests accompany these downloads on the same release: chronoscope-source.zip and chronoscope-dependency-sources.tar.xz. MPL covered source is included. Application source includes patched GLib and frontend Knockout modification. Root MIT does not replace upstream/data/media licenses. See third-party/docs/DISTRIBUTION.md. Linux additionally requires its native source archive and replacement instructions.\n')
         if target == 'windows-x86_64':
             with (root / 'SOURCE-ACCESS.txt').open('a') as instructions:
                 instructions.write('Windows installer source, including NSIS/LZMA, plugins, graphics and the Tauri template, is supplied in chronoscope-windows-installer-sources.tar.xz with original licenses and pinned provenance.\n')

@@ -4,7 +4,7 @@ TimeScope is experimental. Source versions and downloadable builds can differ; [
 
 ## Unreleased
 
-## 0.16.17 — experimental Mac preview candidate, 2026-11-21
+## 0.16.17 — 2026-11-21
 
 - Rename the app to TimeScope. The CLI command is now `timescope` and new portable workspaces use `.timescope`. The previous CLI command and existing `.chronoscope` workspace files are supported.
 - Add Globe flight and track spectating in Globe and Time. Follow an entity, change direction, or stop through the attached CLI or MCP.

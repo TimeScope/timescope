@@ -6,7 +6,7 @@ on:
         description: Build one platform at a time within the shared free storage allowance
         required: true
         type: choice
-        options: [windows-x86_64, macos-arm64]
+        options: [windows-x86_64, macos-arm64, linux-x86_64]
       verify_only:
         description: Run all source checks and retain verified frontend without building a GUI package
         type: boolean
@@ -85,7 +85,7 @@ jobs:
         run: python scripts/ci_cache.py restore --directory "$RUNNER_TEMP/dependency-cache"
       - name: Linux runner build dependencies
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev patchelf xvfb libfuse2
+        run: sudo apt-get update && sudo apt-get install -y libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev patchelf xvfb libfuse2t64 squashfs-tools
       - name: Record compiler and hosted image
         run: |
           rustc -Vv
@@ -199,6 +199,19 @@ jobs:
         env:
           PLATFORM: ${{ inputs.platform }}
         run: python scripts/package_tester.py --target "$PLATFORM" --output "$RUNNER_TEMP/tester-output" --max-bytes 268435456
+      - name: Inventory the exact packaged Linux AppImage
+        if: runner.os == 'Linux' && !inputs.verify_only
+        run: |
+          package="$RUNNER_TEMP/tester-output/chronoscope-linux-x86_64.zip"
+          unzip -q "$package" 'TimeScope/*.AppImage' -d "$RUNNER_TEMP/exact-appimage"
+          images=("$RUNNER_TEMP"/exact-appimage/TimeScope/*.AppImage)
+          test "${#images[@]}" = 1
+          image="${images[0]}"
+          digest="$(sha256sum "$image")"
+          python scripts/package_linux_sources.py inventory --appimage "$image" --sha256 "${digest%% *}" --output "$RUNNER_TEMP/linux-native-inventory"
+          appdir="$RUNNER_TEMP/linux-native-inventory/appdir"
+          python scripts/package_notices.py --check-appdir "$appdir"
+          APPDIR="$appdir" python scripts/test_desktop_cli.py --binary "$appdir/usr/bin/chronoscope-desktop" --launcher "$appdir/AppRun"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: ${{ !inputs.verify_only }}
         with:
@@ -232,6 +245,7 @@ jobs:
             ${{ runner.temp }}/contracts-validation/report.json
             ${{ runner.temp }}/contracts-validation/runs/*/run.json
             ${{ runner.temp }}/contracts-validation/runs/*/logs/*.log
+            ${{ runner.temp }}/linux-native-inventory/inventory.json
             ${{ runner.temp }}/windows-preflight.json
             ${{ runner.temp }}/windows-frontend-inventory.json
           if-no-files-found: warn
