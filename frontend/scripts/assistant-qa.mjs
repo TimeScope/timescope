@@ -535,14 +535,13 @@ try {
     "Disconnected SI opens the chat pane, not connection setup",
   );
   assert.equal(await page.locator("#inspector-chat").getAttribute("aria-expanded"), "true");
-  await page.waitForFunction(() =>
-    document.querySelector("#si-progress").textContent.includes("settings"),
-  );
-  assert.match(await page.textContent("#si-progress"), /settings.*connect/);
+  await page.locator("#si-connection-empty").waitFor({ state: "visible" });
+  await page.locator("#si-connect-service").waitFor({ state: "visible" });
+  assert.equal(await page.locator("#si-send").isDisabled(), true);
   const settingsButton = await page.locator("#si-settings").boundingBox();
   assert(settingsButton.width >= 36 && settingsButton.height >= 36);
   assert.equal(await page.locator("#si-connections").count(), 0);
-  await page.click("#si-settings");
+  await page.click("#si-connect-service");
   await page.waitForSelector("#client-list");
   assert.equal(
     await page.locator(".si-settings-tabs,[data-si-section]").count(),
