@@ -353,6 +353,7 @@ try {
   if (!(await page.locator(".map-advanced").evaluate((e) => e.open)))
     await page.locator(".map-advanced summary").click();
   await page.click("#custom-map-server");
+  await page.locator(".map-connection-options summary").click();
   await page.click("#wmts-cache");
   assert.equal(await page.inputValue("#cache-interval"), "0");
   await page.check("#cache-offline");
