@@ -302,6 +302,7 @@ try {
     };
     const gl = v.viewer.canvas.getContext("webgl2"),
       originalUpload = gl.bufferSubData;
+    const advanceFades = v.advanceFades;
     let uploads = 0;
     v.onViewportChange = () => {};
     v.onSceneChange = () => {};
@@ -347,13 +348,15 @@ try {
         inferred: i >= 90,
       }));
       const next = [...points.slice(100), ...arriving];
+      // This fixture drives alpha explicitly to measure GPU upload batching.
+      // Do not let wall-clock animation callbacks race those writes.
+      v.advanceFades = () => {};
       await v.setData(
         next,
         ["Fade fixture"],
         [-86, 24, -83, 28],
         [epoch, epoch + count * 2],
       );
-      cancelAnimationFrame(v.fadeFrame);
       for (let i = 0; i < 8; i++) await new Promise(requestAnimationFrame);
       gl.bufferSubData = function (...args) {
         uploads++;
@@ -410,6 +413,7 @@ try {
       };
     } finally {
       gl.bufferSubData = originalUpload;
+      v.advanceFades = advanceFades;
       v.setPlayback(false);
       v.setSelection([]);
       v.setDisplayOptions(saved.options);
@@ -437,7 +441,11 @@ try {
     path.join(out, "fade-batching.json"),
     JSON.stringify(fadeBatch, null, 2),
   );
-  assert(fadeBatch.mapped && fadeBatch.halfAlphas);
+  assert(fadeBatch.mapped, "All current events must map to their own pick IDs");
+  assert(
+    fadeBatch.halfAlphas,
+    "All incoming glyphs must retain the driven half alpha",
+  );
   assert.equal(fadeBatch.incoming, 100);
   assert.equal(fadeBatch.outgoing, 100);
   assert.equal(
