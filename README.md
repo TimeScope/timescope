@@ -92,7 +92,7 @@ Time heights, tracks and density colors describe recorded samples, not physical 
 
 Open a bundled demo from **Help → Demo datasets**, or import CSV, TSV, Excel or GIS files. Filter, select, chart and save a portable `.timescope` workspace. Existing `.chronoscope` workspaces still open. Optional SI chat and CLI/MCP tools use the same analysis engine. [Features and guides](docs/USER-GUIDE.md) · [Privacy](PRIVACY.md).
 
-**[Download the 0.16.16 Windows preview](https://github.com/TimeScope/timescope/releases/tag/v0.16.16)**. The [0.16.14 Mac and Linux previews](https://github.com/TimeScope/timescope/releases/tag/v0.16.14) remain available. Windows is unsigned; macOS is ad hoc signed and not notarized. Linux was tested on Ubuntu 26.04.1 with glibc 2.43; older distributions remain unverified. Exact sources, notices, checksums and scoped native validation receipts accompany the downloads. [Platform status](docs/INSTALLATION.md) · [Changes](CHANGELOG.md).
+**[Download TimeScope 0.16.17](https://github.com/TimeScope/timescope/releases/tag/v0.16.17)** for Apple Silicon macOS, Windows x64, or Ubuntu 24.04 amd64. The macOS app is ad hoc signed, not Developer ID signed or notarized; Windows uses an unsigned installer and requires WebView2 Evergreen Runtime. The Ubuntu ZIP contains a `.deb`, not an AppImage. [Installation and validation limits](docs/INSTALLATION.md) · [SHA256SUMS.txt](https://github.com/TimeScope/timescope/releases/download/v0.16.17/SHA256SUMS.txt) · [Release provenance](https://github.com/TimeScope/timescope/releases/download/v0.16.17/RELEASE-MANIFEST.json) · [Changes](CHANGELOG.md).
 
 Build with Rust 1.96+, Node 22+ and [platform prerequisites](docs/INSTALLATION.md):
 
