@@ -316,10 +316,10 @@ async fn pair(State(shared): State<Arc<Shared>>, h: HeaderMap, Json(v): Json<Val
     let origin = v["origin"].as_str().unwrap_or("");
     let document = v["document"].as_str().unwrap_or("");
     let valid_origin = mcp_http::Url::parse(origin).is_ok_and(|u| {
-        u.origin().ascii_serialization() == origin
-            && (u.scheme() == "https"
-                || u.scheme() == "http"
-                    && matches!(u.host_str(), Some("localhost" | "127.0.0.1" | "[::1]")))
+        (u.scheme() == "https"
+            || u.scheme() == "http"
+                && matches!(u.host_str(), Some("localhost" | "127.0.0.1" | "[::1]")))
+            && u.origin().ascii_serialization() == origin
     });
     let Some(tools) = v["tools"].as_array() else {
         return error("Missing tools");

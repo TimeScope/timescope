@@ -21,6 +21,8 @@ Do not widen the allowlist to hide a new finding. Review it, rotate/revoke a rea
 
 ## Dependency advisories
 
+The 2026-11-25 source update selects URL 2.5.9 (RUSTSEC-2026-0592), Cookie 0.18.3 (RUSTSEC-2026-0594), and Rustix 1.1.6 (RUSTSEC-2026-0486), with Form-urlencoded 1.2.3 required by URL. The local [rstar compatibility patch](../vendor/rstar/BACKPORT.md) removes Heapless 0.8.0 and its nine unsoundness advisories without changing geographic APIs. The patched lockfile reports zero vulnerability entries and no unsoundness warnings; seven unmaintained-package and two yanked-package warnings remain. Full archive checksums, publisher/official-commit provenance and production-source diffs were reviewed before compilation. Installed registry sources were compared file for file with the reviewed archives. These checks do not establish immunity from a compromised upstream maintainer. Native validation applies only to the operating system actually tested; older distributed executables are unchanged.
+
 The 2026-11-04 checks for source version 0.16.16 update Calamine from 0.37.0 to 0.38.0 for [RUSTSEC-2026-0436](https://rustsec.org/advisories/RUSTSEC-2026-0436.html), covering panic and unbounded allocation in malformed Excel compound files. No unrelated registry dependency versions changed. The refreshed Rust audit reports zero vulnerability entries, with six unmaintained-package and two yanked-package warnings retained. The frontend npm audit reports zero vulnerabilities. These are source checks, not new Windows/Linux package or quarantined-download acceptance. Earlier dated audit results below remain historical evidence.
 
 ```sh

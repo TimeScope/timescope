@@ -10,7 +10,7 @@ license = "MIT"
 [workspace]
 members = ["src-tauri"]
 default-members = ["."]
-exclude = ["vendor/calamine", "vendor/glib", "tests/glib-backport"]
+exclude = ["vendor/calamine", "vendor/glib", "vendor/rstar", "tests/glib-backport", "tests/rstar-backport"]
 resolver = "2"
 
 [features]
@@ -111,3 +111,4 @@ strip = true
 [patch.crates-io]
 calamine = { path = "vendor/calamine" }
 glib = { path = "vendor/glib" }
+rstar = { path = "vendor/rstar" }

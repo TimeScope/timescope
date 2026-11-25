@@ -1,0 +1,245 @@
+{
+  "crate": "rstar",
+  "version": "0.12.2",
+  "archive_sha256": "421400d13ccfd26dfa5858199c30a5d76f9c54e0dba7575273025b43c5175dbb",
+  "files": [
+    {
+      "path": ".cargo_vcs_info.json",
+      "upstream_bytes": 99,
+      "upstream_sha256": "c5544a43d973aa7f53ae32efe80a36cc68ebb6a3c512afc9324a61b6c9b41044",
+      "local_bytes": 99,
+      "local_sha256": "c5544a43d973aa7f53ae32efe80a36cc68ebb6a3c512afc9324a61b6c9b41044"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "upstream_bytes": 5110,
+      "upstream_sha256": "5424e21bcea1be22cecd68185e83288cd43f9ce28a2115d394225ec4da0f2d0b",
+      "local_bytes": 5110,
+      "local_sha256": "5424e21bcea1be22cecd68185e83288cd43f9ce28a2115d394225ec4da0f2d0b"
+    },
+    {
+      "path": "Cargo.toml",
+      "upstream_bytes": 1826,
+      "upstream_sha256": "025bb74e428ccebfe3598b18318ec1183720521810250b83e9895e13484c591f",
+      "local_bytes": 1785,
+      "local_sha256": "9ce3d02121e54fc1b441a102ddf301b75983d99acbd198e0548bc80bf8c22780"
+    },
+    {
+      "path": "Cargo.toml.orig",
+      "upstream_bytes": 1012,
+      "upstream_sha256": "5fcc9507370e3cc11bb34406c7469b39662cb4a851d7cb098bacac234692cc53",
+      "local_bytes": 995,
+      "local_sha256": "6777be2e8cc691e379cc05e8e78f16ba014bcb854d3cd046585514afea63f1e1"
+    },
+    {
+      "path": "README.md",
+      "upstream_bytes": 3025,
+      "upstream_sha256": "35badde6b30495407f9ac995fbac367ed454edbdc5fa1b0151dd05dd77347f3b",
+      "local_bytes": 3025,
+      "local_sha256": "35badde6b30495407f9ac995fbac367ed454edbdc5fa1b0151dd05dd77347f3b"
+    },
+    {
+      "path": "src/aabb.rs",
+      "upstream_bytes": 8357,
+      "upstream_sha256": "5f2ebfaa9f6af57c09db519debe0b133972078df1cd43e6677fefecbb822e4b1",
+      "local_bytes": 8357,
+      "local_sha256": "5f2ebfaa9f6af57c09db519debe0b133972078df1cd43e6677fefecbb822e4b1"
+    },
+    {
+      "path": "src/algorithm/bulk_load/bulk_load_sequential.rs",
+      "upstream_bytes": 5066,
+      "upstream_sha256": "101f7fe86b01d82373bff72d9528a02cfa0215c21f63a1c894709bb7e7bf168a",
+      "local_bytes": 5066,
+      "local_sha256": "101f7fe86b01d82373bff72d9528a02cfa0215c21f63a1c894709bb7e7bf168a"
+    },
+    {
+      "path": "src/algorithm/bulk_load/cluster_group_iterator.rs",
+      "upstream_bytes": 3542,
+      "upstream_sha256": "0518678a4d5a1a2bb1f9deecc677904f6890f67abcb2ca8ce10f3a13e1a56719",
+      "local_bytes": 3542,
+      "local_sha256": "0518678a4d5a1a2bb1f9deecc677904f6890f67abcb2ca8ce10f3a13e1a56719"
+    },
+    {
+      "path": "src/algorithm/bulk_load/mod.rs",
+      "upstream_bytes": 113,
+      "upstream_sha256": "f6f3f015ea2d6c8b0342616bb993f6be35f40836795daabac6b2eb2d354e57b3",
+      "local_bytes": 113,
+      "local_sha256": "f6f3f015ea2d6c8b0342616bb993f6be35f40836795daabac6b2eb2d354e57b3"
+    },
+    {
+      "path": "src/algorithm/intersection_iterator.rs",
+      "upstream_bytes": 4637,
+      "upstream_sha256": "9b939ad49d9c678c1af2d54058638158f0d5c0faa1baff2e3ed3b67b7104a581",
+      "local_bytes": 4637,
+      "local_sha256": "9b939ad49d9c678c1af2d54058638158f0d5c0faa1baff2e3ed3b67b7104a581"
+    },
+    {
+      "path": "src/algorithm/iterators.rs",
+      "upstream_bytes": 12886,
+      "upstream_sha256": "0d830b691ba7265028ae7b4251d04dc59192a43ddb62da17e58eae6abd4aa13e",
+      "local_bytes": 12886,
+      "local_sha256": "0d830b691ba7265028ae7b4251d04dc59192a43ddb62da17e58eae6abd4aa13e"
+    },
+    {
+      "path": "src/algorithm/mod.rs",
+      "upstream_bytes": 175,
+      "upstream_sha256": "4085dd753a5f7c779a80dcad72098f26aa3ba6701292a766572b605c4e86a192",
+      "local_bytes": 175,
+      "local_sha256": "4085dd753a5f7c779a80dcad72098f26aa3ba6701292a766572b605c4e86a192"
+    },
+    {
+      "path": "src/algorithm/nearest_neighbor.rs",
+      "upstream_bytes": 12181,
+      "upstream_sha256": "d4a3b147c21b69da2373f33f4ebb4d0d11322649122c46708a7937aab68e2138",
+      "local_bytes": 10033,
+      "local_sha256": "9c2489c46eb46f82e177cbcbfe04896b86b88c59e6a7bff99d0cc90c6efdbc4c"
+    },
+    {
+      "path": "src/algorithm/removal.rs",
+      "upstream_bytes": 13876,
+      "upstream_sha256": "174cb3d9d8b965f07b537408e6bc82833dd303ab6ff3a10c325f0773ea46b10d",
+      "local_bytes": 13876,
+      "local_sha256": "174cb3d9d8b965f07b537408e6bc82833dd303ab6ff3a10c325f0773ea46b10d"
+    },
+    {
+      "path": "src/algorithm/rstar.rs",
+      "upstream_bytes": 12515,
+      "upstream_sha256": "1bdb4218da229627181aa469627819018f88e6c6efe8ab1fadb520a2dbf83e40",
+      "local_bytes": 12515,
+      "local_sha256": "1bdb4218da229627181aa469627819018f88e6c6efe8ab1fadb520a2dbf83e40"
+    },
+    {
+      "path": "src/algorithm/selection_functions.rs",
+      "upstream_bytes": 6528,
+      "upstream_sha256": "6ce0395ae821e09ed1d4325f43fec48b47b56ae3b861e1aa02769cb669a275f9",
+      "local_bytes": 6528,
+      "local_sha256": "6ce0395ae821e09ed1d4325f43fec48b47b56ae3b861e1aa02769cb669a275f9"
+    },
+    {
+      "path": "src/envelope.rs",
+      "upstream_bytes": 3480,
+      "upstream_sha256": "9b8800ce33701f14331e791c04f8a9192856e514ea2fd6f8c5890dbca682fa4b",
+      "local_bytes": 3480,
+      "local_sha256": "9b8800ce33701f14331e791c04f8a9192856e514ea2fd6f8c5890dbca682fa4b"
+    },
+    {
+      "path": "src/lib.rs",
+      "upstream_bytes": 2105,
+      "upstream_sha256": "50d187e5b3e0edb373a31a74bbe7a4fe0072b2541d684ecf7fb7a247020cf4ff",
+      "local_bytes": 2105,
+      "local_sha256": "50d187e5b3e0edb373a31a74bbe7a4fe0072b2541d684ecf7fb7a247020cf4ff"
+    },
+    {
+      "path": "src/mint.rs",
+      "upstream_bytes": 2616,
+      "upstream_sha256": "522ca5e07b5510b73bb60a70d8022e7ff48a7ed6f94ac797034aeb81e6760266",
+      "local_bytes": 2616,
+      "local_sha256": "522ca5e07b5510b73bb60a70d8022e7ff48a7ed6f94ac797034aeb81e6760266"
+    },
+    {
+      "path": "src/node.rs",
+      "upstream_bytes": 4323,
+      "upstream_sha256": "b5577b72072c0ef4776665de84007a177f7a249ad055964a691baa7d81350d34",
+      "local_bytes": 4323,
+      "local_sha256": "b5577b72072c0ef4776665de84007a177f7a249ad055964a691baa7d81350d34"
+    },
+    {
+      "path": "src/object.rs",
+      "upstream_bytes": 7884,
+      "upstream_sha256": "dfd93bca931fdb61bb0fd0e320552843a3f79d6829e70423e47053015b18b81c",
+      "local_bytes": 7884,
+      "local_sha256": "dfd93bca931fdb61bb0fd0e320552843a3f79d6829e70423e47053015b18b81c"
+    },
+    {
+      "path": "src/params.rs",
+      "upstream_bytes": 4390,
+      "upstream_sha256": "4f45e7dc147e0fccb46ed7c8b7c6ef0edbba682ea68c01ce53270cbd81722a4e",
+      "local_bytes": 4390,
+      "local_sha256": "4f45e7dc147e0fccb46ed7c8b7c6ef0edbba682ea68c01ce53270cbd81722a4e"
+    },
+    {
+      "path": "src/point.rs",
+      "upstream_bytes": 13760,
+      "upstream_sha256": "4908f76d30fa5ae5049a0bbbf26c116e9a8cacc86104ff1bd9b93eca23003d52",
+      "local_bytes": 13760,
+      "local_sha256": "4908f76d30fa5ae5049a0bbbf26c116e9a8cacc86104ff1bd9b93eca23003d52"
+    },
+    {
+      "path": "src/primitives/cached_envelope.rs",
+      "upstream_bytes": 4010,
+      "upstream_sha256": "7524b6261b20bd06e7f670427f61d3c4cbdb7640fe7cff3af4f6f0aa29955569",
+      "local_bytes": 4010,
+      "local_sha256": "7524b6261b20bd06e7f670427f61d3c4cbdb7640fe7cff3af4f6f0aa29955569"
+    },
+    {
+      "path": "src/primitives/geom_with_data.rs",
+      "upstream_bytes": 4639,
+      "upstream_sha256": "fa5a715a579a09dfc85d2cf7a9d54abb0e01e91f9caee30085d1a3cb82721ed6",
+      "local_bytes": 4639,
+      "local_sha256": "fa5a715a579a09dfc85d2cf7a9d54abb0e01e91f9caee30085d1a3cb82721ed6"
+    },
+    {
+      "path": "src/primitives/line.rs",
+      "upstream_bytes": 3780,
+      "upstream_sha256": "59b19c6ee0e3d2da172b43150da68a328b44521f1efe5bedd3ce13d5cd2830c7",
+      "local_bytes": 3780,
+      "local_sha256": "59b19c6ee0e3d2da172b43150da68a328b44521f1efe5bedd3ce13d5cd2830c7"
+    },
+    {
+      "path": "src/primitives/mod.rs",
+      "upstream_bytes": 401,
+      "upstream_sha256": "0dff8cd779cc848fd0d993e6a3427cb0fa2a8789bf51814b12a73fdba461f7b9",
+      "local_bytes": 401,
+      "local_sha256": "0dff8cd779cc848fd0d993e6a3427cb0fa2a8789bf51814b12a73fdba461f7b9"
+    },
+    {
+      "path": "src/primitives/object_ref.rs",
+      "upstream_bytes": 1932,
+      "upstream_sha256": "2c979f2189c21e0310a47e3445ad7a62f1fbf5e042b3f8b06ac511ae41c9fd7a",
+      "local_bytes": 1932,
+      "local_sha256": "2c979f2189c21e0310a47e3445ad7a62f1fbf5e042b3f8b06ac511ae41c9fd7a"
+    },
+    {
+      "path": "src/primitives/point_with_data.rs",
+      "upstream_bytes": 2312,
+      "upstream_sha256": "8bfd88c5e1a2a466ecc61cc57a3458009cb65f5716547fec83c94fb1f952bb64",
+      "local_bytes": 2312,
+      "local_sha256": "8bfd88c5e1a2a466ecc61cc57a3458009cb65f5716547fec83c94fb1f952bb64"
+    },
+    {
+      "path": "src/primitives/rectangle.rs",
+      "upstream_bytes": 3725,
+      "upstream_sha256": "fe49dc601a05ea9d339927854977f302955a403c898277fda5b28bdeeeda49f5",
+      "local_bytes": 3725,
+      "local_sha256": "fe49dc601a05ea9d339927854977f302955a403c898277fda5b28bdeeeda49f5"
+    },
+    {
+      "path": "src/rtree.rs",
+      "upstream_bytes": 41425,
+      "upstream_sha256": "6c2441fc60d411ef07dfb82695173d28742bbfb82962aeca170fc7f0b39c7ff3",
+      "local_bytes": 41425,
+      "local_sha256": "6c2441fc60d411ef07dfb82695173d28742bbfb82962aeca170fc7f0b39c7ff3"
+    },
+    {
+      "path": "src/test_utilities.rs",
+      "upstream_bytes": 1649,
+      "upstream_sha256": "28ce88bf0b533332aa53fff49431fbf8e644acac6f30fe657b50b02da76322d9",
+      "local_bytes": 1649,
+      "local_sha256": "28ce88bf0b533332aa53fff49431fbf8e644acac6f30fe657b50b02da76322d9"
+    }
+  ],
+  "additional_upstream_files": [
+    {
+      "path": "LICENSE-MIT",
+      "source_url": "https://raw.githubusercontent.com/georust/rstar/c8c5bf9e41468281d030869d409e3f67f1aaf5b7/LICENSE-MIT",
+      "sha256": "9b3a76c27bac8f3e0ff2d1f64f65941c50310ae3ff69318cea230bd4a36822c5",
+      "bytes": 1072
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "source_url": "https://raw.githubusercontent.com/georust/rstar/c8c5bf9e41468281d030869d409e3f67f1aaf5b7/LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "bytes": 10847
+    }
+  ]
+}

@@ -4,6 +4,8 @@ TimeScope is experimental. Source versions and downloadable builds can differ; [
 
 ## Unreleased
 
+- Update URL parsing, encrypted-cookie and native filesystem dependencies for reported security and memory-safety fixes. Remove the affected heapless dependency through a documented rstar compatibility patch; retain geographic APIs. Reject unsupported URL schemes before origin calculation.
+
 - Add an offline ancient Eurasian Y-DNA demo with 1,708 dated records, refined subclades and terminal SNPs, regional Time views, a 3D globe, and historical-period views. Preserve source credits, date ranges, tentative calls and legacy nomenclature.
 
 ## 0.16.17 — 2026-11-21

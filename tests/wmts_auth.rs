@@ -6,6 +6,23 @@ use chronoscope::{
     wmts_auth::{IdentityKind, Profile},
 };
 use serde_json::json;
+
+#[test]
+fn nested_blob_origins_are_rejected_without_affecting_public_http_maps() {
+    let dir = tempfile::tempdir().unwrap();
+    let maps = TileService::new(dir.path().join("wmts-cache")).unwrap();
+    let nested = format!("{}https://maps.example.test", "blob:".repeat(10_000));
+    assert!(chronoscope::wmts_auth::origin(&nested).is_err());
+    assert!(maps.auth.get(&nested).unwrap().is_none());
+    assert!(maps
+        .auth
+        .get("http://maps.example.test/tiles")
+        .unwrap()
+        .is_none());
+    // Exercise the patched upstream directly, as well as our scheme guards.
+    assert!(!reqwest::Url::parse(&nested).unwrap().origin().is_tuple());
+}
+
 #[test]
 fn identities_stay_local_and_are_discoverable_without_pin_arguments() {
     let dir = tempfile::tempdir().unwrap();

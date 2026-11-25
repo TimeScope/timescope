@@ -210,6 +210,11 @@ impl AuthStore {
     pub fn get(&self, url: &str) -> Result<Option<Entry>, String> {
         let (_lock, store) = self.locked()?;
         let url = reqwest::Url::parse(url).map_err(|_| "Invalid WMTS URL")?;
+        // Authentication profiles are HTTPS-only. Reject other schemes before
+        // computing an origin (in particular, nested blob: URLs).
+        if url.scheme() != "https" {
+            return Ok(None);
+        }
         Ok(store
             .profiles
             .get(&url.origin().ascii_serialization())

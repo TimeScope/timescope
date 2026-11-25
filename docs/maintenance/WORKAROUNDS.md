@@ -12,6 +12,7 @@ still match; a dependency update must review each affected entry.
 | Cesium terrain picking | Failed or obsolete worker tasks must not discard valid terrain triangles. | [Pinned patch](../../frontend/scripts/patches/terrain-picker.mjs), deterministic task-lifecycle regressions and multi-view terrain suite. |
 | Cesium idle camera | Angle getters can introduce tiny orientation changes and keep an idle scene drawing. | [Mechanism, measurements and limits](../CESIUM-IDLE-RENDER.md). [PR #13982](https://github.com/CesiumGS/cesium/pull/13982) was open when checked on 25 October 2026. |
 | Cesium Knockout/CSP | Find the global object without eval and retain the desktop CSP. | [Narrow Vite transform](../../frontend/vite.config.ts), CSP-enabled browser parity and native packaging/launch checks. |
+| Rstar nearest-neighbor heap | Remove affected heapless while retaining geographic APIs. | [Provenance, allocation tradeoff and removal gate](../../vendor/rstar/BACKPORT.md); spatial correctness and performance harness. |
 | GLib variant iteration | Retain a reviewed security backport for the supported native dependency graph. | [Advisories, full file ledger and native test commands](../../vendor/glib/BACKPORT.md). |
 
 For each dependency upgrade: inspect the upstream source, run the existing guard

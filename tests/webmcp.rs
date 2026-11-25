@@ -48,6 +48,17 @@ fn browser_controls_are_host_only_and_extension_is_self_contained() {
     );
     let origin = "chrome-extension://abcdefghijklmnopabcdefghijklmnop";
     let body = json!({"pairing_code":started["pairing_code"],"origin":"https://example.org","document":"test-document","tools":[{"name":"records","description":"Example","inputSchema":{"type":"object"}}]});
+    let mut nested = body.clone();
+    nested["origin"] = json!(format!("{}https://example.org", "blob:".repeat(10_000)));
+    assert_eq!(
+        http.post(format!("{url}/pair"))
+            .header("Origin", origin)
+            .json(&nested)
+            .send()
+            .unwrap()
+            .status(),
+        400
+    );
     let paired: serde_json::Value = http
         .post(format!("{url}/pair"))
         .header("Origin", origin)

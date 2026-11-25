@@ -1,0 +1,10 @@
+[package]
+name = "timescope-rstar-backport-tests"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[workspace]
+
+[dependencies]
+rstar = { path = "../../vendor/rstar" }

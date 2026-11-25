@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "reviewed_on": "2026-10-25",
+  "reviewed_on": "2026-11-25",
   "workarounds": [
     {
       "id": "cesium-terrain-picker",
@@ -131,6 +131,32 @@
       ],
       "upstream": "https://github.com/gtk-rs/gtk-rs-core/pull/1343; exact upstream fix and advisory IDs are in the retained backport ledger.",
       "remove_when": "The verified supported native dependency graph no longer contains affected unpatched GLib. Repeat the exact ledger/graph checks, both debug/release iterator regressions on Linux and native compile/smoke checks; preserve required notices/source access."
+    },
+    {
+      "id": "rstar-heapless-removal",
+      "owner": "TimeScope maintainer \u2014 geospatial dependencies",
+      "purpose": "Use the existing allocation-backed nearest-neighbor heap throughout to remove affected heapless without changing geographic APIs.",
+      "source_files": [
+        "vendor/rstar/BACKPORT.md",
+        "vendor/rstar/BACKPORT-FILES.json",
+        "vendor/rstar/src/algorithm/nearest_neighbor.rs",
+        "Cargo.toml"
+      ],
+      "constraints": [
+        {
+          "file": "vendor/rstar/BACKPORT-FILES.json",
+          "keys": [
+            "version"
+          ],
+          "expected": "0.12.2"
+        }
+      ],
+      "regressions": [
+        "scripts/test_rstar_backport.py",
+        "tests/rstar-backport/Cargo.toml"
+      ],
+      "upstream": "https://github.com/georust/rstar; full archive and exact source provenance are in the retained ledger. This is a local removal of an optimization, not an upstream release.",
+      "remove_when": "A compatible released geographic stack excludes affected heapless; pass spatial correctness, performance and native app checks without this patch."
     }
   ]
 }

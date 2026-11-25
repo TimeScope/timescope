@@ -6,6 +6,7 @@ import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 
 export const requiredFiles = [
+  "vendor/rstar/LICENSE-MIT", "vendor/rstar/LICENSE-APACHE", "vendor/rstar/BACKPORT.md",
   "vendor/calamine/LICENSE-MIT.md", "vendor/calamine/BACKPORT.md",
   "vendor/glib/LICENSE", "vendor/glib/COPYRIGHT", "vendor/glib/BACKPORT.md",
   "LICENSE", "THIRD_PARTY.md", "docs/DATA-ATTRIBUTION.md", "docs/DISTRIBUTION.md",
