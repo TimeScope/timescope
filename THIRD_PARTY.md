@@ -62,3 +62,9 @@ Native LGPL/MPL source-access and other dependency obligations must still be che
 ## AI credential storage
 
 `keyring` 4.2.0 (MIT OR Apache-2.0) selects the native credential store: Apple Keychain, Windows Credential Manager, or Linux Secret Service. New platform and cryptographic dependency notices and exact archive checksums are retained in `assets/licenses/locked-cargo/NOTICE-INVENTORY.json`. There is no plaintext-file fallback.
+
+Argmin 0.11.0 retains complete upstream source and licenses under `vendor/argmin`; its BACKPORT.md and per-file ledger document dependency-only migration from paste to pastey 0.2.3. The egui 0.37 migration removed the old Metal dependency and its compatibility patch.
+
+## Legacy renderer
+
+The optional legacy renderer uses egui/eframe 0.37.0 with the Glow renderer and bundled fonts. Skrifa, Harfrust and Vello replace the old ab_glyph/ttf-parser font stack. New locked dependency notices, including the fonts’ OFL, Ubuntu and MIT terms, are retained under `assets/licenses/locked-cargo/` and recorded in its notice inventory. [Review record](docs/security/egui-migration-2026-11-25.json). Wgpu entries in the lockfile are optional and are not enabled by this renderer.

@@ -6,7 +6,7 @@ from workarounds import load_registry, validate_registry
 
 class WorkaroundTests(unittest.TestCase):
     def test_active_index_has_owners_sources_regressions_and_matching_versions(self):
-        self.assertEqual(len(validate_registry(load_registry())), 5)
+        self.assertEqual(len(validate_registry(load_registry())), 6)
 
     def test_dependency_drift_requires_explicit_review(self):
         registry = copy.deepcopy(load_registry())

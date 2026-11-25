@@ -1,0 +1,751 @@
+{
+  "date": "2026-11-25",
+  "scope": "egui legacy renderer 0.31.1 to 0.37.0; source/provenance review before compilation",
+  "review": {
+    "registry_archives": "All 48 added/version-changed lockfile packages verified against Cargo.lock and crates.io checksums; installed files compared with reviewed archives.",
+    "official_sources": "Rust sources, shader sources, original manifests and bundled font binaries compared with official repository commits or release tags. Wgpu is an inactive optional renderer in this app.",
+    "metadata_exceptions": [
+      "Eight egui crate recorded commits returned 404; their source and font files match the official 0.37.0 tag.",
+      "Wgpu crates omit VCS metadata; files match official v30.0.2 tag; platform helper uses wgpu-core/platform-deps/windows-linux-android.",
+      "Glow source matches its recorded commit after CRLF/LF normalization.",
+      "codespan-reporting manifest differs only in package version 0.13.0 to 0.13.1; epaint manifest differs only in one documentation feature name."
+    ],
+    "manual_review": [
+      "Inspected all enum-map-derive production source: input-driven enum/struct token generation, no process/network/environment access.",
+      "Inspected new build scripts: Wgpu/Naga scripts only declare configuration aliases; not selected for the Glow build.",
+      "Checked font and rasterization source for process/network/environment behavior; no unexpected access found.",
+      "Reviewed eframe inspection, screenshot and storage behavior: inspection is disabled; screenshot writes are requested by the app; storage and desktop activation variables have documented purposes.",
+      "Retained license and bundled font notices, obtaining omitted texts from exact official sources.",
+      "Both runtime Glow GLSL shaders inspected and matched byte-for-byte to the official release tag."
+    ],
+    "result": "No supply-chain attack indicators found in this review; checks cannot establish absence of upstream compromise."
+  },
+  "dependencies": [
+    {
+      "name": "accesskit",
+      "version": "0.25.2",
+      "archive_sha256": "4e883d1d28c5fd5568c79ed2d2bd48d9f2fd3945c8974ed0f53690ceddb051be",
+      "published": "2026-10-25T21:06:38.536858Z",
+      "age_days": 30,
+      "publisher": "DataTriny",
+      "repository": "https://github.com/AccessKit/accesskit",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "f3026222559c7f5f46d8f25cb7404de68eb149f0"
+        },
+        "path_in_vcs": "accesskit"
+      }
+    },
+    {
+      "name": "bit-set",
+      "version": "0.10.0",
+      "archive_sha256": "09ec2f926cc3060f09db9ebc5b52823d85268d24bb917e472c0c4bea35780a7d",
+      "published": "2026-03-29T13:55:52.257477Z",
+      "age_days": 240,
+      "publisher": "pczarn",
+      "repository": "https://github.com/contain-rs/bit-set",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "2a569e1a5bffaee2c2974bcf070ef4e8ee85550b"
+        },
+        "path_in_vcs": ""
+      }
+    },
+    {
+      "name": "bit-vec",
+      "version": "0.9.1",
+      "archive_sha256": "b71798fca2c1fe1086445a7258a4bc81e6e49dcd24c8d0dd9a1e57395b603f51",
+      "published": "2026-03-12T11:58:25.849464Z",
+      "age_days": 257,
+      "publisher": "pczarn",
+      "repository": "https://github.com/contain-rs/bit-vec",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "2fb0305422ff7fd915a107b91209abbff9fce50f"
+        },
+        "path_in_vcs": ""
+      }
+    },
+    {
+      "name": "codespan-reporting",
+      "version": "0.13.1",
+      "archive_sha256": "af491d569909a7e4dee0ad7db7f5341fef5c614d5b8ec8cf765732aba3cff681",
+      "published": "2025-10-22T11:47:14.098594Z",
+      "age_days": 398,
+      "publisher": null,
+      "repository": "https://github.com/brendanzab/codespan",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "ef354877a16c83e678051830b260a8f9a53778bd",
+          "dirty": true
+        },
+        "path_in_vcs": "codespan-reporting"
+      }
+    },
+    {
+      "name": "color",
+      "version": "0.3.3",
+      "archive_sha256": "2ec7c5eb7a16992b1904d76c517d170ab353b0e0b3d5a0c81a8a0cd1037893cf",
+      "published": "2026-05-05T14:20:48.490544Z",
+      "age_days": 203,
+      "publisher": "tomcur",
+      "repository": "https://github.com/linebender/color",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "598fae3faca4d17bbde51ec12c0d051102ef4541"
+        },
+        "path_in_vcs": "color"
+      }
+    },
+    {
+      "name": "ecolor",
+      "version": "0.37.0",
+      "archive_sha256": "31bcbef0d4263a63eb32c4834e5d711613035ce1333468e107d928923e21e6e2",
+      "published": "2026-10-15T14:48:52.938614Z",
+      "age_days": 40,
+      "publisher": "rerunio",
+      "repository": "https://github.com/emilk/egui",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "7c0b40402271e8d40cda69f87cf3c2617c2e4382"
+        },
+        "path_in_vcs": "crates/ecolor"
+      }
+    },
+    {
+      "name": "eframe",
+      "version": "0.37.0",
+      "archive_sha256": "9c5642501a65ca657d05f00c643a5c14ff2346cb3818032bfe23d58e1f8e5f84",
+      "published": "2026-10-15T15:28:53.621684Z",
+      "age_days": 40,
+      "publisher": "rerunio",
+      "repository": "https://github.com/emilk/egui/tree/main/crates/eframe",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "3c6eb8261c3293ad9c7ea1ed58487e038860ebef"
+        },
+        "path_in_vcs": "crates/eframe"
+      }
+    },
+    {
+      "name": "egui",
+      "version": "0.37.0",
+      "archive_sha256": "bec9144f49b7a28b5f395d3147e325b4fe3e77ba686eac11d1bdf0a7da3f375f",
+      "published": "2026-10-15T14:49:16.159284Z",
+      "age_days": 40,
+      "publisher": "rerunio",
+      "repository": "https://github.com/emilk/egui",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "7c0b40402271e8d40cda69f87cf3c2617c2e4382"
+        },
+        "path_in_vcs": "crates/egui"
+      }
+    },
+    {
+      "name": "egui-wgpu",
+      "version": "0.37.0",
+      "archive_sha256": "0309cbe1febed48af5b974e4bcc424b35e9664863a4d402697147b57a488c864",
+      "published": "2026-10-15T14:49:55.127617Z",
+      "age_days": 40,
+      "publisher": "rerunio",
+      "repository": "https://github.com/emilk/egui/tree/main/crates/egui-wgpu",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "7c0b40402271e8d40cda69f87cf3c2617c2e4382"
+        },
+        "path_in_vcs": "crates/egui-wgpu"
+      }
+    },
+    {
+      "name": "egui-winit",
+      "version": "0.37.0",
+      "archive_sha256": "e4e449f4c4a2a60c7ccb4ba7fa4078417bfe1f9ddc03b5e05ce75748e33a70de",
+      "published": "2026-10-15T14:49:31.077523Z",
+      "age_days": 40,
+      "publisher": "rerunio",
+      "repository": "https://github.com/emilk/egui/tree/main/crates/egui-winit",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "7c0b40402271e8d40cda69f87cf3c2617c2e4382"
+        },
+        "path_in_vcs": "crates/egui-winit"
+      }
+    },
+    {
+      "name": "egui_extras",
+      "version": "0.37.0",
+      "archive_sha256": "def286cf47194f3fe45b8e37c503ada7a20a64b59a903b4bc704baec943b1827",
+      "published": "2026-10-15T15:35:55.358637Z",
+      "age_days": 40,
+      "publisher": "rerunio",
+      "repository": "https://github.com/emilk/egui",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "9d317be94fc96df23bd5d9316f357efa2d3631d8"
+        },
+        "path_in_vcs": "crates/egui_extras"
+      }
+    },
+    {
+      "name": "egui_glow",
+      "version": "0.37.0",
+      "archive_sha256": "9275ca5cc35a6b7c94e0e8cedf22542f66cb0cf45ed8ab2657c78ff49fec7268",
+      "published": "2026-10-15T14:49:41.064307Z",
+      "age_days": 40,
+      "publisher": "rerunio",
+      "repository": "https://github.com/emilk/egui/tree/main/crates/egui_glow",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "7c0b40402271e8d40cda69f87cf3c2617c2e4382"
+        },
+        "path_in_vcs": "crates/egui_glow"
+      }
+    },
+    {
+      "name": "emath",
+      "version": "0.37.0",
+      "archive_sha256": "e73ce90f54750be8672c02be0743fe47530e6f251e066f0ee2869b59eb297af5",
+      "published": "2026-10-15T14:48:48.114881Z",
+      "age_days": 40,
+      "publisher": "rerunio",
+      "repository": "https://github.com/emilk/egui/tree/main/crates/emath",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "7c0b40402271e8d40cda69f87cf3c2617c2e4382"
+        },
+        "path_in_vcs": "crates/emath"
+      }
+    },
+    {
+      "name": "enum-map",
+      "version": "3.1.0",
+      "archive_sha256": "d4532960034c15ba2f55e9eee631040ecc473c32e6c4b200828c759840f13a06",
+      "published": "2026-07-21T06:21:25.208591Z",
+      "age_days": 126,
+      "publisher": "sugar700",
+      "repository": "https://codeberg.org/sugar700/enum-map",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "a09d924a4afde4e2864a1df7b1438a5e6cdf3e7e"
+        },
+        "path_in_vcs": "enum-map"
+      }
+    },
+    {
+      "name": "enum-map-derive",
+      "version": "1.0.1",
+      "archive_sha256": "7127272f64b3e098f7d81f350d672081b879bff896d219c42370dc858b1af9ff",
+      "published": "2026-08-03T11:44:43.151219Z",
+      "age_days": 113,
+      "publisher": "sugar700",
+      "repository": "https://codeberg.org/sugar700/enum-map",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "ccf562d340723530d54f7bdfeb1782b4ded803a7"
+        },
+        "path_in_vcs": "enum-map-derive"
+      }
+    },
+    {
+      "name": "epaint",
+      "version": "0.37.0",
+      "archive_sha256": "97bac86ae3dde93fc3951e790951caea739ff39a6c89d909cdaf1d9278dbb1bd",
+      "published": "2026-10-15T14:49:06.268100Z",
+      "age_days": 40,
+      "publisher": "rerunio",
+      "repository": "https://github.com/emilk/egui/tree/main/crates/epaint",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "7c0b40402271e8d40cda69f87cf3c2617c2e4382"
+        },
+        "path_in_vcs": "crates/epaint"
+      }
+    },
+    {
+      "name": "epaint_default_fonts",
+      "version": "0.37.0",
+      "archive_sha256": "cfc1cc505827f4c23eedc297975a0fd038268d41293f389dd8ff3b574aefab19",
+      "published": "2026-10-15T14:48:55.676178Z",
+      "age_days": 40,
+      "publisher": "rerunio",
+      "repository": "https://github.com/emilk/egui/tree/main/crates/epaint_default_fonts",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "7c0b40402271e8d40cda69f87cf3c2617c2e4382"
+        },
+        "path_in_vcs": "crates/epaint_default_fonts"
+      }
+    },
+    {
+      "name": "euclid",
+      "version": "0.22.14",
+      "archive_sha256": "f1a05365e3b1c6d1650318537c7460c6923f1abdd272ad6842baa2b509957a06",
+      "published": "2026-03-18T20:00:26.960761Z",
+      "age_days": 251,
+      "publisher": "nical",
+      "repository": "https://github.com/servo/euclid",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "60f2bd96deec0c0683eeddd737e0dc070a25e9af"
+        },
+        "path_in_vcs": ""
+      }
+    },
+    {
+      "name": "fearless_simd",
+      "version": "0.4.1",
+      "archive_sha256": "b97b65636e5b9ef369943878ac74335ba1c55c1cb6adbf1e2c293c624248d693",
+      "published": "2026-05-16T09:49:57.602219Z",
+      "age_days": 192,
+      "publisher": "LaurenzV",
+      "repository": "https://github.com/linebender/fearless_simd",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "0e8e242aaa8031cdc9708f99334e8998d4725916"
+        },
+        "path_in_vcs": "fearless_simd"
+      }
+    },
+    {
+      "name": "font-types",
+      "version": "0.12.7",
+      "archive_sha256": "835ae9d781464a79026cde387f9cbc650c9a4909d7cf7e658b127e3c35d2f35d",
+      "published": "2026-10-15T14:22:07.032780Z",
+      "age_days": 40,
+      "publisher": "dfrg",
+      "repository": "https://github.com/googlefonts/fontations",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "ef666662f5985965bbbb726c4f77d15481831a1b"
+        },
+        "path_in_vcs": "font-types"
+      }
+    },
+    {
+      "name": "glifo",
+      "version": "0.3.0",
+      "archive_sha256": "282a26c1e23de04bdab3e34a21b6f877a479b96737792516b9b8b8f69b6661be",
+      "published": "2026-08-07T11:00:12.385798Z",
+      "age_days": 109,
+      "publisher": "LaurenzV",
+      "repository": "https://github.com/linebender/vello",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "7073a85d61ee099d1d3595651ddf92302b074348"
+        },
+        "path_in_vcs": "glifo"
+      }
+    },
+    {
+      "name": "glow",
+      "version": "0.17.0",
+      "archive_sha256": "29038e1c483364cc6bb3cf78feee1816002e127c331a1eec55a4d202b9e1adb5",
+      "published": "2026-03-07T04:35:01.036126Z",
+      "age_days": 262,
+      "publisher": "grovesNL",
+      "repository": "https://github.com/grovesNL/glow",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "0983efbc97fa4815f18990ef2a59540ede94f6f6"
+        },
+        "path_in_vcs": ""
+      }
+    },
+    {
+      "name": "guillotiere",
+      "version": "0.7.0",
+      "archive_sha256": "6b17e70c989c36bad147b27a58d148c0741c51448aa5653436547323e524d0ab",
+      "published": "2026-03-18T21:58:48.041153Z",
+      "age_days": 251,
+      "publisher": "nical",
+      "repository": "https://github.com/nical/guillotiere",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "11f558ba8a2c80c23e6adb5934d73b352d81eee8"
+        },
+        "path_in_vcs": ""
+      }
+    },
+    {
+      "name": "harfrust",
+      "version": "0.12.0",
+      "archive_sha256": "c03d949a14aa089bbb282f7dd76a498a7f684428e4257202efc119ec010376f9",
+      "published": "2026-07-03T19:32:00.510158Z",
+      "age_days": 144,
+      "publisher": "behdad",
+      "repository": "https://github.com/harfbuzz/harfrust",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "60b28ea22b5261710018d69c168a762bcb28794c"
+        },
+        "path_in_vcs": "harfrust"
+      }
+    },
+    {
+      "name": "itertools",
+      "version": "0.15.0",
+      "archive_sha256": "8b4baf93f58d4425749ca49a51c50ebab072c5df6994d08fed93541c331481dc",
+      "published": "2026-06-16T15:09:28.880416Z",
+      "age_days": 161,
+      "publisher": "jswrenn",
+      "repository": "https://github.com/rust-itertools/itertools",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "37bd72aa6d58e594711d127b52418ca5e58b6091"
+        },
+        "path_in_vcs": ""
+      }
+    },
+    {
+      "name": "kurbo",
+      "version": "0.13.1",
+      "archive_sha256": "4b60dfc32f652b926df6192e55525b16d186c69d47876c3ead4da5cc9f8450e2",
+      "published": "2026-05-13T16:32:09.461806Z",
+      "age_days": 195,
+      "publisher": "tomcur",
+      "repository": "https://github.com/linebender/kurbo",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "838b69ef35f3381cefc007d86aa8364f5a6dc673"
+        },
+        "path_in_vcs": "kurbo"
+      }
+    },
+    {
+      "name": "linebender_resource_handle",
+      "version": "0.1.1",
+      "archive_sha256": "d4a5ff6bcca6c4867b1c4fd4ef63e4db7436ef363e0ad7531d1558856bae64f4",
+      "published": "2025-09-16T09:53:56.589443Z",
+      "age_days": 434,
+      "publisher": "DJMcNab",
+      "repository": "https://github.com/linebender/raw_resource_handle",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "bd8694ffca7550e8d569346c50de5fdcb5c51a7f"
+        },
+        "path_in_vcs": ""
+      }
+    },
+    {
+      "name": "naga",
+      "version": "30.0.2",
+      "archive_sha256": "fd0dd362bf26c0ffdd143df6da66a25d287e196eff482f117771010b207ad163",
+      "published": "2026-11-12T18:38:58.097243Z",
+      "age_days": 12,
+      "publisher": "cwfitzgerald",
+      "repository": "https://github.com/gfx-rs/wgpu",
+      "recorded_vcs": null
+    },
+    {
+      "name": "naga-types",
+      "version": "30.0.2",
+      "archive_sha256": "14474170feb673cfb18b3565111a9869797cc1d290fb9ec969c53f5e1e231c6d",
+      "published": "2026-11-12T18:38:56.290546Z",
+      "age_days": 12,
+      "publisher": "cwfitzgerald",
+      "repository": "https://github.com/gfx-rs/wgpu",
+      "recorded_vcs": null
+    },
+    {
+      "name": "nom",
+      "version": "8.0.0",
+      "archive_sha256": "df9761775871bdef83bee530e60050f7e54b1105350d6884eb0fb4f46c2f9405",
+      "published": "2025-01-26T16:03:28.068915Z",
+      "age_days": 667,
+      "publisher": "Geal",
+      "repository": "https://github.com/rust-bakery/nom",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "2cec1b3e4c9ccac62c902d60c00de6d1549ccbe1"
+        },
+        "path_in_vcs": ""
+      }
+    },
+    {
+      "name": "os_pipe",
+      "version": "1.2.3",
+      "archive_sha256": "7d8fae84b431384b68627d0f9b3b1245fcf9f46f6c0e3dc902e9dce64edd1967",
+      "published": "2025-10-11T19:15:04.313994Z",
+      "age_days": 409,
+      "publisher": "oconnor663",
+      "repository": "https://github.com/oconnor663/os_pipe.rs",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "228ee175117faf1bf0cce99942ce579244215da4"
+        },
+        "path_in_vcs": ""
+      }
+    },
+    {
+      "name": "peniko",
+      "version": "0.6.1",
+      "archive_sha256": "839c8299360d2e998bdb106dc0a6cd71dcc5f4df51df1b620361bf50e283cca6",
+      "published": "2026-05-15T04:59:45.348256Z",
+      "age_days": 193,
+      "publisher": "waywardmonkeys",
+      "repository": "https://github.com/linebender/peniko",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "e1bb9ef26282a2dd48058a3a7154691548fe4980"
+        },
+        "path_in_vcs": "peniko"
+      }
+    },
+    {
+      "name": "polycool",
+      "version": "0.4.0",
+      "archive_sha256": "50596ddc09eb5ad5f75cacd40209568e66df71baf86e1499a0e99c4cff12a5a6",
+      "published": "2025-10-23T22:48:11.442086Z",
+      "age_days": 397,
+      "publisher": "jneem",
+      "repository": "https://github.com/linebender/kurbo",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "0ffc830eca99e68ba6bab54224cfac2c66bde2f9"
+        },
+        "path_in_vcs": "polycool"
+      }
+    },
+    {
+      "name": "read-fonts",
+      "version": "0.41.0",
+      "archive_sha256": "046a7d674daf459825b32f5062056d6882db0d2f5a479fbd76ccfc870ac18709",
+      "published": "2026-07-03T18:33:14.197122Z",
+      "age_days": 144,
+      "publisher": "cmyr",
+      "repository": "https://github.com/googlefonts/fontations",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "cd4aaef57887dd1d8a5875e38c406843e66c9cab"
+        },
+        "path_in_vcs": "read-fonts"
+      }
+    },
+    {
+      "name": "self_cell",
+      "version": "1.3.0",
+      "archive_sha256": "2ab42ca02749e120097e328d91d415325bdf43b1c72c4c8badf37375fe40a813",
+      "published": "2026-07-16T07:47:15.429408Z",
+      "age_days": 131,
+      "publisher": "Voultapher",
+      "repository": "https://github.com/Voultapher/self_cell",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "93cb06e430e7516ac9b436029a15127782b6c2b6"
+        }
+      }
+    },
+    {
+      "name": "send_wrapper",
+      "version": "0.6.0",
+      "archive_sha256": "cd0b0ec5f1c1ca621c432a25813d8d60c88abe6d3e08a3eb9cf37d97a0fe3d73",
+      "published": "2022-06-05T17:10:03.323883Z",
+      "age_days": 1633,
+      "publisher": "thk1",
+      "repository": "https://github.com/thk1/send_wrapper",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "1d005016d15a301af42e5a3fdc1369d9badb1f23"
+        }
+      }
+    },
+    {
+      "name": "skrifa",
+      "version": "0.44.0",
+      "archive_sha256": "819ab7d62b1d3e72d9d9dea5650bac30424f9111364bb94928dbf5ecad1baa68",
+      "published": "2026-07-04T01:17:33.247998Z",
+      "age_days": 143,
+      "publisher": "cmyr",
+      "repository": "https://github.com/googlefonts/fontations",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "b373cdbc6043a791fb23b3e0f413649458f5e63a"
+        },
+        "path_in_vcs": "skrifa"
+      }
+    },
+    {
+      "name": "tree_magic_mini",
+      "version": "3.2.2",
+      "archive_sha256": "b8765b90061cba6c22b5831f675da109ae5561588290f9fa2317adab2714d5a6",
+      "published": "2025-11-14T19:22:26.199587Z",
+      "age_days": 375,
+      "publisher": "mbrubeck",
+      "repository": "https://github.com/mbrubeck/tree_magic/",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "75bf1b01dc81d5c0b3377a3202792fa83097872c"
+        },
+        "path_in_vcs": ""
+      }
+    },
+    {
+      "name": "unicode-properties",
+      "version": "0.1.5",
+      "archive_sha256": "993ad287eb20e8ba755312801cfe1413e0f25d604075863acaddca10b04c1833",
+      "published": "2026-10-31T18:12:10.001920Z",
+      "age_days": 24,
+      "publisher": "Manishearth",
+      "repository": "https://github.com/unicode-rs/unicode-properties",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "b5594806088d6492327228a74d05c881b9b3c042"
+        },
+        "path_in_vcs": ""
+      }
+    },
+    {
+      "name": "vello_common",
+      "version": "0.2.0",
+      "archive_sha256": "bbb2141a2bca6e6d598e471fd4d1d7eed8e020aad6a28187edda07f091a325dd",
+      "published": "2026-08-07T11:00:10.051964Z",
+      "age_days": 109,
+      "publisher": "LaurenzV",
+      "repository": "https://github.com/linebender/vello",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "7073a85d61ee099d1d3595651ddf92302b074348"
+        },
+        "path_in_vcs": "sparse_strips/vello_common"
+      }
+    },
+    {
+      "name": "vello_cpu",
+      "version": "0.2.0",
+      "archive_sha256": "ace506ca414548966fcf3c283be94eb1cad8254de488791ee698bf438b0890a9",
+      "published": "2026-08-07T11:00:16.114890Z",
+      "age_days": 109,
+      "publisher": "LaurenzV",
+      "repository": "https://github.com/linebender/vello",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "7073a85d61ee099d1d3595651ddf92302b074348"
+        },
+        "path_in_vcs": "sparse_strips/vello_cpu"
+      }
+    },
+    {
+      "name": "wgpu",
+      "version": "30.0.2",
+      "archive_sha256": "146fc3d654250e6207921a66c87534c621bc886c70df83dcf466c1d66813810e",
+      "published": "2026-11-12T18:39:07.662878Z",
+      "age_days": 12,
+      "publisher": "cwfitzgerald",
+      "repository": "https://github.com/gfx-rs/wgpu",
+      "recorded_vcs": null
+    },
+    {
+      "name": "wgpu-core",
+      "version": "30.0.2",
+      "archive_sha256": "ad661da2ee99f208c30090b585284b2ab5b8bf2358ddf2d2215592808ec62f1a",
+      "published": "2026-11-12T18:39:05.543751Z",
+      "age_days": 12,
+      "publisher": "cwfitzgerald",
+      "repository": "https://github.com/gfx-rs/wgpu",
+      "recorded_vcs": null
+    },
+    {
+      "name": "wgpu-core-deps-windows-linux-android",
+      "version": "30.0.2",
+      "archive_sha256": "1331b08fa2362c5d454eccc4448e6e4f01eccfea569a00e310adbfc4415f2bdc",
+      "published": "2026-11-12T18:39:04.364181Z",
+      "age_days": 12,
+      "publisher": "cwfitzgerald",
+      "repository": "https://github.com/gfx-rs/wgpu",
+      "recorded_vcs": null
+    },
+    {
+      "name": "wgpu-hal",
+      "version": "30.0.2",
+      "archive_sha256": "a57452fe453658e141aafdb09de1028afa498805fab518238ddf372a518813ff",
+      "published": "2026-11-12T18:39:01.590792Z",
+      "age_days": 12,
+      "publisher": "cwfitzgerald",
+      "repository": "https://github.com/gfx-rs/wgpu",
+      "recorded_vcs": null
+    },
+    {
+      "name": "wgpu-naga-bridge",
+      "version": "30.0.2",
+      "archive_sha256": "44a62ead68aad7cd40ac9e2cd2b8ec64f32dfbad2765f429b9fb74b8b735869f",
+      "published": "2026-11-12T18:39:00.528717Z",
+      "age_days": 12,
+      "publisher": "cwfitzgerald",
+      "repository": "https://github.com/gfx-rs/wgpu",
+      "recorded_vcs": null
+    },
+    {
+      "name": "wgpu-types",
+      "version": "30.0.2",
+      "archive_sha256": "a9f6ee0bd50f5ab79fb8c25e3f33afb27126f034af4ba5909c7a0967058659e6",
+      "published": "2026-11-12T18:38:59.022971Z",
+      "age_days": 12,
+      "publisher": "cwfitzgerald",
+      "repository": "https://github.com/gfx-rs/wgpu",
+      "recorded_vcs": null
+    },
+    {
+      "name": "wl-clipboard-rs",
+      "version": "0.9.5",
+      "archive_sha256": "959c7ac3b8afde864f7a7448ac16f29b2b83350b7eccbf77fb781c3999aa6848",
+      "published": "2026-10-26T11:26:51.298417Z",
+      "age_days": 29,
+      "publisher": "YaLTeR",
+      "repository": "https://github.com/YaLTeR/wl-clipboard-rs",
+      "recorded_vcs": {
+        "git": {
+          "sha1": "16b63adcbd2191a8c29c2a467342fc24b4ea82dc"
+        },
+        "path_in_vcs": ""
+      }
+    }
+  ],
+  "local_evidence": ".qa/egui-migration/ (ignored local evidence; not bundled with the app)",
+  "runtime_validation": {
+    "rust_library": "86 passed; 2 opt-in tests ignored; includes four new legacy regressions and three existing scene tests",
+    "legacy_regressions": [
+      "Pointer-driven mode/tab/table/playback controls with real font layout and tessellation",
+      "PNG screenshot callback and UI completion",
+      "Failed PNG write reaches the dismissible error dialog",
+      "Native file drop reaches CSV import wizard"
+    ],
+    "legacy_clippy": "cargo clippy --offline --locked -p chronoscope --features legacy --all-targets -- -D warnings passed; existing dependency warnings remain visible",
+    "native": {
+      "passed": true,
+      "platform": "Linux X11 / Xvfb / software OpenGL",
+      "demo": "1,708-record ancient Y-DNA workspace",
+      "views": [
+        "SpaceTime",
+        "Map",
+        "Network"
+      ],
+      "screenshots": "Rendered PNGs decoded and inspected; retained as ignored local evidence",
+      "binary_sha256": "7e496869cfd612c4449900681024588dc74d8088f06623f8200d4049d51f65c8"
+    },
+    "routine_checks": {
+      "passed": true,
+      "frontend": "229 passed, 1 skipped; TypeScript check passed",
+      "packaging_notices": "23 distribution tests passed; JS and Python notice validators passed",
+      "workarounds": "Argmin source ledger and maintenance inventory passed",
+      "format": "Rust format and first-party diff whitespace checks passed; original CRLF/trailing whitespace in retained upstream license texts is preserved for exact provenance."
+    },
+    "limits": [
+      "Native acceptance applies only to Linux X11 with software OpenGL; macOS/Windows and physical GPUs untested.",
+      "A separate Tauri desktop compile attempt could not complete because GTK development pkg-config metadata is unavailable.",
+      "Two opt-in library tests were not run.",
+      "No public promotion or installers changed."
+    ]
+  },
+  "audit": {
+    "vulnerabilities": 0,
+    "yanked": 0,
+    "unmaintained": [
+      "chrono",
+      "proc-macro-error",
+      "zbus_names",
+      "zvariant",
+      "zvariant_derive"
+    ]
+  }
+}

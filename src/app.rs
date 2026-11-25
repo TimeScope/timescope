@@ -99,6 +99,7 @@ enum WorkerResult {
     Raw(Result<RawImport, String>),
     Converted(Result<ImportReport, String>, bool, String),
     Analysis(AnalysisResult, u64),
+    Snapshot(Result<PathBuf, String>),
 }
 #[derive(Clone, Copy, PartialEq)]
 enum FileAction {
@@ -177,7 +178,7 @@ pub struct Chronoscope {
 }
 impl Chronoscope {
     pub fn new(cc: &eframe::CreationContext<'_>, initial: Option<PathBuf>) -> Self {
-        let mut style = (*cc.egui_ctx.style()).clone();
+        let mut style = (*cc.egui_ctx.global_style()).clone();
         style.visuals = egui::Visuals::dark();
         style.visuals.panel_fill = Color32::from_rgb(20, 29, 41);
         style.visuals.window_fill = Color32::from_rgb(24, 35, 48);
@@ -189,7 +190,7 @@ impl Chronoscope {
         style.spacing.item_spacing = Vec2::new(8., 8.);
         style.spacing.button_padding = Vec2::new(11., 7.);
         style.spacing.interact_size = Vec2::new(40., 28.);
-        cc.egui_ctx.set_style(style);
+        cc.egui_ctx.set_global_style(style);
         let project = Project::empty();
         let scene = Scene::new(&project.dataset);
         let (tx, rx) = mpsc::channel();
@@ -384,19 +385,19 @@ impl Chronoscope {
             .unwrap_or_default();
         self.exact_end = self.project.filter.end.map(time_label).unwrap_or_default();
         let (lo, hi) = self.project.dataset.time_bounds();
-        let span = (hi - lo) as f64;
+        let span = hi - lo;
         self.time_start = self
             .project
             .filter
             .start
-            .map(|t| (t - lo) as f64 / span)
+            .map(|t| (t - lo) / span)
             .unwrap_or(0.)
             .clamp(0., 1.);
         self.time_end = self
             .project
             .filter
             .end
-            .map(|t| (t - lo) as f64 / span)
+            .map(|t| (t - lo) / span)
             .unwrap_or(1.)
             .clamp(0., 1.);
         self.geo_enabled = self.project.filter.bounds.is_some();
@@ -481,6 +482,10 @@ impl Chronoscope {
                         }
                     }
                     Err(e) => self.error = Some(e),
+                },
+                WorkerResult::Snapshot(result) => match result {
+                    Ok(path) => self.status = format!("Snapshot saved to {}", path.display()),
+                    Err(error) => self.error = Some(error),
                 },
                 WorkerResult::Analysis(result, revision) => {
                     self.analysis_revision = revision;
@@ -572,9 +577,9 @@ impl Chronoscope {
             }
         }
     }
-    fn header(&mut self, ctx: &egui::Context) {
-        let panel = egui::TopBottomPanel::top("header").exact_height(54.);
-        panel.show(ctx,|ui|{
+    fn header(&mut self, ui: &mut egui::Ui) {
+        let panel = egui::Panel::top("header").exact_size(54.);
+        panel.show(ui,|ui|{
             ui.add_space(8.);
             ui.horizontal(|ui|{
                 ui.add_space(10.);
@@ -623,12 +628,12 @@ impl Chronoscope {
             });
         });
     }
-    fn sidebar(&mut self, ctx: &egui::Context) {
-        let panel = egui::SidePanel::left("filters")
+    fn sidebar(&mut self, ui: &mut egui::Ui) {
+        let panel = egui::Panel::left("filters")
             .resizable(true)
-            .default_width(240.)
-            .width_range(215. ..=340.);
-        panel.show(ctx,|ui|{
+            .default_size(240.)
+            .size_range(215. ..=340.);
+        panel.show(ui,|ui|{
             egui::ScrollArea::vertical().show(ui,|ui|{
                 ui.add_space(12.);
                 ui.label(RichText::new("DATA EXPLORER").size(11.).strong().color(MUTED));
@@ -785,12 +790,12 @@ impl Chronoscope {
             });
         });
     }
-    fn inspector(&mut self, ctx: &egui::Context) {
-        egui::SidePanel::right("inspector")
+    fn inspector(&mut self, ui: &mut egui::Ui) {
+        egui::Panel::right("inspector")
             .resizable(true)
-            .default_width(285.)
-            .width_range(250. ..=420.)
-            .show(ctx, |ui| {
+            .default_size(285.)
+            .size_range(250. ..=420.)
+            .show(ui, |ui| {
                 ui.add_space(10.);
                 ui.horizontal(|ui| {
                     for (tab, name) in [
@@ -1501,13 +1506,13 @@ impl Chronoscope {
         ui.separator();
         ui.label(RichText::new("Workspace is saved in .chrono.json files. Import source values, notes, groups and views are preserved.").small().color(MUTED));
     }
-    fn timeline(&mut self, ctx: &egui::Context) {
+    fn timeline(&mut self, ui: &mut egui::Ui) {
         let previous_time = (self.time_start, self.time_end);
-        egui::TopBottomPanel::bottom("timeline")
-            .exact_height(174.)
-            .show(ctx, |ui| {
+        egui::Panel::bottom("timeline")
+            .exact_size(174.)
+            .show(ui, |ui| {
                 let (lo, hi) = self.project.dataset.time_bounds();
-                let span = (hi - lo) as f64;
+                let span = hi - lo;
                 ui.horizontal(|ui| {
                     ui.add_space(12.);
                     ui.label(RichText::new("TIME WINDOW").size(11.).color(MUTED));
@@ -1550,7 +1555,7 @@ impl Chronoscope {
                 f.end = None;
                 for e in &self.project.dataset.events {
                     if f.matches(e, &self.project.selected) {
-                        let b = (((e.time - lo) as f64 / span * 80.).floor() as usize).min(79);
+                        let b = (((e.time - lo) / span * 80.).floor() as usize).min(79);
                         buckets[b] += 1;
                         if self.project.selected.contains(&e.id) {
                             selected[b] += 1;
@@ -1609,12 +1614,12 @@ impl Chronoscope {
                                 .iter()
                                 .filter(|e| f.matches(e, &self.project.selected))
                                 .filter(|e| {
-                                    (((e.time - lo) as f64 / span * 80.).floor() as usize).min(79)
+                                    (((e.time - lo) / span * 80.).floor() as usize).min(79)
                                         == bin.min(79)
                                 })
                                 .map(|e| e.id)
                                 .collect();
-                            self.select(ids, ctx.input(|i| i.modifiers.shift));
+                            self.select(ids, ui.input(|i| i.modifiers.shift));
                         }
                     }
                 }
@@ -1777,14 +1782,14 @@ impl Chronoscope {
             self.select(vec![id], add);
         }
     }
-    fn center(&mut self, ctx: &egui::Context) {
+    fn center(&mut self, ui: &mut egui::Ui) {
         egui::CentralPanel::default()
             .frame(
                 egui::Frame::new()
                     .fill(Color32::from_rgb(12, 21, 31))
                     .inner_margin(12.),
             )
-            .show(ctx, |ui| {
+            .show(ui, |ui| {
                 ui.horizontal(|ui| {
                     for (mode, label) in [
                         (ViewMode::SpaceTime, "Space-time"),
@@ -1903,7 +1908,7 @@ impl Chronoscope {
         let mut cancel = false;
         let mut run = false;
         if let Some(wizard) = &mut self.wizard {
-            egui::Window::new("Import tabular data").id(egui::Id::new("import")).collapsible(false).resizable(true).default_width(810.).default_height(560.).anchor(Align2::CENTER_CENTER,Vec2::ZERO).show(ctx,|ui|{
+            egui::Window::new("Import tabular data").id(egui::Id::unique("import")).collapsible(false).resizable(true).default_width(810.).default_height(560.).anchor(Align2::CENTER_CENTER,Vec2::ZERO).show(ctx,|ui|{
 
                 ui.label(RichText::new(&wizard.raw.source).size(18.).strong());
                 ui.horizontal(|ui|{
@@ -2140,8 +2145,9 @@ fn stat(ui: &mut egui::Ui, value: &str, label: &str) {
         ui.label(RichText::new(label).small().color(MUTED));
     });
 }
-impl eframe::App for Chronoscope {
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+impl Chronoscope {
+    fn show(&mut self, ui: &mut egui::Ui) {
+        let ctx = &ui.ctx().clone();
         self.frame_count += 1;
         let prior_filter = self.project.filter.clone();
         let prior_selection = self.project.selected.clone();
@@ -2183,17 +2189,17 @@ impl eframe::App for Chronoscope {
             i.raw
                 .dropped_files
                 .iter()
-                .filter_map(|f| f.path.clone())
+                .map(|f| f.path().to_path_buf())
                 .collect::<Vec<_>>()
         });
         if let Some(path) = dropped.first() {
             self.read_import(path.clone());
         }
         self.refresh();
-        self.header(ctx);
-        egui::TopBottomPanel::bottom("status")
-            .exact_height(28.)
-            .show(ctx, |ui| {
+        self.header(ui);
+        egui::Panel::bottom("status")
+            .exact_size(28.)
+            .show(ui, |ui| {
                 ui.horizontal(|ui| {
                     ui.add_space(10.);
                     ui.label(RichText::new(&self.status).size(11.).color(MUTED));
@@ -2210,12 +2216,12 @@ impl eframe::App for Chronoscope {
                     });
                 });
             });
-        self.timeline(ctx);
-        self.sidebar(ctx);
+        self.timeline(ui);
+        self.sidebar(ui);
         self.refresh();
-        self.inspector(ctx);
+        self.inspector(ui);
         self.refresh();
-        self.center(ctx);
+        self.center(ui);
         self.import_window(ctx);
         self.file_window(ctx);
         if let Some(error) = self.error.clone() {
@@ -2276,30 +2282,246 @@ impl eframe::App for Chronoscope {
                 self.capture_after = None;
             }
         }
-        if self.snapshot_path.is_some() {
-            ctx.send_viewport_cmd(egui::ViewportCommand::Screenshot(Default::default()));
+        if let Some(path) = self.snapshot_path.take() {
+            let tx = self.tx.clone();
+            let repaint = ctx.clone();
+            ctx.request_screenshot(move |image| {
+                let bytes = image
+                    .pixels
+                    .iter()
+                    .flat_map(|p| p.to_array())
+                    .collect::<Vec<_>>();
+                let result = image::save_buffer_with_format(
+                    &path,
+                    &bytes,
+                    image.width() as u32,
+                    image.height() as u32,
+                    image::ColorType::Rgba8,
+                    image::ImageFormat::Png,
+                )
+                .map(|()| path)
+                .map_err(|error| error.to_string());
+                let _ = tx.send(WorkerResult::Snapshot(result));
+                repaint.request_repaint();
+            });
         }
-        for event in ctx.input(|i| i.events.clone()) {
-            if let egui::Event::Screenshot { image, .. } = event {
-                if let Some(path) = self.snapshot_path.take() {
-                    let bytes = image
-                        .pixels
-                        .iter()
-                        .flat_map(|p| p.to_array())
-                        .collect::<Vec<_>>();
-                    match image::save_buffer_with_format(
-                        &path,
-                        &bytes,
-                        image.width() as u32,
-                        image.height() as u32,
-                        image::ColorType::Rgba8,
-                        image::ImageFormat::Png,
-                    ) {
-                        Ok(()) => self.status = format!("Snapshot saved to {}", path.display()),
-                        Err(e) => self.error = Some(e.to_string()),
-                    }
-                }
+    }
+}
+
+impl eframe::App for Chronoscope {
+    fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
+        self.show(ui);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    struct Harness {
+        ctx: egui::Context,
+        app: Chronoscope,
+        time: f64,
+        _directory: tempfile::TempDir,
+    }
+
+    impl Harness {
+        fn new() -> Self {
+            let directory = tempfile::tempdir().unwrap();
+            let path = directory.path().join("demo.chrono.json");
+            project::save(&path, &Project::new(crate::demo::dataset())).unwrap();
+            let ctx = egui::Context::default();
+            let cc = eframe::CreationContext::_new_kittest(ctx.clone());
+            let app = Chronoscope::new(&cc, Some(path));
+            Self {
+                ctx,
+                app,
+                time: 0.,
+                _directory: directory,
             }
         }
+
+        fn frame(&mut self, events: Vec<egui::Event>) -> egui::FullOutput {
+            self.time += 1. / 60.;
+            let mut output = self.ctx.run_ui(
+                egui::RawInput {
+                    screen_rect: Some(egui::Rect::from_min_size(
+                        egui::Pos2::ZERO,
+                        Vec2::new(1440., 980.),
+                    )),
+                    time: Some(self.time),
+                    events,
+                    ..Default::default()
+                },
+                |ui| self.app.show(ui),
+            );
+            // This harness checks layout/input and tessellation without a GPU integration.
+            // Native GUI QA separately verifies that eframe uploads the font textures.
+            output.textures_delta.clear();
+            output
+        }
+
+        fn click(&mut self, label: &str) {
+            // Allow panel sizing and font layout to settle before locating the real widget.
+            self.frame(vec![]);
+            let output = self.frame(vec![]);
+            let pos = output
+                .shapes
+                .iter()
+                .find_map(|shape| match &shape.shape {
+                    egui::Shape::Text(text) if text.galley.job.text == label => {
+                        Some(text.visual_bounding_rect().center())
+                    }
+                    _ => None,
+                })
+                .unwrap_or_else(|| panic!("Missing rendered widget: {label}"));
+            self.frame(vec![
+                egui::Event::PointerMoved(pos),
+                egui::Event::PointerButton {
+                    pos,
+                    button: egui::PointerButton::Primary,
+                    pressed: true,
+                    modifiers: Default::default(),
+                },
+            ]);
+            self.frame(vec![egui::Event::PointerButton {
+                pos,
+                button: egui::PointerButton::Primary,
+                pressed: false,
+                modifiers: Default::default(),
+            }]);
+        }
+    }
+
+    #[test]
+    fn legacy_panels_modes_charts_and_playback_accept_pointer_input() {
+        let mut h = Harness::new();
+        assert!(!h.app.visible.is_empty());
+        h.click("Map");
+        assert_eq!(h.app.mode, ViewMode::Map);
+        h.click("Network");
+        assert_eq!(h.app.mode, ViewMode::Network);
+        h.click("Space-time");
+        assert_eq!(h.app.mode, ViewMode::SpaceTime);
+        h.click("Charts");
+        assert!(h.app.tab == InspectorTab::Charts);
+        let output = h.frame(vec![]);
+        assert!(output.shapes.iter().any(|shape| matches!(&shape.shape,
+            egui::Shape::Text(text) if text.galley.job.text == "Visible data summary")));
+        // Tessellate the actual scene and new font output, rather than testing layout alone.
+        assert!(!h
+            .ctx
+            .tessellate(output.shapes, output.pixels_per_point)
+            .is_empty());
+        h.click("Table");
+        assert!(!h.app.show_table);
+        h.click("Table");
+        assert!(h.app.show_table);
+        h.click("Play");
+        assert!(h.app.playing);
+        h.app.last_tick = Instant::now() - std::time::Duration::from_millis(100);
+        h.frame(vec![]);
+        assert!(h.app.time_end < 1.);
+        h.click("Pause");
+        assert!(!h.app.playing);
+        h.click("Full range");
+        assert_eq!((h.app.time_start, h.app.time_end), (0., 1.));
+    }
+
+    #[test]
+    fn legacy_screenshot_callback_writes_png_and_reports_completion() {
+        let mut h = Harness::new();
+        let path = h._directory.path().join("snapshot.png");
+        h.app.snapshot_path = Some(path.clone());
+        let output = h.frame(vec![]);
+        let callback = output.viewport_output[&egui::ViewportId::ROOT]
+            .commands
+            .iter()
+            .find_map(|cmd| match cmd {
+                egui::ViewportCommand::Screenshot(callback) => Some(callback.clone()),
+                _ => None,
+            })
+            .expect("Screenshot request reaches the integration");
+        assert!(h.app.snapshot_path.is_none());
+        callback.complete(std::sync::Arc::new(egui::ColorImage::filled(
+            [4, 3],
+            ACCENT,
+        )));
+        h.frame(vec![]);
+        let image = image::open(&path).unwrap().to_rgba8();
+        assert_eq!(image.dimensions(), (4, 3));
+        assert_eq!(image.get_pixel(0, 0).0, ACCENT.to_array());
+        assert!(h.app.status.starts_with("Snapshot saved to "));
+        assert!(h.app.error.is_none());
+    }
+
+    #[test]
+    fn legacy_screenshot_write_failure_reaches_the_error_dialog() {
+        let mut h = Harness::new();
+        h.app.snapshot_path = Some(h._directory.path().join("missing/snapshot.png"));
+        let output = h.frame(vec![]);
+        for cmd in &output.viewport_output[&egui::ViewportId::ROOT].commands {
+            if let egui::ViewportCommand::Screenshot(callback) = cmd {
+                callback
+                    .clone()
+                    .complete(std::sync::Arc::new(egui::ColorImage::filled(
+                        [1, 1],
+                        ACCENT,
+                    )));
+            }
+        }
+        h.frame(vec![]);
+        assert!(h.app.error.is_some());
+        h.click("Dismiss");
+        assert!(h.app.error.is_none());
+    }
+
+    #[test]
+    fn legacy_native_file_drop_reaches_the_import_wizard() {
+        #[derive(Debug)]
+        struct FileDrop(PathBuf);
+        impl egui::DroppedFile for FileDrop {
+            fn path(&self) -> &std::path::Path {
+                &self.0
+            }
+            fn bytes(&self) -> Result<Vec<u8>, String> {
+                std::fs::read(&self.0).map_err(|error| error.to_string())
+            }
+        }
+        let mut h = Harness::new();
+        let path = h._directory.path().join("dropped.csv");
+        std::fs::write(
+            &path,
+            "entity,time,latitude,longitude\nSurvey,2026-11-25T00:00:00Z,10,20\n",
+        )
+        .unwrap();
+        let mut input = egui::RawInput {
+            screen_rect: Some(egui::Rect::from_min_size(
+                egui::Pos2::ZERO,
+                Vec2::new(1440., 980.),
+            )),
+            ..Default::default()
+        };
+        input
+            .dropped_files
+            .push(std::sync::Arc::new(FileDrop(path)));
+        let mut output = h.ctx.run_ui(input, |ui| h.app.show(ui));
+        output.textures_delta.clear();
+        let deadline = Instant::now() + std::time::Duration::from_secs(3);
+        while h.app.wizard.is_none() && Instant::now() < deadline {
+            std::thread::sleep(std::time::Duration::from_millis(2));
+            h.frame(vec![]);
+        }
+        assert!(h.app.error.is_none(), "{:?}", h.app.error);
+        let wizard = h
+            .app
+            .wizard
+            .as_ref()
+            .expect("Dropped CSV opens the import wizard");
+        assert_eq!(
+            wizard.raw.tables[0].headers,
+            ["entity", "time", "latitude", "longitude"]
+        );
+        assert_eq!(wizard.raw.tables[0].rows.len(), 1);
     }
 }

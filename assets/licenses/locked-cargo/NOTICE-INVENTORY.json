@@ -24,6 +24,29 @@
     "scope": "conservative entire lock inventory; may not be linked on this target"
   },
   {
+    "name": "accesskit",
+    "version": "0.25.2",
+    "archive_sha256": "4e883d1d28c5fd5568c79ed2d2bd48d9f2fd3945c8974ed0f53690ceddb051be",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+        "source_url": "https://codeload.github.com/AccessKit/accesskit/tar.gz/f3026222559c7f5f46d8f25cb7404de68eb149f0"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+        "source_url": "https://codeload.github.com/AccessKit/accesskit/tar.gz/f3026222559c7f5f46d8f25cb7404de68eb149f0"
+      },
+      {
+        "path": "LICENSE.chromium",
+        "sha256": "845022e0c1db1abb41a6ba4cd3c4b674ec290f3359d9d3c78ae558d4c0ed9308",
+        "source_url": "https://codeload.github.com/AccessKit/accesskit/tar.gz/f3026222559c7f5f46d8f25cb7404de68eb149f0"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
+  },
+  {
     "name": "accurate",
     "version": "0.4.1",
     "archive_sha256": "aeeaf4e8673753ed50c991c2055d2ec90edfbdc590d8d31453b61f107715e0b9",
@@ -838,6 +861,22 @@
   },
   {
     "name": "bit-set",
+    "version": "0.10.0",
+    "archive_sha256": "09ec2f926cc3060f09db9ebc5b52823d85268d24bb917e472c0c4bea35780a7d",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "8173d5c29b4f956d532781d2b86e4e30f83e6b7878dce18c919451d6ba707c90"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "6b56ddc7cd80419e5e22e075f2252d720f6cbe17e3e2c17383095ee2712bcffa"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
+  },
+  {
+    "name": "bit-set",
     "version": "0.8.0",
     "archive_sha256": "08807e080ed7f9d5433fa9b275196cfc35414f66a0c79d864dc51a0d825231a3",
     "notices": [
@@ -867,6 +906,22 @@
       }
     ],
     "scope": "conservative entire lock inventory; may not be linked on this target"
+  },
+  {
+    "name": "bit-vec",
+    "version": "0.9.1",
+    "archive_sha256": "b71798fca2c1fe1086445a7258a4bc81e6e49dcd24c8d0dd9a1e57395b603f51",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "8173d5c29b4f956d532781d2b86e4e30f83e6b7878dce18c919451d6ba707c90"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "f51ac2c59a222f7476ce507ca879960e2b64ea64bb2786eefdbeb7b0b538d1b7"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
   },
   {
     "name": "bitflags",
@@ -1594,6 +1649,34 @@
     "archive_sha256": "3538270d33cc669650c4b093848450d380def10c331d38c768e34cac80576e6e",
     "notices": [],
     "scope": "conservative entire lock inventory; may not be linked on this target"
+  },
+  {
+    "name": "codespan-reporting",
+    "version": "0.13.1",
+    "archive_sha256": "af491d569909a7e4dee0ad7db7f5341fef5c614d5b8ec8cf765732aba3cff681",
+    "notices": [
+      {
+        "path": "LICENSE",
+        "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
+  },
+  {
+    "name": "color",
+    "version": "0.3.3",
+    "archive_sha256": "2ec7c5eb7a16992b1904d76c517d170ab353b0e0b3d5a0c81a8a0cd1037893cf",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "508a77d2e7b51d98adeed32648ad124b7b30241a8e70b2e72c99f92d8e5874d1"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
   },
   {
     "name": "colorchoice",
@@ -2538,11 +2621,47 @@
     "scope": "conservative entire lock inventory; may not be linked on this target"
   },
   {
+    "name": "ecolor",
+    "version": "0.37.0",
+    "archive_sha256": "31bcbef0d4263a63eb32c4834e5d711613035ce1333468e107d928923e21e6e2",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "8173d5c29b4f956d532781d2b86e4e30f83e6b7878dce18c919451d6ba707c90",
+        "source_url": "https://codeload.github.com/emilk/egui/tar.gz/0.37.0"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "95ca92f5f8ea5231f1580b3a2a799e8260af3114b900e1def5355a7f44bcf60c",
+        "source_url": "https://codeload.github.com/emilk/egui/tar.gz/0.37.0"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
+  },
+  {
     "name": "eframe",
     "version": "0.31.1",
     "archive_sha256": "d0dfe0859f3fb1bc6424c57d41e10e9093fe938f426b691e42272c2f336d915c",
     "notices": [],
     "scope": "conservative entire lock inventory; may not be linked on this target"
+  },
+  {
+    "name": "eframe",
+    "version": "0.37.0",
+    "archive_sha256": "9c5642501a65ca657d05f00c643a5c14ff2346cb3818032bfe23d58e1f8e5f84",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "8173d5c29b4f956d532781d2b86e4e30f83e6b7878dce18c919451d6ba707c90",
+        "source_url": "https://codeload.github.com/emilk/egui/tar.gz/0.37.0"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "95ca92f5f8ea5231f1580b3a2a799e8260af3114b900e1def5355a7f44bcf60c",
+        "source_url": "https://codeload.github.com/emilk/egui/tar.gz/0.37.0"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
   },
   {
     "name": "egui",
@@ -2552,11 +2671,47 @@
     "scope": "conservative entire lock inventory; may not be linked on this target"
   },
   {
+    "name": "egui",
+    "version": "0.37.0",
+    "archive_sha256": "bec9144f49b7a28b5f395d3147e325b4fe3e77ba686eac11d1bdf0a7da3f375f",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "8173d5c29b4f956d532781d2b86e4e30f83e6b7878dce18c919451d6ba707c90",
+        "source_url": "https://codeload.github.com/emilk/egui/tar.gz/0.37.0"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "95ca92f5f8ea5231f1580b3a2a799e8260af3114b900e1def5355a7f44bcf60c",
+        "source_url": "https://codeload.github.com/emilk/egui/tar.gz/0.37.0"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
+  },
+  {
     "name": "egui-wgpu",
     "version": "0.31.1",
     "archive_sha256": "d319dfef570f699b6e9114e235e862a2ddcf75f0d1a061de9e1328d92146d820",
     "notices": [],
     "scope": "conservative entire lock inventory; may not be linked on this target"
+  },
+  {
+    "name": "egui-wgpu",
+    "version": "0.37.0",
+    "archive_sha256": "0309cbe1febed48af5b974e4bcc424b35e9664863a4d402697147b57a488c864",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "8173d5c29b4f956d532781d2b86e4e30f83e6b7878dce18c919451d6ba707c90",
+        "source_url": "https://codeload.github.com/emilk/egui/tar.gz/0.37.0"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "95ca92f5f8ea5231f1580b3a2a799e8260af3114b900e1def5355a7f44bcf60c",
+        "source_url": "https://codeload.github.com/emilk/egui/tar.gz/0.37.0"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
   },
   {
     "name": "egui-winit",
@@ -2566,6 +2721,24 @@
     "scope": "conservative entire lock inventory; may not be linked on this target"
   },
   {
+    "name": "egui-winit",
+    "version": "0.37.0",
+    "archive_sha256": "e4e449f4c4a2a60c7ccb4ba7fa4078417bfe1f9ddc03b5e05ce75748e33a70de",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "8173d5c29b4f956d532781d2b86e4e30f83e6b7878dce18c919451d6ba707c90",
+        "source_url": "https://codeload.github.com/emilk/egui/tar.gz/0.37.0"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "95ca92f5f8ea5231f1580b3a2a799e8260af3114b900e1def5355a7f44bcf60c",
+        "source_url": "https://codeload.github.com/emilk/egui/tar.gz/0.37.0"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
+  },
+  {
     "name": "egui_extras",
     "version": "0.31.1",
     "archive_sha256": "624659a2e972a46f4d5f646557906c55f1cd5a0836eddbe610fdf1afba1b4226",
@@ -2573,11 +2746,47 @@
     "scope": "conservative entire lock inventory; may not be linked on this target"
   },
   {
+    "name": "egui_extras",
+    "version": "0.37.0",
+    "archive_sha256": "def286cf47194f3fe45b8e37c503ada7a20a64b59a903b4bc704baec943b1827",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "8173d5c29b4f956d532781d2b86e4e30f83e6b7878dce18c919451d6ba707c90",
+        "source_url": "https://codeload.github.com/emilk/egui/tar.gz/0.37.0"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "95ca92f5f8ea5231f1580b3a2a799e8260af3114b900e1def5355a7f44bcf60c",
+        "source_url": "https://codeload.github.com/emilk/egui/tar.gz/0.37.0"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
+  },
+  {
     "name": "egui_glow",
     "version": "0.31.1",
     "archive_sha256": "910906e3f042ea6d2378ec12a6fd07698e14ddae68aed2d819ffe944a73aab9e",
     "notices": [],
     "scope": "conservative entire lock inventory; may not be linked on this target"
+  },
+  {
+    "name": "egui_glow",
+    "version": "0.37.0",
+    "archive_sha256": "9275ca5cc35a6b7c94e0e8cedf22542f66cb0cf45ed8ab2657c78ff49fec7268",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "8173d5c29b4f956d532781d2b86e4e30f83e6b7878dce18c919451d6ba707c90",
+        "source_url": "https://codeload.github.com/emilk/egui/tar.gz/0.37.0"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "95ca92f5f8ea5231f1580b3a2a799e8260af3114b900e1def5355a7f44bcf60c",
+        "source_url": "https://codeload.github.com/emilk/egui/tar.gz/0.37.0"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
   },
   {
     "name": "either",
@@ -2613,6 +2822,24 @@
     "archive_sha256": "9e4cadcff7a5353ba72b7fea76bf2122b5ebdbc68e8155aa56dfdea90083fe1b",
     "notices": [],
     "scope": "conservative entire lock inventory; may not be linked on this target"
+  },
+  {
+    "name": "emath",
+    "version": "0.37.0",
+    "archive_sha256": "e73ce90f54750be8672c02be0743fe47530e6f251e066f0ee2869b59eb297af5",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "8173d5c29b4f956d532781d2b86e4e30f83e6b7878dce18c919451d6ba707c90",
+        "source_url": "https://codeload.github.com/emilk/egui/tar.gz/0.37.0"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "95ca92f5f8ea5231f1580b3a2a799e8260af3114b900e1def5355a7f44bcf60c",
+        "source_url": "https://codeload.github.com/emilk/egui/tar.gz/0.37.0"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
   },
   {
     "name": "embed-doc-image",
@@ -2698,11 +2925,42 @@
     "scope": "conservative entire lock inventory; may not be linked on this target"
   },
   {
+    "name": "enum-map",
+    "version": "3.1.0",
+    "archive_sha256": "d4532960034c15ba2f55e9eee631040ecc473c32e6c4b200828c759840f13a06",
+    "notices": [
+      {
+        "path": "Cargo.lock.license",
+        "sha256": "46b189c2e61a47d69ddd0b4c5a41f47ca8f64bedac5d76285e4ca1c7187cc89d",
+        "source_url": "https://codeberg.org/sugar700/enum-map/archive/a09d924a4afde4e2864a1df7b1438a5e6cdf3e7e.tar.gz"
+      },
+      {
+        "path": "renovate.json.license",
+        "sha256": "91ed71cc6a1af55bbdc5b13801a6f525d339147c77233c57105cbd2350dd77ed",
+        "source_url": "https://codeberg.org/sugar700/enum-map/archive/a09d924a4afde4e2864a1df7b1438a5e6cdf3e7e.tar.gz"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
+  },
+  {
     "name": "enum-map-derive",
     "version": "0.17.0",
     "archive_sha256": "f282cfdfe92516eb26c2af8589c274c7c17681f5ecc03c18255fe741c6aa64eb",
     "notices": [],
     "scope": "conservative entire lock inventory; may not be linked on this target"
+  },
+  {
+    "name": "enum-map-derive",
+    "version": "1.0.1",
+    "archive_sha256": "7127272f64b3e098f7d81f350d672081b879bff896d219c42370dc858b1af9ff",
+    "notices": [
+      {
+        "path": "Cargo.lock.license",
+        "sha256": "46b189c2e61a47d69ddd0b4c5a41f47ca8f64bedac5d76285e4ca1c7187cc89d",
+        "source_url": "https://codeberg.org/sugar700/enum-map/archive/ccf562d340723530d54f7bdfeb1782b4ded803a7.tar.gz"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
   },
   {
     "name": "enumflags2",
@@ -2744,11 +3002,67 @@
     "scope": "conservative entire lock inventory; may not be linked on this target"
   },
   {
+    "name": "epaint",
+    "version": "0.37.0",
+    "archive_sha256": "97bac86ae3dde93fc3951e790951caea739ff39a6c89d909cdaf1d9278dbb1bd",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "8173d5c29b4f956d532781d2b86e4e30f83e6b7878dce18c919451d6ba707c90",
+        "source_url": "https://codeload.github.com/emilk/egui/tar.gz/0.37.0"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "95ca92f5f8ea5231f1580b3a2a799e8260af3114b900e1def5355a7f44bcf60c",
+        "source_url": "https://codeload.github.com/emilk/egui/tar.gz/0.37.0"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
+  },
+  {
     "name": "epaint_default_fonts",
     "version": "0.31.1",
     "archive_sha256": "fc7e7a64c02cf7a5b51e745a9e45f60660a286f151c238b9d397b3e923f5082f",
     "notices": [],
     "scope": "conservative entire lock inventory; may not be linked on this target"
+  },
+  {
+    "name": "epaint_default_fonts",
+    "version": "0.37.0",
+    "archive_sha256": "cfc1cc505827f4c23eedc297975a0fd038268d41293f389dd8ff3b574aefab19",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "8173d5c29b4f956d532781d2b86e4e30f83e6b7878dce18c919451d6ba707c90",
+        "source_url": "https://codeload.github.com/emilk/egui/tar.gz/0.37.0"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "95ca92f5f8ea5231f1580b3a2a799e8260af3114b900e1def5355a7f44bcf60c",
+        "source_url": "https://codeload.github.com/emilk/egui/tar.gz/0.37.0"
+      },
+      {
+        "path": "fonts/Hack-Regular.txt",
+        "sha256": "47c0cccbeec7e8614548cc485588b28149e7874188df5f41b36efebcee285c87"
+      },
+      {
+        "path": "fonts/OFL.txt",
+        "sha256": "6a73f9541c2de74158c0e7cf6b0a58ef774f5a780bf191f2d7ec9cc53efe2bf2"
+      },
+      {
+        "path": "fonts/UFL.txt",
+        "sha256": "2f0015108d68627bd788d313f529c21ff4da2c2c42a5e1f3883acc83480f9002"
+      },
+      {
+        "path": "fonts/egui-icons.txt",
+        "sha256": "36dbbfd79d73974f864116879c17dd11559e1340277385f1ac52d8d29a5f5c79"
+      },
+      {
+        "path": "fonts/emoji-icon-font-mit-license.txt",
+        "sha256": "b9d2c1d909aa149996fd4c91dcb92b2362a04431640c1d200959da94caf8cde1"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
   },
   {
     "name": "equivalent",
@@ -2809,6 +3123,26 @@
       }
     ],
     "scope": "conservative entire lock inventory; may not be linked on this target"
+  },
+  {
+    "name": "euclid",
+    "version": "0.22.14",
+    "archive_sha256": "f1a05365e3b1c6d1650318537c7460c6923f1abdd272ad6842baa2b509957a06",
+    "notices": [
+      {
+        "path": "COPYRIGHT",
+        "sha256": "ec82b96487e9e778ee610c7ab245162464782cfa1f555c2299333f8dbe5c036a"
+      },
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "62065228e42caebca7e7d7db1204cbb867033de5982ca4009928915e4095f3a3"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
   },
   {
     "name": "event-listener",
@@ -2949,6 +3283,22 @@
       }
     ],
     "scope": "conservative entire lock inventory; may not be linked on this target"
+  },
+  {
+    "name": "fearless_simd",
+    "version": "0.4.1",
+    "archive_sha256": "b97b65636e5b9ef369943878ac74335ba1c55c1cb6adbf1e2c293c624248d693",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "23c23145f6eac25c28cdcc03d38506a5712a9a8cffb5bd5301457f6173ea696e"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
   },
   {
     "name": "field-offset",
@@ -3093,6 +3443,22 @@
       }
     ],
     "scope": "conservative entire lock inventory; may not be linked on this target"
+  },
+  {
+    "name": "font-types",
+    "version": "0.12.7",
+    "archive_sha256": "835ae9d781464a79026cde387f9cbc650c9a4909d7cf7e658b127e3c35d2f35d",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "eba684204073ed715c4abb48129acdfd2bff8ae48339e6a7da3b341d3027b7f0"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "7b4c9a3946dfcea7967582760e963e27799e225dcf20565c8ef55324bb017427"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
   },
   {
     "name": "foreign-types",
@@ -3688,6 +4054,22 @@
     "scope": "conservative entire lock inventory; may not be linked on this target"
   },
   {
+    "name": "glifo",
+    "version": "0.3.0",
+    "archive_sha256": "282a26c1e23de04bdab3e34a21b6f877a479b96737792516b9b8b8f69b6661be",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "3252fc481fda4d2bad9e1ae675065889abd35c8abb500499ac01e70aaffa02b9"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
+  },
+  {
     "name": "glob",
     "version": "0.3.4",
     "archive_sha256": "e4eba85ea1d0a966a983acd07deee566e67395d2d96b6fb39e62b5a833f1eb0b",
@@ -3722,6 +4104,26 @@
       }
     ],
     "scope": "conservative entire lock inventory; may not be linked on this target"
+  },
+  {
+    "name": "glow",
+    "version": "0.17.0",
+    "archive_sha256": "29038e1c483364cc6bb3cf78feee1816002e127c331a1eec55a4d202b9e1adb5",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "b8601fc79bdf8d8088f0938bea861ffc63ed0eebbedf25f44ab2cf2e85bd7edc"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "cdbd06e25b8c9c5d6019949d2de8123f56d29cee4166396423d2ba8c81700845"
+      },
+      {
+        "path": "LICENSE-ZLIB",
+        "sha256": "636f644f1e149eb62961657c0e34953681eff64435653912e7bd19992666faa5"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
   },
   {
     "name": "glutin",
@@ -3868,6 +4270,22 @@
     "scope": "conservative entire lock inventory; may not be linked on this target"
   },
   {
+    "name": "guillotiere",
+    "version": "0.7.0",
+    "archive_sha256": "6b17e70c989c36bad147b27a58d148c0741c51448aa5653436547323e524d0ab",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "644d05561bc2dc5993f19d6602894315d925744d854a0413876e203f86c35830"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "cab31b979edfb1d6ff72a9a84e1092a9b68954022fc3f253338e64879961b8d2"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
+  },
+  {
     "name": "half",
     "version": "2.7.1",
     "archive_sha256": "6ea2d84b969582b4b1864a92dc5d27cd2b77b622a8d79306834f1be5ba20d84b",
@@ -3882,6 +4300,18 @@
       }
     ],
     "scope": "conservative entire lock inventory; may not be linked on this target"
+  },
+  {
+    "name": "harfrust",
+    "version": "0.12.0",
+    "archive_sha256": "c03d949a14aa089bbb282f7dd76a498a7f684428e4257202efc119ec010376f9",
+    "notices": [
+      {
+        "path": "LICENSE",
+        "sha256": "3a7c3f0b887abb7c638faf022d29257418458614c6724b120ceeffb279f9c7d2"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
   },
   {
     "name": "hash32",
@@ -4638,6 +5068,22 @@
     "scope": "conservative entire lock inventory; may not be linked on this target"
   },
   {
+    "name": "itertools",
+    "version": "0.15.0",
+    "archive_sha256": "8b4baf93f58d4425749ca49a51c50ebab072c5df6994d08fed93541c331481dc",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "7576269ea71f767b99297934c0b2367532690f8c4badc695edf8e04ab6a1e545"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
+  },
+  {
     "name": "itoa",
     "version": "1.0.18",
     "archive_sha256": "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682",
@@ -4990,6 +5436,22 @@
     "scope": "conservative entire lock inventory; may not be linked on this target"
   },
   {
+    "name": "kurbo",
+    "version": "0.13.1",
+    "archive_sha256": "4b60dfc32f652b926df6192e55525b16d186c69d47876c3ead4da5cc9f8450e2",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "23c23145f6eac25c28cdcc03d38506a5712a9a8cffb5bd5301457f6173ea696e"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
+  },
+  {
     "name": "lazy_static",
     "version": "1.5.1",
     "archive_sha256": "20870f649af7073d53e38067b2a84312175d56ea15217e1b15bc83506ec50afb",
@@ -5135,6 +5597,22 @@
       }
     ],
     "scope": "conservative entire lock inventory; may not be linked on this target"
+  },
+  {
+    "name": "linebender_resource_handle",
+    "version": "0.1.1",
+    "archive_sha256": "d4a5ff6bcca6c4867b1c4fd4ef63e4db7436ef363e0ad7531d1558856bae64f4",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "508a77d2e7b51d98adeed32648ad124b7b30241a8e70b2e72c99f92d8e5874d1"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
   },
   {
     "name": "linfa",
@@ -5605,6 +6083,38 @@
     "scope": "conservative entire lock inventory; may not be linked on this target"
   },
   {
+    "name": "naga",
+    "version": "30.0.2",
+    "archive_sha256": "fd0dd362bf26c0ffdd143df6da66a25d287e196eff482f117771010b207ad163",
+    "notices": [
+      {
+        "path": "LICENSE.APACHE",
+        "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9"
+      },
+      {
+        "path": "LICENSE.MIT",
+        "sha256": "dc0d97139e8205818c703741c7be7cb3b96888bd5917b8d6fc6133731e403c21"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
+  },
+  {
+    "name": "naga-types",
+    "version": "30.0.2",
+    "archive_sha256": "14474170feb673cfb18b3565111a9869797cc1d290fb9ec969c53f5e1e231c6d",
+    "notices": [
+      {
+        "path": "LICENSE.APACHE",
+        "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9"
+      },
+      {
+        "path": "LICENSE.MIT",
+        "sha256": "dc0d97139e8205818c703741c7be7cb3b96888bd5917b8d6fc6133731e403c21"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
+  },
+  {
     "name": "nalgebra",
     "version": "0.35.0",
     "archive_sha256": "adc43a60c217b0c6ff46e47f26911015ad8d2e5a8be1af668c67e370d99a4346",
@@ -5743,6 +6253,18 @@
       }
     ],
     "scope": "conservative entire lock inventory; may not be linked on this target"
+  },
+  {
+    "name": "nom",
+    "version": "8.0.0",
+    "archive_sha256": "df9761775871bdef83bee530e60050f7e54b1105350d6884eb0fb4f46c2f9405",
+    "notices": [
+      {
+        "path": "LICENSE",
+        "sha256": "4dbda04344456f09a7a588140455413a9ac59b6b26a1ef7cdf9c800c012d87f0"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
   },
   {
     "name": "ntapi",
@@ -6378,6 +6900,18 @@
     "scope": "conservative entire lock inventory; may not be linked on this target"
   },
   {
+    "name": "os_pipe",
+    "version": "1.2.3",
+    "archive_sha256": "7d8fae84b431384b68627d0f9b3b1245fcf9f46f6c0e3dc902e9dce64edd1967",
+    "notices": [
+      {
+        "path": "LICENSE",
+        "sha256": "8f71659370c5268d9a1dc962a46232540e8fca63462586d8efaa95aab492a208"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
+  },
+  {
     "name": "outref",
     "version": "0.5.2",
     "archive_sha256": "1a80800c0488c3a21695ea981a54918fbb37abf04f4d0720c453632255e2ff0e",
@@ -6496,6 +7030,22 @@
       }
     ],
     "scope": "conservative entire lock inventory; may not be linked on this target"
+  },
+  {
+    "name": "peniko",
+    "version": "0.6.1",
+    "archive_sha256": "839c8299360d2e998bdb106dc0a6cd71dcc5f4df51df1b620361bf50e283cca6",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "f9946796a8a5bd5981565142fa42e3b0cc36aef6f80e86beaf5905b3c0fef1b5"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "23c23145f6eac25c28cdcc03d38506a5712a9a8cffb5bd5301457f6173ea696e"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
   },
   {
     "name": "percent-encoding",
@@ -6808,6 +7358,22 @@
       }
     ],
     "scope": "conservative entire lock inventory; may not be linked on this target"
+  },
+  {
+    "name": "polycool",
+    "version": "0.4.0",
+    "archive_sha256": "50596ddc09eb5ad5f75cacd40209568e66df71baf86e1499a0e99c4cff12a5a6",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "23c23145f6eac25c28cdcc03d38506a5712a9a8cffb5bd5301457f6173ea696e"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
   },
   {
     "name": "portable-atomic",
@@ -7467,6 +8033,22 @@
       }
     ],
     "scope": "conservative entire lock inventory; may not be linked on this target"
+  },
+  {
+    "name": "read-fonts",
+    "version": "0.41.0",
+    "archive_sha256": "046a7d674daf459825b32f5062056d6882db0d2f5a479fbd76ccfc870ac18709",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "eba684204073ed715c4abb48129acdfd2bff8ae48339e6a7da3b341d3027b7f0"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "7b4c9a3946dfcea7967582760e963e27799e225dcf20565c8ef55324bb017427"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
   },
   {
     "name": "redox_syscall",
@@ -8209,6 +8791,22 @@
     "scope": "conservative entire lock inventory; may not be linked on this target"
   },
   {
+    "name": "self_cell",
+    "version": "1.3.0",
+    "archive_sha256": "2ab42ca02749e120097e328d91d415325bdf43b1c72c4c8badf37375fe40a813",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+      },
+      {
+        "path": "LICENSE-GPLv2",
+        "sha256": "f9c375a1be4a41f7b70301dd83c91cb89e41567478859b77eef375a52d782505"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
+  },
+  {
     "name": "semver",
     "version": "1.0.28",
     "archive_sha256": "8a7852d02fc848982e0c167ef163aaff9cd91dc640ba85e263cb1ce46fae51cd",
@@ -8223,6 +8821,22 @@
       }
     ],
     "scope": "conservative entire lock inventory; may not be linked on this target"
+  },
+  {
+    "name": "send_wrapper",
+    "version": "0.6.0",
+    "archive_sha256": "cd0b0ec5f1c1ca621c432a25813d8d60c88abe6d3e08a3eb9cf37d97a0fe3d73",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE.txt",
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      {
+        "path": "LICENSE-MIT.txt",
+        "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
   },
   {
     "name": "serde",
@@ -8635,6 +9249,22 @@
       }
     ],
     "scope": "conservative entire lock inventory; may not be linked on this target"
+  },
+  {
+    "name": "skrifa",
+    "version": "0.44.0",
+    "archive_sha256": "819ab7d62b1d3e72d9d9dea5650bac30424f9111364bb94928dbf5ecad1baa68",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "eba684204073ed715c4abb48129acdfd2bff8ae48339e6a7da3b341d3027b7f0"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "7b4c9a3946dfcea7967582760e963e27799e225dcf20565c8ef55324bb017427"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
   },
   {
     "name": "slab",
@@ -9895,6 +10525,18 @@
     "scope": "conservative entire lock inventory; may not be linked on this target"
   },
   {
+    "name": "tree_magic_mini",
+    "version": "3.2.2",
+    "archive_sha256": "b8765b90061cba6c22b5831f675da109ae5561588290f9fa2317adab2714d5a6",
+    "notices": [
+      {
+        "path": "LICENSE",
+        "sha256": "a7cea8a5a56ba02950d098a7c56eed312fc745ceecd437e4aad2f7f8d38661b8"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
+  },
+  {
     "name": "try-lock",
     "version": "0.2.5",
     "archive_sha256": "e421abadd41a4225275504ea4d6566923418b7f05506fbc9c0fe86ba7396114b",
@@ -10049,6 +10691,30 @@
       }
     ],
     "scope": "conservative entire lock inventory; may not be linked on this target"
+  },
+  {
+    "name": "unicode-properties",
+    "version": "0.1.5",
+    "archive_sha256": "993ad287eb20e8ba755312801cfe1413e0f25d604075863acaddca10b04c1833",
+    "notices": [
+      {
+        "path": "COPYRIGHT",
+        "sha256": "23860c2a7b5d96b21569afedf033469bab9fe14a1b24a35068b8641c578ce24d"
+      },
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "7b63ecd5f1902af1b63729947373683c32745c16a10e8e6292e2e2dcd7e90ae0"
+      },
+      {
+        "path": "LICENSE-UNICODE",
+        "sha256": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
   },
   {
     "name": "unicode-segmentation",
@@ -10236,6 +10902,38 @@
       }
     ],
     "scope": "conservative entire lock inventory; may not be linked on this target"
+  },
+  {
+    "name": "vello_common",
+    "version": "0.2.0",
+    "archive_sha256": "bbb2141a2bca6e6d598e471fd4d1d7eed8e020aad6a28187edda07f091a325dd",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "adf157330f722fe7cfd5964a2a6974eff851b718228c6735724a11706e6f4dec"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
+  },
+  {
+    "name": "vello_cpu",
+    "version": "0.2.0",
+    "archive_sha256": "ace506ca414548966fcf3c283be94eb1cad8254de488791ee698bf438b0890a9",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "adf157330f722fe7cfd5964a2a6974eff851b718228c6735724a11706e6f4dec"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
   },
   {
     "name": "version-compare",
@@ -10754,6 +11452,22 @@
     "scope": "conservative entire lock inventory; may not be linked on this target"
   },
   {
+    "name": "wgpu",
+    "version": "30.0.2",
+    "archive_sha256": "146fc3d654250e6207921a66c87534c621bc886c70df83dcf466c1d66813810e",
+    "notices": [
+      {
+        "path": "LICENSE.APACHE",
+        "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9"
+      },
+      {
+        "path": "LICENSE.MIT",
+        "sha256": "dc0d97139e8205818c703741c7be7cb3b96888bd5917b8d6fc6133731e403c21"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
+  },
+  {
     "name": "wgpu-core",
     "version": "24.0.5",
     "archive_sha256": "7f0aa306497a238d169b9dc70659105b4a096859a34894544ca81719242e1499",
@@ -10768,6 +11482,38 @@
       }
     ],
     "scope": "conservative entire lock inventory; may not be linked on this target"
+  },
+  {
+    "name": "wgpu-core",
+    "version": "30.0.2",
+    "archive_sha256": "ad661da2ee99f208c30090b585284b2ab5b8bf2358ddf2d2215592808ec62f1a",
+    "notices": [
+      {
+        "path": "LICENSE.APACHE",
+        "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9"
+      },
+      {
+        "path": "LICENSE.MIT",
+        "sha256": "dc0d97139e8205818c703741c7be7cb3b96888bd5917b8d6fc6133731e403c21"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
+  },
+  {
+    "name": "wgpu-core-deps-windows-linux-android",
+    "version": "30.0.2",
+    "archive_sha256": "1331b08fa2362c5d454eccc4448e6e4f01eccfea569a00e310adbfc4415f2bdc",
+    "notices": [
+      {
+        "path": "LICENSE.APACHE",
+        "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9"
+      },
+      {
+        "path": "LICENSE.MIT",
+        "sha256": "dc0d97139e8205818c703741c7be7cb3b96888bd5917b8d6fc6133731e403c21"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
   },
   {
     "name": "wgpu-hal",
@@ -10786,6 +11532,38 @@
     "scope": "conservative entire lock inventory; may not be linked on this target"
   },
   {
+    "name": "wgpu-hal",
+    "version": "30.0.2",
+    "archive_sha256": "a57452fe453658e141aafdb09de1028afa498805fab518238ddf372a518813ff",
+    "notices": [
+      {
+        "path": "LICENSE.APACHE",
+        "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9"
+      },
+      {
+        "path": "LICENSE.MIT",
+        "sha256": "dc0d97139e8205818c703741c7be7cb3b96888bd5917b8d6fc6133731e403c21"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
+  },
+  {
+    "name": "wgpu-naga-bridge",
+    "version": "30.0.2",
+    "archive_sha256": "44a62ead68aad7cd40ac9e2cd2b8ec64f32dfbad2765f429b9fb74b8b735869f",
+    "notices": [
+      {
+        "path": "LICENSE.APACHE",
+        "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9"
+      },
+      {
+        "path": "LICENSE.MIT",
+        "sha256": "dc0d97139e8205818c703741c7be7cb3b96888bd5917b8d6fc6133731e403c21"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
+  },
+  {
     "name": "wgpu-types",
     "version": "24.0.0",
     "archive_sha256": "50ac044c0e76c03a0378e7786ac505d010a873665e2d51383dcff8dd227dc69c",
@@ -10800,6 +11578,22 @@
       }
     ],
     "scope": "conservative entire lock inventory; may not be linked on this target"
+  },
+  {
+    "name": "wgpu-types",
+    "version": "30.0.2",
+    "archive_sha256": "a9f6ee0bd50f5ab79fb8c25e3f33afb27126f034af4ba5909c7a0967058659e6",
+    "notices": [
+      {
+        "path": "LICENSE.APACHE",
+        "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9"
+      },
+      {
+        "path": "LICENSE.MIT",
+        "sha256": "dc0d97139e8205818c703741c7be7cb3b96888bd5917b8d6fc6133731e403c21"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
   },
   {
     "name": "wide",
@@ -11770,6 +12564,22 @@
       }
     ],
     "scope": "conservative entire lock inventory; may not be linked on this target"
+  },
+  {
+    "name": "wl-clipboard-rs",
+    "version": "0.9.5",
+    "archive_sha256": "959c7ac3b8afde864f7a7448ac16f29b2b83350b7eccbf77fb781c3999aa6848",
+    "notices": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "d0235d2a1f657b6fd18fd4ce98988348969a9284d94281b6d117830aa259a07a"
+      }
+    ],
+    "scope": "egui migration; conservative full lock inventory including inactive optional/platform entries"
   },
   {
     "name": "writeable",

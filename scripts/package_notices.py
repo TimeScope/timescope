@@ -20,6 +20,7 @@ MANIFEST = 'NOTICE-MANIFEST.json'
 APP_NOTICES = 'usr/share/chronoscope/third-party'
 NATIVE_MANIFEST = 'usr/share/chronoscope/NATIVE-NOTICE-MANIFEST.json'
 REQUIRED_FILES = {
+    'vendor/argmin/LICENSE-MIT', 'vendor/argmin/LICENSE-APACHE', 'vendor/argmin/BACKPORT.md',
     'vendor/rstar/LICENSE-MIT', 'vendor/rstar/LICENSE-APACHE', 'vendor/rstar/BACKPORT.md',
   'vendor/calamine/LICENSE-MIT.md', 'vendor/calamine/BACKPORT.md',
     'vendor/glib/LICENSE', 'vendor/glib/COPYRIGHT', 'vendor/glib/BACKPORT.md',

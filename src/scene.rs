@@ -3,7 +3,6 @@ use crate::{
     project::Camera,
 };
 use eframe::egui::{self, Align2, Color32, FontId, Pos2, Rect, Sense, Stroke, Vec2};
-use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 
 pub const ACCENT: Color32 = Color32::from_rgb(95, 215, 190);
@@ -152,7 +151,7 @@ impl Scene {
         };
         let mut node_hits: Vec<(String, Pos2, Vec<u64>)> = Vec::new();
         let (lo, hi) = data.time_bounds();
-        let span = (hi - lo) as f64;
+        let span = hi - lo;
         let projection = |x: f32, z: f32, t: f32| -> Pos2 {
             let scale = rect.width().min(rect.height()) * 0.36 * camera.zoom;
             if mode == ViewMode::Map {
@@ -266,7 +265,7 @@ impl Scene {
                     let t = if mode == ViewMode::Map {
                         0.
                     } else {
-                        ((e.time - lo) as f64 / span) as f32 * height
+                        ((e.time - lo) / span) as f32 * height
                     };
                     let pos = projection(x, z, t);
                     tracks
@@ -282,10 +281,7 @@ impl Scene {
                     if let Some(end) = e.end {
                         if mode == ViewMode::SpaceTime {
                             painter.line_segment(
-                                [
-                                    pos,
-                                    projection(x, z, ((end - lo) as f64 / span) as f32 * height),
-                                ],
+                                [pos, projection(x, z, ((end - lo) / span) as f32 * height)],
                                 Stroke::new(3_f32, entity_color(&e.entity).gamma_multiply(0.6)),
                             );
                         }
@@ -428,7 +424,7 @@ impl Scene {
                 let (lat, lon) = e.location().unwrap();
                 let [x, z] = self.frame.xy(lat, lon);
                 let rz = x * camera.yaw.sin() + z * camera.yaw.cos();
-                let t = ((e.time - lo) as f64 / span) as f32 * 1.55 * camera.time_scale;
+                let t = ((e.time - lo) / span) as f32 * 1.55 * camera.time_scale;
                 rz * camera.pitch.cos() + t * camera.pitch.sin()
             };
             picks.sort_by(|a, b| depth(a.0).total_cmp(&depth(b.0)));
@@ -520,7 +516,7 @@ impl Scene {
                                 let t = if mode == ViewMode::Map {
                                     0.
                                 } else {
-                                    ((e.time - lo) as f64 / span) as f32 * 1.55 * camera.time_scale
+                                    ((e.time - lo) / span) as f32 * 1.55 * camera.time_scale
                                 };
                                 area.contains(projection(x, z, t)).then_some(e.id)
                             })

@@ -401,7 +401,8 @@
       "test_glib_backport.py",
       "test_workarounds.py",
       "test_release_preflight.py",
-      "test_rstar_backport.py"
+      "test_rstar_backport.py",
+      "test_macro_migrations.py"
     ],
     "packaging": [
       "test_publication_cleanup.py",

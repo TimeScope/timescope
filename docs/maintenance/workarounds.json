@@ -157,6 +157,29 @@
       ],
       "upstream": "https://github.com/georust/rstar; full archive and exact source provenance are in the retained ledger. This is a local removal of an optimization, not an upstream release.",
       "remove_when": "A compatible released geographic stack excludes affected heapless; pass spatial correctness, performance and native app checks without this patch."
+    },
+    {
+      "id": "maintained-token-pasting",
+      "owner": "TimeScope maintainer \u2014 dependency maintenance",
+      "purpose": "Replace retired paste with reviewed pastey through a dependency-only alias in Argmin. The egui migration removed the legacy Metal dependency and patch.",
+      "source_files": [
+        "vendor/argmin/BACKPORT.md"
+      ],
+      "constraints": [
+        {
+          "file": "vendor/argmin/BACKPORT-FILES.json",
+          "keys": [
+            "version"
+          ],
+          "expected": "0.11.0"
+        }
+      ],
+      "regressions": [
+        "scripts/test_macro_migrations.py",
+        "tests/analytics.rs"
+      ],
+      "upstream": "Full package/official-commit comparisons retained in maintenance review evidence.",
+      "remove_when": "Compatible upstream releases use maintained macros; retain statistics parity and native-platform tests."
     }
   ]
 }
