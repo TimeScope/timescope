@@ -1,8 +1,13 @@
+interface Intent<T> {
+  workspace: string | undefined;
+  delta: Partial<T>;
+}
+
 /** Serial latest-intent writes. Each update rebases only its changed fields on
  * current engine state; CAS prevents overwriting an intervening external write. */
 export class FilterIntent<T extends object> {
-  private pending: Partial<T> | null = null;
-  private applying: Partial<T> | null = null;
+  private pending: Intent<T> | null = null;
+  private applying: Intent<T> | null = null;
   private work: Promise<void> | null = null;
   private resolve: (() => void) | null = null;
   private reject: ((e: unknown) => void) | null = null;
@@ -12,22 +17,29 @@ export class FilterIntent<T extends object> {
   private failure: unknown;
   private refreshPending = false;
   constructor(
-    private read: () => Promise<{ filter: T; revision: number }>,
-    private write: (filter: T, revision: number) => Promise<unknown>,
+    private read: () => Promise<{ filter: T; revision: number; workspace?: string }>,
+    private write: (filter: T, revision: number, workspace?: string) => Promise<unknown>,
     private applied: () => Promise<void>,
+    private workspace: () => string | undefined = () => undefined,
   ) {}
+  private current(intent: Intent<T> | null) {
+    return intent?.workspace === this.workspace() ? intent?.delta : undefined;
+  }
   desired(base: T): T {
-    return { ...base, ...this.applying, ...this.pending };
+    return { ...base, ...this.current(this.applying), ...this.current(this.pending) };
   }
   protects(key: keyof T): boolean {
     return (
       !!this.work &&
-      (key in (this.pending || {}) || key in (this.applying || {}))
+      (key in (this.current(this.pending) || {}) || key in (this.current(this.applying) || {}))
     );
   }
   enqueue(delta: Partial<T>, delay = 0, progressive = false): Promise<void> {
     this.progressive ||= progressive;
-    this.pending = { ...this.pending, ...delta };
+    this.pending = {
+      workspace: this.workspace(),
+      delta: { ...this.current(this.pending), ...delta },
+    };
     this.prepare();
     clearTimeout(this.timer);
     if (delay) this.timer = setTimeout(() => this.start(), delay);
@@ -67,14 +79,19 @@ export class FilterIntent<T extends object> {
           this.refreshPending = false;
           continue;
         }
-        const delta = this.pending;
+        const intent = this.pending;
         this.pending = null;
-        this.applying = delta;
+        this.applying = intent;
         try {
           for (let attempt = 0; ; attempt++) {
             const state = await this.read();
+            if (intent.workspace !== state.workspace) break;
             try {
-              await this.write({ ...state.filter, ...delta }, state.revision);
+              await this.write(
+                { ...state.filter, ...intent.delta },
+                state.revision,
+                intent.workspace,
+              );
               break;
             } catch (e) {
               if (attempt >= 2 || !(e as Error).message?.includes("CONFLICT:"))
@@ -82,7 +99,9 @@ export class FilterIntent<T extends object> {
             }
           }
         } catch (e) {
-          this.pending = Object.assign({}, delta, this.pending);
+          const pending = this.pending as Intent<T> | null;
+          if (!pending || pending.workspace === intent.workspace)
+            this.pending = { ...intent, delta: { ...intent.delta, ...pending?.delta } };
           throw e;
         }
         this.applying = null;

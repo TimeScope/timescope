@@ -1622,9 +1622,14 @@ const filterIntent = new FilterIntent<Filter>(
       compact: true,
       include_statistics: false,
     });
-    return { filter: current.filter as Filter, revision: current.revision };
+    return {
+      filter: current.filter as Filter,
+      revision: current.revision,
+      workspace: current.workspace_id,
+    };
   },
-  (filter, revision) => call("filter", { filter, expected_revision: revision }),
+  (filter, revision, workspace) =>
+    call("filter", { filter, expected_revision: revision, expected_workspace: workspace }),
   async () => {
     if (tables.tableRespectFilters && !gisTable.layerId) {
       tableSelection.anchor = null;
@@ -1633,6 +1638,7 @@ const filterIntent = new FilterIntent<Filter>(
     }
     await refresh(!view.smoothPlaybackActive);
   },
+  () => snapshot?.workspace_id,
 );
 function filter(
   delta: Partial<Filter>,

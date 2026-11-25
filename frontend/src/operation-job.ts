@@ -30,6 +30,11 @@ export async function runJob<K extends JobCommand>(
       terminal = !["queued", "running"].includes(state.status);
       if (terminal) {
         if (state.status !== "completed") {
+          if (state.commit_receipt?.committed === true)
+            throw new CommandError({
+              code: "RESOURCE_LIMIT",
+              message: "The operation committed, but its result details exceeded the job limit. Review the updated workspace or output before retrying.",
+            });
           // SQLite's progress handler can return "Workspace database:
           // interrupted". The terminal lifecycle/code, not that diagnostic,
           // determines what a cancelled operation shows to the user.

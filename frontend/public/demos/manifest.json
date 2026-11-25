@@ -5074,6 +5074,521 @@
         "start": null
       },
       "sha256": "6e16765195d93252d031adcb3b9a526227ecd2c2c7dedd482c81c69fd6f6536e"
+    },
+    {
+      "file": "ancient-y-dna-time.jpg",
+      "demo": "ancient-y-dna",
+      "basemap": "natural-earth",
+      "map_attribution": [
+        "Natural Earth · public domain"
+      ],
+      "source_url": "https://doi.org/10.1093/nargab/lqaa081",
+      "license": "aYChr-DB · CC BY 4.0; AADR v66.p1 · CC0 1.0",
+      "saved_view_index": 1,
+      "events": 1708,
+      "visible": 964,
+      "scene": {
+        "mode": "space-time",
+        "renderer": "cesium",
+        "cesium_camera": {
+          "position": [
+            1280174.1441226448,
+            2075593.4318970004,
+            3947432.8445916595
+          ],
+          "direction": [
+            4.41299633963434e-16,
+            0.7071067811865474,
+            -0.7071067811865478
+          ],
+          "up": [
+            -2.972810364169849e-17,
+            0.7071067811865474,
+            0.7071067811865478
+          ]
+        },
+        "view_states": {
+          "space-time": {
+            "center": [
+              11.499999999999991,
+              54.10576560823254,
+              1.3222238854040097e-9
+            ],
+            "ground_width": 6446130.842101794,
+            "heading": 0,
+            "tilt": 44.99999999999997,
+            "footprint": [
+              [
+                -32.10704905283085,
+                32.33153065311012,
+                0
+              ],
+              [
+                55.10704905283082,
+                32.33153065311012,
+                0
+              ],
+              [
+                55.10704905283082,
+                90,
+                0
+              ],
+              [
+                -32.10704905283085,
+                90,
+                0
+              ]
+            ],
+            "camera": {
+              "position": [
+                1280174.1441226448,
+                2075593.4318970004,
+                3947432.8445916595
+              ],
+              "direction": [
+                4.41299633963434e-16,
+                0.7071067811865474,
+                -0.7071067811865478
+              ],
+              "up": [
+                -2.972810364169849e-17,
+                0.7071067811865474,
+                0.7071067811865478
+              ]
+            }
+          }
+        },
+        "render_budget": 100000,
+        "display": {
+          "mode": "points",
+          "cluster_pixels": 48,
+          "time_bin_minutes": 0,
+          "partition": "all",
+          "spatial_culling": false,
+          "show_points": true,
+          "show_centroids": false,
+          "point_scale": 1.5,
+          "track_opacity": 0.25,
+          "trail_opacity": 0.25,
+          "show_tracks": false,
+          "show_trails": false,
+          "trail_pixels": 2,
+          "trail_gap_minutes": 180,
+          "heat_radius": 32,
+          "heat_weight": "count",
+          "heat_max": null,
+          "heat_reference_zoom": null,
+          "bloom": false,
+          "bloom_strength": 1.3,
+          "bloom_radius": 0.1,
+          "bloom_threshold": 0.1
+        },
+        "entity_colors": {
+          "C1a": "#8fcbd0",
+          "C2": "#7290da",
+          "C2a": "#aeda72",
+          "C2b": "#44a5ae",
+          "C3 (legacy)": "#72dac8",
+          "C6 (legacy)": "#daaa72",
+          "D1a": "#8c72da",
+          "E1a": "#76da72",
+          "E1b1a (tentative)": "#babd57",
+          "E1b1b": "#ebce65",
+          "E1b1b (tentative)": "#ebce65",
+          "G1": "#d1da72",
+          "G2": "#c472da",
+          "G2a": "#55d3b1",
+          "G2a (tentative)": "#55d3b1",
+          "G2b": "#359b82",
+          "H1": "#727bda",
+          "H2": "#99da72",
+          "H2 (tentative)": "#99da72",
+          "H3": "#da72b7",
+          "I1": "#9b9cff",
+          "I1 (tentative)": "#9b9cff",
+          "I2": "#dabf72",
+          "I2a": "#6eb9f7",
+          "I2a (tentative)": "#6eb9f7",
+          "I2b": "#aac8fa",
+          "J1": "#c38af1",
+          "J1 (tentative)": "#c38af1",
+          "J2": "#729dda",
+          "J2a": "#d5b6ee",
+          "J2a (tentative)": "#d5b6ee",
+          "J2b": "#b68bdf",
+          "J2b (tentative)": "#b68bdf",
+          "L1": "#72dabb",
+          "N1": "#da9d72",
+          "N1a": "#e3a6c9",
+          "N1c": "#c7a1eb",
+          "N3 (legacy)": "#da72a2",
+          "O1": "#72c0da",
+          "O1b": "#ce9e75",
+          "O2a": "#f1a16a",
+          "O3 (legacy)": "#72da98",
+          "Q1a": "#c7b17e",
+          "Q1a (tentative)": "#c7b17e",
+          "Q1b": "#aa905e",
+          "Q1b (tentative)": "#aa905e",
+          "R1a": "#ee6f91",
+          "R1a (tentative)": "#ee6f91",
+          "R1b": "#ffad5a",
+          "R1b (tentative)": "#ffad5a",
+          "R2": "#72dad0",
+          "T1": "#dab272",
+          "Unresolved · BT": "#7b8798",
+          "Unresolved · C": "#7b8798",
+          "Unresolved · CF": "#7b8798",
+          "Unresolved · CT": "#7b8798",
+          "Unresolved · D": "#7b8798",
+          "Unresolved · E": "#7b8798",
+          "Unresolved · F": "#7b8798",
+          "Unresolved · G": "#7b8798",
+          "Unresolved · H": "#7b8798",
+          "Unresolved · HIJK": "#7b8798",
+          "Unresolved · I": "#7b8798",
+          "Unresolved · IJ": "#7b8798",
+          "Unresolved · IJK": "#7b8798",
+          "Unresolved · J": "#7b8798",
+          "Unresolved · K": "#7b8798",
+          "Unresolved · L": "#7b8798",
+          "Unresolved · N": "#7b8798",
+          "Unresolved · NO": "#7b8798",
+          "Unresolved · NO1": "#7b8798",
+          "Unresolved · O": "#7b8798",
+          "Unresolved · P": "#7b8798",
+          "Unresolved · P1": "#7b8798",
+          "Unresolved · Q": "#7b8798",
+          "Unresolved · R": "#7b8798",
+          "Unresolved · R1": "#7b8798",
+          "Unresolved · T": "#7b8798"
+        },
+        "measurement": null,
+        "table_source": null,
+        "gis_table": null,
+        "table_attributes": true,
+        "table_respect_filters": false,
+        "table_sort": "time",
+        "table_descending": false,
+        "table_column_offset": 0,
+        "time_height": 1.8,
+        "time_axis_anchor": null,
+        "show_grab_handles": false,
+        "playback_fade": false,
+        "playback_fade_amount": 0,
+        "globe_time": false,
+        "globe_altitude": false,
+        "time_altitude": false,
+        "globe_time_scale": 1,
+        "focus": 0.45,
+        "bounds": [
+          -12,
+          34,
+          35,
+          63
+        ],
+        "table_open": false,
+        "inspector_tab": "views",
+        "chart": {
+          "kind": "line",
+          "scope": "visible",
+          "source": null,
+          "x": "time",
+          "y": "value",
+          "group": "",
+          "aggregate": "count",
+          "x_axis": "time",
+          "time_bucket": "day",
+          "stacked": false,
+          "y2": "",
+          "trendline": false,
+          "bins": 20,
+          "limit": 2000,
+          "title": "",
+          "x_label": "",
+          "y_label": "",
+          "y2_label": "",
+          "period_a": null,
+          "period_b": null
+        },
+        "chart_presets": [],
+        "expanded": false
+      },
+      "filter": {
+        "bounds": {
+          "east": 35,
+          "north": 63,
+          "south": 34,
+          "west": -12
+        },
+        "end": -63745056000,
+        "facet_fields": {},
+        "facet_hidden": {},
+        "hidden_categories": [],
+        "hidden_entities": [],
+        "hidden_sources": [],
+        "located_only": false,
+        "predicates": [],
+        "search": "",
+        "selected_only": false,
+        "start": -379314576000
+      },
+      "sha256": "4514caf44c95d14243117dbc57f3776ce9b0d110a986f8d4ff62a232f5b30f47"
+    },
+    {
+      "file": "ancient-y-dna-globe.jpg",
+      "demo": "ancient-y-dna",
+      "basemap": "natural-earth",
+      "map_attribution": [
+        "Natural Earth · public domain"
+      ],
+      "source_url": "https://doi.org/10.1093/nargab/lqaa081",
+      "license": "aYChr-DB · CC BY 4.0; AADR v66.p1 · CC0 1.0",
+      "saved_view_index": 0,
+      "events": 1708,
+      "visible": 1371,
+      "scene": {
+        "mode": "globe",
+        "renderer": "cesium",
+        "cesium_camera": {
+          "position": [
+            8062170.5837876275,
+            11513972.849251209,
+            14055965.470055213
+          ],
+          "direction": [
+            -0.4055797876726389,
+            -0.5792279653395692,
+            -0.7071067811865475
+          ],
+          "up": [
+            -0.40557978767263886,
+            -0.5792279653395691,
+            0.7071067811865476
+          ]
+        },
+        "view_states": {
+          "globe": {
+            "center": [
+              54.99999913641774,
+              45.19242409382429,
+              1.3969838619232178e-9
+            ],
+            "ground_width": 15600834.821150236,
+            "heading": 359.99981817537093,
+            "tilt": 0.192424093825276,
+            "footprint": [
+              [
+                -180,
+                -90,
+                0
+              ],
+              [
+                180,
+                -90,
+                0
+              ],
+              [
+                180,
+                90,
+                0
+              ],
+              [
+                -180,
+                90,
+                0
+              ]
+            ],
+            "camera": {
+              "position": [
+                8062170.5837876275,
+                11513972.849251209,
+                14055965.470055213
+              ],
+              "direction": [
+                -0.4055797876726389,
+                -0.5792279653395692,
+                -0.7071067811865475
+              ],
+              "up": [
+                -0.40557978767263886,
+                -0.5792279653395691,
+                0.7071067811865476
+              ]
+            }
+          }
+        },
+        "render_budget": 100000,
+        "display": {
+          "mode": "points",
+          "cluster_pixels": 48,
+          "time_bin_minutes": 0,
+          "partition": "all",
+          "spatial_culling": false,
+          "show_points": true,
+          "show_centroids": false,
+          "point_scale": 1.5,
+          "track_opacity": 0.25,
+          "trail_opacity": 0.25,
+          "show_tracks": false,
+          "show_trails": false,
+          "trail_pixels": 2,
+          "trail_gap_minutes": 180,
+          "heat_radius": 32,
+          "heat_weight": "count",
+          "heat_max": null,
+          "heat_reference_zoom": null,
+          "bloom": false,
+          "bloom_strength": 1.3,
+          "bloom_radius": 0.1,
+          "bloom_threshold": 0.1
+        },
+        "entity_colors": {
+          "C1a": "#8fcbd0",
+          "C2": "#7290da",
+          "C2a": "#aeda72",
+          "C2b": "#44a5ae",
+          "C3 (legacy)": "#72dac8",
+          "C6 (legacy)": "#daaa72",
+          "D1a": "#8c72da",
+          "E1a": "#76da72",
+          "E1b1a (tentative)": "#babd57",
+          "E1b1b": "#ebce65",
+          "E1b1b (tentative)": "#ebce65",
+          "G1": "#d1da72",
+          "G2": "#c472da",
+          "G2a": "#55d3b1",
+          "G2a (tentative)": "#55d3b1",
+          "G2b": "#359b82",
+          "H1": "#727bda",
+          "H2": "#99da72",
+          "H2 (tentative)": "#99da72",
+          "H3": "#da72b7",
+          "I1": "#9b9cff",
+          "I1 (tentative)": "#9b9cff",
+          "I2": "#dabf72",
+          "I2a": "#6eb9f7",
+          "I2a (tentative)": "#6eb9f7",
+          "I2b": "#aac8fa",
+          "J1": "#c38af1",
+          "J1 (tentative)": "#c38af1",
+          "J2": "#729dda",
+          "J2a": "#d5b6ee",
+          "J2a (tentative)": "#d5b6ee",
+          "J2b": "#b68bdf",
+          "J2b (tentative)": "#b68bdf",
+          "L1": "#72dabb",
+          "N1": "#da9d72",
+          "N1a": "#e3a6c9",
+          "N1c": "#c7a1eb",
+          "N3 (legacy)": "#da72a2",
+          "O1": "#72c0da",
+          "O1b": "#ce9e75",
+          "O2a": "#f1a16a",
+          "O3 (legacy)": "#72da98",
+          "Q1a": "#c7b17e",
+          "Q1a (tentative)": "#c7b17e",
+          "Q1b": "#aa905e",
+          "Q1b (tentative)": "#aa905e",
+          "R1a": "#ee6f91",
+          "R1a (tentative)": "#ee6f91",
+          "R1b": "#ffad5a",
+          "R1b (tentative)": "#ffad5a",
+          "R2": "#72dad0",
+          "T1": "#dab272",
+          "Unresolved · BT": "#7b8798",
+          "Unresolved · C": "#7b8798",
+          "Unresolved · CF": "#7b8798",
+          "Unresolved · CT": "#7b8798",
+          "Unresolved · D": "#7b8798",
+          "Unresolved · E": "#7b8798",
+          "Unresolved · F": "#7b8798",
+          "Unresolved · G": "#7b8798",
+          "Unresolved · H": "#7b8798",
+          "Unresolved · HIJK": "#7b8798",
+          "Unresolved · I": "#7b8798",
+          "Unresolved · IJ": "#7b8798",
+          "Unresolved · IJK": "#7b8798",
+          "Unresolved · J": "#7b8798",
+          "Unresolved · K": "#7b8798",
+          "Unresolved · L": "#7b8798",
+          "Unresolved · N": "#7b8798",
+          "Unresolved · NO": "#7b8798",
+          "Unresolved · NO1": "#7b8798",
+          "Unresolved · O": "#7b8798",
+          "Unresolved · P": "#7b8798",
+          "Unresolved · P1": "#7b8798",
+          "Unresolved · Q": "#7b8798",
+          "Unresolved · R": "#7b8798",
+          "Unresolved · R1": "#7b8798",
+          "Unresolved · T": "#7b8798"
+        },
+        "measurement": null,
+        "table_source": null,
+        "gis_table": null,
+        "table_attributes": true,
+        "table_respect_filters": false,
+        "table_sort": "time",
+        "table_descending": false,
+        "table_column_offset": 0,
+        "time_height": 1.8,
+        "time_axis_anchor": null,
+        "show_grab_handles": false,
+        "playback_fade": false,
+        "playback_fade_amount": 0,
+        "globe_time": true,
+        "globe_altitude": false,
+        "time_altitude": false,
+        "globe_time_scale": 20,
+        "focus": 0.45,
+        "bounds": [
+          -15,
+          5,
+          170,
+          75
+        ],
+        "table_open": false,
+        "inspector_tab": "views",
+        "chart": {
+          "kind": "line",
+          "scope": "visible",
+          "source": null,
+          "x": "time",
+          "y": "value",
+          "group": "",
+          "aggregate": "count",
+          "x_axis": "time",
+          "time_bucket": "day",
+          "stacked": false,
+          "y2": "",
+          "trendline": false,
+          "bins": 20,
+          "limit": 2000,
+          "title": "",
+          "x_label": "",
+          "y_label": "",
+          "y2_label": "",
+          "period_a": null,
+          "period_b": null
+        },
+        "chart_presets": [],
+        "expanded": false
+      },
+      "filter": {
+        "bounds": null,
+        "end": -63745056000,
+        "facet_fields": {},
+        "facet_hidden": {},
+        "hidden_categories": [],
+        "hidden_entities": [],
+        "hidden_sources": [],
+        "located_only": false,
+        "predicates": [],
+        "search": "",
+        "selected_only": false,
+        "start": -379314576000
+      },
+      "sha256": "a5f5bb41e5c5f99b75dcabc941eda37f37ca8481dc2a36ac3bc8f468b1d5cd77"
     }
   ]
 }

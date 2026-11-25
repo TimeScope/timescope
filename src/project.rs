@@ -6,6 +6,7 @@ use std::{
     io::{BufReader, Read, Write},
     path::{Path, PathBuf},
 };
+pub(crate) const MAX_IMPORT_RECIPES: usize = 1000;
 
 #[derive(Clone, Copy, Debug, Default, Serialize, Deserialize, PartialEq)]
 pub enum ViewMode {
@@ -457,7 +458,7 @@ impl Project {
         crate::field_roles::validate(&self.field_roles)?;
         crate::gis::validate_layers(&self.gis_layers)?;
         self.scene.validate()?;
-        if self.imports.len() > 1000 {
+        if self.imports.len() > MAX_IMPORT_RECIPES {
             return Err("Too many import recipes".into());
         }
         if let Some(w) = &self.workspace {

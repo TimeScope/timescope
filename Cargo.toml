@@ -10,7 +10,7 @@ license = "MIT"
 [workspace]
 members = ["src-tauri"]
 default-members = ["."]
-exclude = ["vendor/glib", "tests/glib-backport"]
+exclude = ["vendor/calamine", "vendor/glib", "tests/glib-backport"]
 resolver = "2"
 
 [features]
@@ -109,4 +109,5 @@ strip = true
 
 # Compatible security backport; provenance and removal gate: vendor/glib/BACKPORT.md
 [patch.crates-io]
+calamine = { path = "vendor/calamine" }
 glib = { path = "vendor/glib" }

@@ -44,6 +44,18 @@ pub struct Demo {
 
 pub const DEMOS: &[Demo] = &[
     Demo {
+        id: "ancient-y-dna",
+        name: "Ancient Y-DNA · Eurasian subclades",
+        description: "1,708 dated ancient records with 78 branch/confidence labels and 1,031 AADR metadata matches. Regional Time views, a Eurasian globe, full subclades and terminal SNPs. Dates are estimates; sampled paternal lineages are not population frequencies or observed migration routes.",
+        source_url: "https://doi.org/10.1093/nargab/lqaa081",
+        license: "aYChr-DB · CC BY 4.0; AADR v66.p1 · CC0 1.0",
+        previews: &[
+            Preview { key: "time", label: "Time", view_index: 1 },
+            Preview { key: "globe", label: "3D Globe", view_index: 0 },
+        ],
+        bytes: include_bytes!("../samples/ancient-y-eurasian-subclades.chronoscope"),
+    },
+    Demo {
         id: "flight-altitude",
         name: "A week of flights · 6 Philippine airports",
         description: "175 flights and 11,018 samples across March 1–7, 2026 UTC: Manila, Cebu, Davao, Iloilo, Caticlan and Puerto Princesa. Reported altitude is approximate; original timestamps are preserved.",

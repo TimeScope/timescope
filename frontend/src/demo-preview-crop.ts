@@ -186,6 +186,20 @@ export const bundledPreviewCrops: Record<
     right: 438,
     sha256: "c76a6cb0f8d7cdba01e653b134bcfb5affec7ae10b35e0df8b621fa0d1ded9ca",
   },
+  "ancient-y-dna-time.jpg": {
+    width: 480,
+    height: 300,
+    left: 44,
+    right: 438,
+    sha256: "4514caf44c95d14243117dbc57f3776ce9b0d110a986f8d4ff62a232f5b30f47",
+  },
+  "ancient-y-dna-globe.jpg": {
+    width: 480,
+    height: 300,
+    left: 59,
+    right: 427,
+    sha256: "a5f5bb41e5c5f99b75dcabc941eda37f37ca8481dc2a36ac3bc8f468b1d5cd77",
+  },
 };
 
 /** Detect only uniform dark side mattes, preserving nonuniform scene content. */

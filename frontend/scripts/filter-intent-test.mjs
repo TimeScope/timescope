@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import test from "node:test";
 import ts from "typescript";
 const source = fs.readFileSync(
   new URL("../src/filter-intent.ts", import.meta.url),
@@ -184,3 +185,22 @@ for (let burst = 0; burst < 30; burst++) {
 console.log(
   "Passed: 30 deterministic range bursts, joined drains, external CAS rebasing, failed-write retry and captured debounced deltas.",
 );
+
+test("a delayed filter is dropped after a workspace switch", async () => {
+  let workspace = "first";
+  const writes = [];
+  const intent = new FilterIntent(
+    async () => ({ filter: { search: "" }, revision: 2, workspace }),
+    async (...args) => writes.push(args),
+    async () => {},
+    () => workspace,
+  );
+  const stale = intent.enqueue({ search: "old" }, 220);
+  workspace = "second";
+  assert.deepEqual(intent.desired({ search: "" }), { search: "" });
+  await intent.flush();
+  await stale;
+  assert.deepEqual(writes, []);
+  await intent.enqueue({ search: "new" });
+  assert.deepEqual(writes, [[{ search: "new" }, 2, "second"]]);
+});

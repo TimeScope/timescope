@@ -102,12 +102,17 @@ def restore(archive, root, kind):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--sources', action='store_true', help='Restore optional demo CSVs and generator source snapshots')
+    parser.add_argument('--ancient-y-sources', action='store_true', help='Fetch pinned source tables for the ancient Y-DNA demo generator')
     parser.add_argument('--validation-media', action='store_true', help='Restore archived validation images locally')
     args = parser.parse_args()
     manifest = json.loads((ROOT / 'assets/data-assets.json').read_text())
     terrain = manifest['terrain']
     fetch(terrain, safe_path(ROOT, terrain['path']))
     print('Verified pinned offline terrain: ' + terrain['sha256'])
+    if args.ancient_y_sources:
+        for name, entry in manifest['ancient-y-sources'].items():
+            fetch(entry, safe_path(ROOT, entry['path']))
+            print('Verified ancient Y-DNA source: ' + name)
     for flag, key in [(args.sources, 'demo-source-inputs'), (args.validation_media, 'validation-media')]:
         if flag:
             entry = manifest[key]

@@ -40,6 +40,8 @@ pub const COMMANDS: &[&str] = &[
     "export",
 ];
 pub type Jobs = Arc<Mutex<BTreeMap<String, Job>>>;
+const RESULT_BUDGET: usize = 16 * 1024 * 1024;
+const DEFAULT_RESULT_LIMIT: usize = 4 * 1024 * 1024;
 pub struct Job {
     pub command: String,
     pub status: String,
@@ -49,6 +51,7 @@ pub struct Job {
     pub total: Option<u64>,
     pub message: String,
     pub result: Option<Value>,
+    result_bytes: usize,
     pub receipt: Option<Value>,
     pub error: Option<String>,
     pub scope: Option<PathBuf>,
@@ -121,6 +124,24 @@ pub fn invoke(engine: &Engine, command: &str, args: Value) -> Result<Value, Stri
                 .ok_or("Job registry is full")?;
             jobs.remove(&oldest);
         }
+        // Reserve space before starting writes. A read completing concurrently
+        // must never consume the space needed to report a committed operation.
+        let result_limit = if command == "wmts_rasters" {
+            8 * 1024 * 1024
+        } else {
+            DEFAULT_RESULT_LIMIT
+        };
+        let reserved =
+            if crate::schema::is_mutation(&command, &arguments) || command == "analytics_run" {
+                result_limit
+            } else {
+                0
+            };
+        if reserved > 0
+            && jobs.values().map(|job| job.result_bytes).sum::<usize>() + reserved > RESULT_BUDGET
+        {
+            return Err("RESOURCE_LIMIT: insufficient job result space; release completed jobs before starting this operation".into());
+        }
         let mut random = [0u8; 16];
         getrandom::fill(&mut random).map_err(|e| e.to_string())?;
         let id: String = random.iter().map(|b| format!("{b:02x}")).collect();
@@ -136,6 +157,7 @@ pub fn invoke(engine: &Engine, command: &str, args: Value) -> Result<Value, Stri
                 total: None,
                 message: "Queued".into(),
                 result: None,
+                result_bytes: reserved,
                 receipt: None,
                 error: None,
                 scope: scope.clone(),
@@ -178,17 +200,10 @@ pub fn invoke(engine: &Engine, command: &str, args: Value) -> Result<Value, Stri
             let chat_owned =
                 command == "si_run" && engine.assistant.chat_finished(&job_id, &result);
             if let Ok(mut jobs) = engine.jobs.lock() {
-                let retained: usize = jobs
-                    .values()
-                    .filter_map(|j| j.result.as_ref())
-                    .map(|v| v.to_string().len())
-                    .sum();
+                let retained: usize = jobs.values().map(|job| job.result_bytes).sum();
                 if let Some(job) = jobs.get_mut(&job_id) {
-                    let result_budget = if job.command == "wmts_rasters" {
-                        8 * 1024 * 1024
-                    } else {
-                        4 * 1024 * 1024
-                    };
+                    let available = RESULT_BUDGET - (retained - job.result_bytes);
+                    job.result_bytes = 0;
                     job.receipt = result
                         .as_ref()
                         .ok()
@@ -196,17 +211,17 @@ pub fn invoke(engine: &Engine, command: &str, args: Value) -> Result<Value, Stri
                         .filter(|v| v.to_string().len() <= 4096)
                         .cloned();
                     match result {
-                        Ok(value)
-                            if value.to_string().len() <= result_budget
-                                && retained + value.to_string().len() <= 16 * 1024 * 1024 =>
-                        {
-                            job.status = "completed".into();
-                            job.message = "Completed".into();
-                            job.result = Some(value)
-                        }
-                        Ok(_) => {
-                            job.status = "failed".into();
-                            job.error=Some("RESOURCE_LIMIT: inspect commit_receipt before retrying; job results exceed 4 MiB per job (8 MiB for rasters) / 16 MiB retained; reduce query budgets or release completed jobs".into());
+                        Ok(value) => {
+                            let bytes = value.to_string().len();
+                            if bytes <= result_limit.min(available) {
+                                job.status = "completed".into();
+                                job.message = "Completed".into();
+                                job.result_bytes = bytes;
+                                job.result = Some(value);
+                            } else {
+                                job.status = "failed".into();
+                                job.error=Some("RESOURCE_LIMIT: inspect commit_receipt before retrying; job results exceed 4 MiB per job (8 MiB for rasters) / 16 MiB retained; reduce query budgets or release completed jobs".into());
+                            }
                         }
                         Err(e) => {
                             job.status = if crate::mcp::error_code(&e) == "CANCELLED" {

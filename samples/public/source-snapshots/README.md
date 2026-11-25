@@ -1,5 +1,10 @@
 Full generator inputs are optional checksum-pinned downloads. Run `python3 scripts/fetch_data_assets.py --sources` from the checkout root before regenerating demos. Restored inputs stay ignored. See [repository data](../../../docs/REPOSITORY-DATA.md).
 
+The ancient Y-DNA demo has three separately pinned tables: run
+`python3 scripts/fetch_data_assets.py --ancient-y-sources` and then
+`python3 scripts/prepare_ancient_y_demo.py`. Their revision URLs, sizes and SHA-256
+hashes are in `assets/data-assets.json`. [Interpretation and source evidence](../../../docs/ANCIENT-Y-DNA-DEMO.md).
+
 # Pinned priority-demo source inputs
 
 Retrieved 26 October 2026. See [SHA256.json](SHA256.json) for exact input hashes and

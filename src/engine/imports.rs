@@ -100,6 +100,9 @@ impl Engine {
                     .unwrap_or_else(|| Mapping::detect(table).mapping);
                 let mut staged = crate::store::DataStore::new(&self.data_dir)?;
                 let append = args["append"].as_bool().unwrap_or(false);
+                if append && s.project.imports.len() >= project::MAX_IMPORT_RECIPES {
+                    return Err("RESOURCE_LIMIT: workspace already has 1000 import recipes; start another workspace".into());
+                }
                 let target_source = args["target_source"].as_str();
                 if let Some(target) = target_source {
                     if !append {

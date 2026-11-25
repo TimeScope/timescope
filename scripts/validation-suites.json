@@ -129,7 +129,8 @@
       "import-safety-qa.mjs",
       "radius-navigation-qa.mjs",
       "settings-rework-qa.mjs",
-      "chart-interface-qa.mjs"
+      "chart-interface-qa.mjs",
+      "ancient-y-dna-qa.mjs"
     ],
     "performance": [
       "cesium-scale-qa.mjs",
@@ -304,7 +305,8 @@
         "dms-qa.mjs",
         "import-layers-qa.mjs",
         "import-safety-qa.mjs",
-        "settings-rework-qa.mjs"
+        "settings-rework-qa.mjs",
+        "ancient-y-dna-qa.mjs"
       ],
       "rust": [
         "autosave",
@@ -320,7 +322,8 @@
         "dms_coordinates",
         "import_layers",
         "import_queue_identity",
-        "import_safety"
+        "import_safety",
+        "ancient_y_demo"
       ]
     },
     "gis": {

@@ -4,6 +4,11 @@ use std::{
     path::Path,
     time::{Duration, Instant},
 };
+pub(crate) fn persist_workspace(file: tempfile::NamedTempFile, path: &Path) -> Result<(), String> {
+    crate::input_limits::ensure_workspace(file.path())?;
+    persist(file, path)
+}
+
 pub(crate) fn persist(file: tempfile::NamedTempFile, path: &Path) -> Result<(), String> {
     file.as_file().sync_all().map_err(|e| e.to_string())?;
     crate::operation::progress(0, Some(1), "Committing external file");
@@ -51,5 +56,24 @@ pub(crate) fn backup(
             }
             _ => return Err("Database backup returned an unsupported state".into()),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn oversized_workspace_keeps_the_existing_save() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("study.timescope");
+        std::fs::write(&path, b"previous workspace").unwrap();
+        let staged = tempfile::NamedTempFile::new_in(dir.path()).unwrap();
+        staged
+            .as_file()
+            .set_len(crate::input_limits::MAX_INPUT + 1)
+            .unwrap();
+        assert!(persist_workspace(staged, &path).is_err());
+        assert_eq!(std::fs::read(&path).unwrap(), b"previous workspace");
     }
 }

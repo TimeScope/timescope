@@ -98,3 +98,13 @@ test("Pre-aborted jobs never start and are recognized as cancellation", async ()
   );
   assert.deepEqual(calls, []);
 });
+
+test("an unavailable result still reports that the change committed", async () => {
+  const calls = fixture({
+    status: "failed",
+    error: { code: "RESOURCE_LIMIT", message: "Result unavailable" },
+    commit_receipt: { committed: true },
+  });
+  await assert.rejects(runJob("import_commit", {}), /operation committed/i);
+  assert.equal(calls.at(-1), "job_release");
+});

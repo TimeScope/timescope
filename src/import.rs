@@ -1,5 +1,5 @@
 use crate::model::*;
-use calamine::{open_workbook_auto_from_rs, Data, Reader};
+use calamine::{Data, Reader, Sheets, Xls, Xlsb, Xlsx};
 use serde::{Deserialize, Serialize};
 use std::{
     collections::{BTreeMap, BTreeSet},
@@ -334,9 +334,14 @@ pub fn read_file(path: &Path, delimiter: u8) -> Result<RawImport, String> {
             row_numbers,
         });
     } else if ["xlsx", "xls", "xlsb"].contains(&ext.as_str()) {
+        let bytes = crate::input_limits::read_bounded(
+            path,
+            100 * crate::input_limits::MIB,
+            "Reading workbook bytes",
+        )?;
         if ext == "xlsx" || ext == "xlsb" {
             let mut zip = zip::ZipArchive::new(crate::input_limits::CheckedReader(
-                File::open(path).map_err(|e| e.to_string())?,
+                std::io::Cursor::new(bytes.as_slice()),
             ))
             .map_err(|e| e.to_string())?;
             let mut expanded = 0u64;
@@ -366,15 +371,18 @@ pub fn read_file(path: &Path, delimiter: u8) -> Result<RawImport, String> {
                 }
             }
         }
-        let bytes = crate::input_limits::read_bounded(
-            path,
-            100 * crate::input_limits::MIB,
-            "Reading workbook bytes",
-        )?;
-        let shared: std::sync::Arc<[u8]> = bytes.into();
-        let workbook_result = open_workbook_auto_from_rs(crate::input_limits::CheckedReader(
-            std::io::Cursor::new(shared),
-        ));
+        let input = crate::input_limits::CheckedReader(std::io::Cursor::new(bytes));
+        let workbook_result = match ext.as_str() {
+            "xls" => Xls::new(input)
+                .map(Sheets::Xls)
+                .map_err(calamine::Error::from),
+            "xlsb" => Xlsb::new(input)
+                .map(Sheets::Xlsb)
+                .map_err(calamine::Error::from),
+            _ => Xlsx::new(input)
+                .map(Sheets::Xlsx)
+                .map_err(calamine::Error::from),
+        };
         crate::operation::check()?;
         let mut workbook = workbook_result.map_err(|e| format!("Cannot read workbook: {e}"))?;
         let names = workbook.sheet_names().to_vec();

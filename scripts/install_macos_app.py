@@ -29,7 +29,7 @@ def is_chronoscope(bundle):
         return False
     try:
         identity = metadata(bundle).get('CFBundleIdentifier', '')
-        return identity == BUNDLE_ID or identity.startswith('org.chronoscope.')
+        return identity in {BUNDLE_ID, 'org.chronoscope.desktop', 'org.chronoscope.cesium'}
     except (OSError, ValueError, plistlib.InvalidFileException):
         return False
 
@@ -53,6 +53,8 @@ def install(source):
         subprocess.run(['/usr/bin/ditto', str(source), str(staged)], check=True)
         subprocess.run(['/usr/bin/codesign', '--verify', '--strict', str(staged)], check=True)
         if destination.exists() or destination.is_symlink():
+            if not is_chronoscope(destination):
+                raise ValueError(f'Refusing to replace an unrecognized app at {destination}')
             os.replace(destination, previous)
         try:
             os.replace(staged, destination)

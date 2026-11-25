@@ -820,6 +820,18 @@ impl Engine {
             }
             Ok(v)
         });
+        if command == "import_commit"
+            && result
+                .as_ref()
+                .is_ok_and(|value| value["needs_review"] == true)
+        {
+            // The import ticket remains available and the staged rows were discarded.
+            return result.and_then(|mut value| {
+                value["revision"] = json!(revision);
+                value["workspace_id"] = json!(self.workspace_identity()?);
+                Ok(value)
+            });
+        }
         let mut s = self.state.lock().map_err(|_| "Workspace unavailable")?;
         let result = result.and_then(|value| {
             if mutation && command != "open" {
@@ -957,9 +969,7 @@ impl Engine {
             if let Ok(value) = &mut result {
                 let external = file_commit.as_ref().is_some_and(|guard| guard.committed());
                 if command != "preferences"
-                    && (external
-                        || command == "open"
-                        || identity.effects().dirty && value["needs_review"] != true)
+                    && (external || command == "open" || identity.effects().dirty)
                 {
                     value["commit_receipt"] = json!({"operation_id":format!("{store_id}:{current}"),"kind":if external {"external_file"}else{"workspace"},"store_id":store_id,"revision_before":revision.to_string(),"revision_after":current.to_string(),"committed":true,"cancel_requested":crate::operation::cancelled()});
                 }
@@ -970,10 +980,7 @@ impl Engine {
                 command,
                 current,
                 lifecycle_path.as_deref(),
-                new_document
-                    && result
-                        .as_ref()
-                        .is_ok_and(|value| value["needs_review"] != true),
+                new_document,
             );
         }
         crate::diagnostics::record(

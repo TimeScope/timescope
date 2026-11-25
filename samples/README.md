@@ -3,6 +3,7 @@
 Open **Help → Demo datasets** for all 14 bundled offline projects, including the website earthquake and crime examples. [New event/statistics demos, sources and interpretation](../docs/PRIORITY-DEMOS.md). You can also open these files directly:
 
 - `animal-gps-black-rock-forest-2023-03.chronoscope`: 3,439 observations of two bobcats and one fisher in New York.
+- `ancient-y-eurasian-subclades.chronoscope`: 1,708 dated ancient Eurasian Y-DNA records with refined subclades, terminal SNPs, regional Time views and a 3D globe. [Sources and dating uncertainty](../docs/ANCIENT-Y-DNA-DEMO.md).
 - `animal-gps-white-storks-2018.chronoscope`: 6,090 observations of three migrating storks.
 - `animal-telemetry-elephant-seals-2004.chronoscope`: 15,501 dive summaries from three seals, with maximum depth and duration attributes and a saved depth chart.
 - `noaa-ais-san-francisco-2024-01-01.chronoscope`: 8,473 NOAA AIS observations from ten San Francisco Bay vessels, with four saved views.

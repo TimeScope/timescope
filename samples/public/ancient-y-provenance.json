@@ -1,0 +1,77 @@
+{
+  "records": 1708,
+  "display_groups": 78,
+  "matched_aadr_records": 1031,
+  "unresolved_records": 205,
+  "source_records": 1797,
+  "excluded_missing_calendar_age": 74,
+  "excluded_open_ended_calendar_age": 15,
+  "project_sha256": "fbdd138cf2dff0250acf7574d1f25e09bf780c2d6c645a840934b1600ffe04f5",
+  "project_bytes": 413166,
+  "source_tables": {
+    "aydb-v5.xlsx": {
+      "url": "https://raw.githubusercontent.com/eelhaik/aYDB/a2b366af2ce9e1dacca6d96793521b8ce309eb24/a-YChr-DB%20-%20V5.xlsx",
+      "path": "samples/public/source-snapshots/ancient-y/aydb-v5.xlsx",
+      "bytes": 272253,
+      "sha256": "e297110a18cba73d4044e8a95c0fae98d7f48633ad6ccfae1cd364e460eb1b3c"
+    },
+    "aadr-v62.anno": {
+      "url": "https://raw.githubusercontent.com/MYangLab/aadr-visualizer/c027d042523361e7f5c850dc68ba62c3d567a723/data/v62.0_1240k_public.anno",
+      "path": "samples/public/source-snapshots/ancient-y/aadr-v62.anno",
+      "bytes": 8243708,
+      "sha256": "e110f2fc631b24a183ea236e7c93b153b361fe4682b9845dc9d4f2b586695e66"
+    },
+    "aadr-v66-p1.janno": {
+      "url": "https://raw.githubusercontent.com/poseidon-framework/aadr-archive/7406a4162bbde48dbae41dc8e68381a30ce0116e/AADR_v66_p1_1240K/AADR_v66_p1_1240K.janno",
+      "path": "samples/public/source-snapshots/ancient-y/aadr-v66-p1.janno",
+      "bytes": 16480151,
+      "sha256": "b29a825f0a1ae1dd8e14fcfeb06bcbf07301ebc7717e397fc975290df4be2ee2"
+    }
+  },
+  "views": [
+    {
+      "index": 0,
+      "name": "Eurasia · paternal lineages · 12–2 ka BP"
+    },
+    {
+      "index": 1,
+      "name": "Europe · Time · 12–2 ka BP"
+    },
+    {
+      "index": 2,
+      "name": "Eurasian steppe and Siberia · Time · 12–2 ka BP"
+    },
+    {
+      "index": 3,
+      "name": "East Asia · Time · 12–2 ka BP"
+    },
+    {
+      "index": 4,
+      "name": "Caucasus and West Asia · Time · 12–2 ka BP"
+    },
+    {
+      "index": 5,
+      "name": "Eurasia · all dated records"
+    },
+    {
+      "index": 6,
+      "name": "Before farming · 12–8 ka BP"
+    },
+    {
+      "index": 7,
+      "name": "Early-farmer period · 8–5.5 ka BP"
+    },
+    {
+      "index": 8,
+      "name": "Steppe-expansion period · 5.5–3.5 ka BP"
+    },
+    {
+      "index": 9,
+      "name": "Eurasia · matched AADR nomenclature only"
+    },
+    {
+      "index": 10,
+      "name": "Eurasia · resolved branches only"
+    }
+  ]
+}

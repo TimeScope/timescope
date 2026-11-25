@@ -1848,6 +1848,7 @@ impl DataStore {
     /// Local automatic copies keep external resource references and avoid the
     /// compaction/materialization performed for a portable export.
     pub(crate) fn save_autosave(&self, path: &Path, metadata: &Project) -> Result<(), String> {
+        self.validate_metadata(metadata)?;
         let parent = path.parent().ok_or("Invalid autosave directory")?;
         std::fs::create_dir_all(parent).map_err(err)?;
         let tmp = tempfile::NamedTempFile::new_in(parent).map_err(err)?;
@@ -1860,9 +1861,10 @@ impl DataStore {
             .map_err(err)?;
         destination.execute("INSERT INTO meta(key,value) VALUES('project',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",[serde_json::to_string(&external).map_err(err)?]).map_err(err)?;
         drop(destination);
-        crate::persistence::persist(tmp, path)
+        crate::persistence::persist_workspace(tmp, path)
     }
     pub fn save_as(&self, path: &Path, metadata: &Project) -> Result<(), String> {
+        self.validate_metadata(metadata)?;
         let parent = path
             .parent()
             .filter(|p| !p.as_os_str().is_empty())
@@ -1944,12 +1946,12 @@ impl DataStore {
             // the completed file and atomically replaces the destination.
             portable.execute("VACUUM INTO ?", [filename]).map_err(err)?;
             drop(portable);
-            crate::persistence::persist(compact, path)?;
+            crate::persistence::persist_workspace(compact, path)?;
         } else {
             // Keep existing path support when an OS path cannot be bound as UTF-8.
             portable.execute_batch("VACUUM").map_err(err)?;
             drop(portable);
-            crate::persistence::persist(tmp, path)?;
+            crate::persistence::persist_workspace(tmp, path)?;
         }
         Ok(())
     }

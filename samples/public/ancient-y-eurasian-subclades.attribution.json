@@ -1,0 +1,26 @@
+[
+  {
+    "title": "aYChr-DB v5 · ancient Eurasian Y haplogroups",
+    "creator": "Freeman, Brimacombe & Elhaik (2020)",
+    "source_url": "https://doi.org/10.1093/nargab/lqaa081",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "changes": "1,708 of 1,797 records retained: 74 missing calendar ages and 15 open-ended dates excluded. Original specimen, site, coordinates, reported haplogroup, calendar dates and study references retained. Calendar BC/AD range midpoints are display anchors, not precise lifetimes; raw radiocarbon BP values are not substituted for calendar ages. BP is relative to 1950. No inferred routes, coordinate jitter or synthetic samples. Legacy and tentative calls remain explicit. Counts reflect sampling, not population frequencies; the basemap uses modern geography."
+  },
+  {
+    "title": "Allen Ancient DNA Resource · v66.p1 · 1240K metadata",
+    "creator": "Swapan Mallick & David Reich; Poseidon metadata packaging",
+    "source_url": "https://doi.org/10.7910/DVN/FFIDCW",
+    "license": "CC0 1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "changes": "1,031 conservative metadata matches to the same source specimens, with Pass/male, identity, geographic and dating checks. Preserve original aYChr-DB labels alongside manual, automatic ISOGG v15.73, terminal-SNP and source-study fields. No sequence-based reanalysis. Broad or conflicting calls are not assigned an invented descendant. Poseidon package 1.0.0, pinned source: https://github.com/poseidon-framework/aadr-archive/tree/7406a4162bbde48dbae41dc8e68381a30ce0116e/AADR_v66_p1_1240K"
+  },
+  {
+    "title": "The Allen Ancient DNA Resource (AADR) a curated compendium of ancient human genomes",
+    "creator": "Mallick et al. (2024), Scientific Data 11:182",
+    "source_url": "https://doi.org/10.1038/s41597-024-03031-7",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "changes": "Methodological citation accompanying the AADR v66.p1 dataset citation. Underlying study identifiers and references remain attached to each sample."
+  }
+]
